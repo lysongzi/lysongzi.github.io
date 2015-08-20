@@ -1,4 +1,3 @@
 # lysongzi.github.io
->林友松の博客<br>
->Lysongzi's blog<br>
->Study Everyday
+>林友松の博客 (lysongzi's blog)<br>
+>Study Everyday.
