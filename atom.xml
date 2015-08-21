@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[林友松の博客]]></title>
+  <subtitle><![CDATA[少泡妹子多看书，多吃多睡多搞基]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://lysongzi.com/"/>
+  <updated>2015-08-21T16:02:30.458Z</updated>
+  <id>http://lysongzi.com/</id>
+  
+  <author>
+    <name><![CDATA[lysongzZ_]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[你好，世界！]]></title>
+    <link href="http://lysongzi.com/2015/08/22/%E4%BD%A0%E5%A5%BD%EF%BC%8C%E4%B8%96%E7%95%8C%EF%BC%81/"/>
+    <id>http://lysongzi.com/2015/08/22/你好，世界！/</id>
+    <published>2015-08-21T16:02:30.458Z</published>
+    <updated>2015-08-21T16:02:30.458Z</updated>
+    <content type="html"><![CDATA[<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.lysongzi.Main</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Main</span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span>&#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="l]]>
+    </summary>
+    
+      <category term="HelloWorld" scheme="http://lysongzi.com/tags/HelloWorld/"/>
+    
+      <category term="Hexo" scheme="http://lysongzi.com/tags/Hexo/"/>
+    
+      <category term="Java" scheme="http://lysongzi.com/tags/Java/"/>
+    
+  </entry>
+  
+</feed>
