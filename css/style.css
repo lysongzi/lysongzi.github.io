@@ -203,13 +203,12 @@ code {
   float: right;
 }
 .entry-content .gist {
-  background: color-code;
-  border: 1px solid #ddd;
+  background: #222;
+  border: 1px solid #bbb;
   margin-top: 15px;
   padding: 7px 15px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  text-shadow: 0 0 1px #fff;
   line-height: 1.6;
   overflow: auto;
   color: #666;
@@ -233,7 +232,6 @@ code {
   color: #999;
   margin-top: 5px;
   padding: 0;
-  text-shadow: 0 0 1px #fff;
   font-size: 100%;
 }
 .entry-content .gist .gist-file .gist-meta a {
@@ -243,13 +241,12 @@ code {
   color: #33a6b8;
 }
 figure.highlight {
-  background: color-code;
-  border: 1px solid #ddd;
+  background: #222;
+  border: 1px solid #bbb;
   margin: 0;
   padding: 7px 15px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  text-shadow: 0 0 1px #fff;
   line-height: 1.6;
   overflow: auto;
   position: relative;
@@ -258,7 +255,6 @@ figure.highlight {
 figure.highlight figcaption {
   color: #999;
   margin-bottom: 5px;
-  text-shadow: 0 0 1px #fff;
 }
 figure.highlight figcaption a {
   position: absolute;
@@ -290,7 +286,7 @@ figure.highlight .gutter {
 }
 figure.highlight .code {
   border-left: 1px solid #fff;
-  color: #666;
+  color: #fff;
 }
 pre .comment,
 pre .template_comment,
@@ -687,11 +683,11 @@ pre .deletion {
 }
 .entry-content th {
   font-weight: bold;
-  border-bottom: 3px solid #ddd;
+  border-bottom: 3px solid #bbb;
   padding-bottom: 0.5em;
 }
 .entry-content td {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #bbb;
   padding: 10px 0;
 }
 .entry-content blockquote {
@@ -966,7 +962,7 @@ pre .deletion {
   color: #fff;
 }
 #page-nav .space {
-  color: #ddd;
+  color: #bbb;
 }
 #page-nav .next {
   min-width: 5em;
@@ -1155,7 +1151,7 @@ pre .deletion {
     font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
     font-size: 15px;
     padding: 5px 10px;
-    border-bottom: 2px solid #ddd !important;
+    border-bottom: 2px solid #bbb !important;
     border: 0;
     width: 100%;
     -webkit-box-sizing: border-box;
