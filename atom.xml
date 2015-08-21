@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[林友松の博客]]></title>
+  <subtitle><![CDATA[少泡妹子多看书，多吃多睡多搞基]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://lysongzi.com/"/>
+  <updated>2015-08-21T12:47:37.361Z</updated>
+  <id>http://lysongzi.com/</id>
+  
+  <author>
+    <name><![CDATA[lysongzZ_]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <link href="http://lysongzi.com/2015/08/21/hello-world/"/>
+    <id>http://lysongzi.com/2015/08/21/hello-world/</id>
+    <published>2015-08-21T12:47:37.361Z</published>
+    <updated>2015-08-21T12:47:37.361Z</updated>
+    <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.<br><a id="more"></a></p>
+<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><blockquote>
+<p>平行进口的美规车、日规车等价格相对便宜，但无法享受汽车“三包”及4S店的质保，一直是车主心病。近日，重庆两位美规版玛莎拉蒂车主将车开到4S店进行保养和维修的时候，被告知要缴纳10万元门槛费，这让他们郁闷不已。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Welcome to <a href="http://hexo.io/">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.<br>]]>
+    
+    </summary>
+    
+      <category term="first" scheme="http://lysongzi.com/tags/first/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[你好，世界！]]></title>
+    <link href="http://lysongzi.com/2015/08/21/%E4%BD%A0%E5%A5%BD%EF%BC%8C%E4%B8%96%E7%95%8C%EF%BC%81/"/>
+    <id>http://lysongzi.com/2015/08/21/你好，世界！/</id>
+    <published>2015-08-21T12:46:54.776Z</published>
+    <updated>2015-08-21T12:46:54.776Z</updated>
+    <content type="html"><![CDATA[<h2 id="前言">前言</h2><p>&emsp;&emsp;Yilia是我去年9月开发的主题，本来只是想给自己玩，因而开始有许多“任性”的设计。诸如“我本可以兼容ie，但我就不”这种…<br>结果star数越来越多，半年里，居然成为了搜索“hexo-theme”最多star数的主题。<br>感慨大家跟我一样任性的同时，也是受宠若惊，万分感谢！<br><a id="more"></a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;而年前的主要矛盾，是日益增多的star和fork数，与功能还未完善之间的矛盾；以及越来越多的bug被大家发现，与我忙得飞起只好假装没发现这些bug的矛盾…</p>
+<blockquote>
+<p>话说这三件事一直有放在心上，是使用hexo时还不够满意的地方。</p>
+</blockquote>
+<p>移动端适配。就很多主题来看，响应式布局就等同于移动端适配，这是远远不足够的。布局影响的仅仅是视觉，还必须有特有的交互逻辑，以适应大家的操作习惯。<br>seo。hexo的seo还比较弱，description需要支持文章自定义比较稳妥，而把标签云塞到keyword里面去是个好想法。<br>模块化加载。把fancybox，jiathis，duoshuo这些给延迟加载，移动端和pc端js分离。就瀑布图来看，是有信心提速20%-30%的。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="前言">前言</h2><p>&emsp;&emsp;Yilia是我去年9月开发的主题，本来只是想给自己玩，因而开始有许多“任性”的设计。诸如“我本可以兼容ie，但我就不”这种…<br>结果star数越来越多，半年里，居然成为了搜索“hexo-theme”最多star数的主题。<br>感慨大家跟我一样任性的同时，也是受宠若惊，万分感谢！<br>]]>
+    
+    </summary>
+    
+      <category term="first" scheme="http://lysongzi.com/tags/first/"/>
+    
+  </entry>
+  
+</feed>
