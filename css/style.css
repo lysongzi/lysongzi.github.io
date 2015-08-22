@@ -170,6 +170,9 @@ em {
 code {
   text-shadow: 0 1px #fff;
   padding: 0 0.3em;
+  background-color: #f5f5f5;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
 }
 del {
   text-decoration: line-through;
@@ -196,9 +199,24 @@ sup {
 sub {
   bottom: -0.25em;
 }
+<<<<<<< HEAD
 a {
   text-decoration: none;
   color: #817c7c;
+=======
+abbr {
+  cursor: help;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #222;
+  margin: 20px 0 10px;
+  font-weight: bold;
+>>>>>>> origin/master
 }
 a:hover,
 a:focus {
@@ -225,10 +243,20 @@ button {
   margin: 0;
   padding: 0;
 }
+<<<<<<< HEAD
 input::-moz-focus-inner,
 button::-moz-focus-inner {
   border: 0;
   padding: 0;
+=======
+h2 {
+  border-bottom: 1px solid #ccc;
+}
+pre,
+code {
+  font-family: "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
+  font-size: 1em;
+>>>>>>> origin/master
 }
 h1 {
   font-size: 1.5em;
@@ -242,8 +270,22 @@ h1 {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+<<<<<<< HEAD
 .clearfix {
   zoom: 1;
+=======
+.entry-content .gist {
+  background: #222;
+  border: 1px solid #bbb;
+  margin-top: 15px;
+  padding: 7px 15px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  text-shadow: 0 0 1px #fff;
+  line-height: 1.6;
+  overflow: auto;
+  color: #666;
+>>>>>>> origin/master
 }
 .clearfix:before,
 .clearfix:after {
@@ -257,9 +299,19 @@ h1 {
   color: #fff;
   padding: 2px 0 0 4px;
 }
+<<<<<<< HEAD
 ::-moz-placeholder {
   color: #fff;
   padding: 2px 0 0 4px;
+=======
+.entry-content .gist .gist-file .gist-meta {
+  background: none;
+  color: #999;
+  margin-top: 5px;
+  padding: 0;
+  text-shadow: 0 0 1px #fff;
+  font-size: 100%;
+>>>>>>> origin/master
 }
 :-ms-input-placeholder {
   color: #fff;
@@ -425,6 +477,7 @@ input[type="search"]::-webkit-search-decoration {
     transform: translateY(0);
   }
 }
+<<<<<<< HEAD
 body >header {
   width: 100%;
   -webkit-box-shadow: 2px 4px 5px rgba(3,3,3,0.2);
@@ -432,6 +485,11 @@ body >header {
   background: #ea6753;
   color: #fff;
   padding: 1em 0 0.8em;
+=======
+figure.highlight .code {
+  border-left: 1px solid #fff;
+  color: #666;
+>>>>>>> origin/master
 }
 @media only screen and (min-width: 1024px) {
   body >header {
@@ -2363,6 +2421,7 @@ section.comment {
   display: block;
   padding: 0 3%;
 }
+<<<<<<< HEAD
 .linkslist ul a:hover {
   color: #ea6753;
   -webkit-transition: color 0.25s;
@@ -2370,6 +2429,10 @@ section.comment {
   -o-transition: color 0.25s;
   -ms-transition: color 0.25s;
   transition: color 0.25s;
+=======
+.entry-content p {
+  margin: 0.5em 0 0.5em 0;
+>>>>>>> origin/master
 }
 footer {
   margin-top: 1em;
@@ -2502,8 +2565,17 @@ footer {
 .social-font a[title="weibo"]::before {
   content: "\f18a";
 }
+<<<<<<< HEAD
 .social-font a[title="twitter"]::before {
   content: "\f099";
+=======
+.entry-content blockquote {
+  font-family: Georgia, "Times New Roman", serif;
+  margin: 0.5em;
+  padding: 0 0 5px 20px;
+  border-left: 4px solid #aaa;
+  color: #777;
+>>>>>>> origin/master
 }
 .social-font a[title="github"]::before {
   content: "\f09b";
@@ -2559,7 +2631,7 @@ img
 .entry-content pre {
   padding: 15px;
   background: #f5f5f5;
-  border: 0;
+  border: 1px solid #ccc;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
