@@ -135,6 +135,9 @@ em {
 code {
   text-shadow: 0 1px #fff;
   padding: 0 0.3em;
+  background-color: #f5f5f5;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
 }
 del {
   text-decoration: line-through;
@@ -170,6 +173,7 @@ h4,
 h5,
 h6 {
   color: #222;
+  margin: 20px 0 10px;
   font-weight: bold;
 }
 h1 a,
@@ -188,6 +192,9 @@ h4 a:hover,
 h5 a:hover,
 h6 a:hover {
   color: #222;
+}
+h2 {
+  border-bottom: 1px solid #ccc;
 }
 pre,
 code {
@@ -209,6 +216,7 @@ code {
   padding: 7px 15px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
+  text-shadow: 0 0 1px #fff;
   line-height: 1.6;
   overflow: auto;
   color: #666;
@@ -232,6 +240,7 @@ code {
   color: #999;
   margin-top: 5px;
   padding: 0;
+  text-shadow: 0 0 1px #fff;
   font-size: 100%;
 }
 .entry-content .gist .gist-file .gist-meta a {
@@ -286,7 +295,7 @@ figure.highlight .gutter {
 }
 figure.highlight .code {
   border-left: 1px solid #fff;
-  color: #fff;
+  color: #666;
 }
 pre .comment,
 pre .template_comment,
@@ -613,7 +622,7 @@ pre .deletion {
   vertical-align: super;
 }
 .entry-content p {
-  margin: 0 0 1em 0;
+  margin: 0.5em 0 0.5em 0;
 }
 .entry-content img,
 .entry-content video {
@@ -692,9 +701,9 @@ pre .deletion {
 }
 .entry-content blockquote {
   font-family: Georgia, "Times New Roman", serif;
-  margin: 1.5em 3em;
-  padding: 5px 20px;
-  border-left: 2px solid #aaa;
+  margin: 0.5em;
+  padding: 0 0 5px 20px;
+  border-left: 4px solid #aaa;
   color: #777;
 }
 .entry-content blockquote p:last-child {
@@ -750,7 +759,7 @@ pre .deletion {
 .entry-content pre {
   padding: 15px;
   background: #f5f5f5;
-  border: 0;
+  border: 1px solid #ccc;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
