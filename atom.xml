@@ -4,7 +4,7 @@
   <subtitle><![CDATA[少泡妹子多看书，多吃多睡多搞基]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://lysongzi.com/"/>
-  <updated>2015-08-22T15:43:34.815Z</updated>
+  <updated>2015-08-23T14:04:24.601Z</updated>
   <id>http://lysongzi.com/</id>
   
   <author>
@@ -19,21 +19,27 @@
     <link href="http://lysongzi.com/2015/08/22/Markdown%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     <id>http://lysongzi.com/2015/08/22/Markdown语法学习笔记/</id>
     <published>2015-08-22T14:21:33.000Z</published>
-    <updated>2015-08-22T15:43:34.815Z</updated>
+    <updated>2015-08-23T14:04:24.601Z</updated>
     <content type="html"><![CDATA[<p>Maekdown语法都是由一些符号所组成，并且这些符号简单易懂，一看就能了解它的含义。现在好多博客和网站的输入框都可以支持Markdown语法进行文本编辑了。最后使用Markdown的一个最大的好处就是文本可以离线编辑，还可以确保文本的格式，不一定要在线的输入框里进行编辑。<br><a id="more"></a></p>
-<h1 id="Markdown_语法说明_缩减版/(传送门)">Markdown 语法说明_缩减版/(<a href="http://www.appinn.com/markdown/" target="_blank" rel="external">传送门</a>)</h1><ul>
-<li><a href="">区块元素</a><ul>
-<li><a href="">段落和换行</a></li>
-<li><a href="">标题</a></li>
-<li><a href="">区块引用</a></li>
+<h1 id="Markdown_语法说明_缩减版/(完全版传送门)">Markdown 语法说明_缩减版/(<a href="http://www.appinn.com/markdown/" target="_blank" rel="external">完全版传送门</a>)</h1><ul>
+<li><a href="#Overview">区块元素</a><ul>
+<li><a href="#p">段落和换行</a></li>
+<li><a href="#header">标题</a></li>
+<li><a href="#blockquote">区块引用</a></li>
+<li><a href="#list">列表</a></li>
+<li><a href="#codeblock">代码块</a></li>
+<li><a href="#hr">分隔线</a></li>
 </ul>
 </li>
 </ul>
-<h1 id="区块元素">区块元素</h1><h3 id="段落和换行">段落和换行</h3><blockquote>
-<p>1) 在段落中可以通过手动输入 <code>&lt;br /&gt;</code> 来实现文本中的强制换行。<br>2) 如果一定要Markdown来自动生成 <code>&lt;br /&gt;</code> 来实现换行的话，就在插入的地方按两个以上空格然后回车。</p>
+<h1 id="Overview">区块元素</h1>
+
+<p></p><h2 id="p">段落和换行</h2><p></p>
+<blockquote>
+<p>1) 在段落中可以通过手动输入 <code>&lt;br/&gt;</code> 来实现文本中的强制换行。<br>2) 如果一定要Markdown来自动生成 <code>&lt;br/&gt;</code> 来实现换行的话，就在插入的地方按两个以上空格然后回车。</p>
 </blockquote>
 <p><br></p>
-<h2 id="标题">标题</h2><p>Markdown支持两种方式来实现标题：  </p>
+<p></p><h2 id="header">标题</h2><br>Markdown支持两种方式来实现标题：  <p></p>
 <p>1) 利用 “<code>=</code>“ 来表示一级标题，用 “<code>-</code>“  来表示二级标题，其中符号可以是任意多个的。  </p>
 <pre><code><span class="header">一级标题
 ======</span>
@@ -50,7 +56,7 @@
 <blockquote>
 <h1 id="一级标题_h1">一级标题 h1</h1><h2 id="二级标题_h2">二级标题 h2</h2><h6 id="六级标题_h6">六级标题 h6</h6></blockquote>
 <p><br></p>
-<h2 id="区块引用（Blockquotes）">区块引用（Blockquotes）</h2><p>只需要在要引用的段落前添加 <code>&gt;</code> 符号，还允许偷懒只在段落第一行使用 <code>&gt;</code> 符号。</p>
+<p></p><h2 id="blockquote">区块引用</h2><br>只需要在要引用的段落前添加 <code>&gt;</code> 符号，还允许偷懒只在段落第一行使用 <code>&gt;</code> 符号。<p></p>
 <pre><code>&gt;This is a blockquote with two paragraphs. Lo<span class="comment">rem ipsum dolor sit</span>
 amet,consectetuer adipiscing elit. Aliquam hendrerit mi posuere 
 lectus.Vestibulum enim wisi, viverra nec, fringilla <span class="flow">in</span>, laoreet
@@ -76,7 +82,75 @@ id sem consectetuer libero luctus adipiscing.
 <p>给出一些例子代码：</p>
 <pre><code><span class="built_in">return</span> shell_<span class="built_in">exec</span>(<span class="string">"echo <span class="variable">$input</span> | <span class="variable">$markdown_script</span>"</span>);
 </code></pre></blockquote>
-<p>持续更行中…(最新更新时间：2015/8/22)</p>
+<p><br>  </p>
+<p></p><h2 id="list">列表</h2><br>Markdown支持无序列表和有序列表。这个不止可以用来编列列表，还可以让长段的文字也按列表形式排列，可自行尝试。<br>其中可以使用 <code>*</code>, <code>+</code>, <code>-</code> 号来实现列表。并且通过缩进可以书写二级列表。如下：  <p></p>
+<pre><code>*  <span class="built_in">red</span>
+*  <span class="built_in">green</span>
+*  <span class="built_in">blue</span>
+
++  <span class="built_in">red</span>
+    +  dark <span class="built_in">red</span>
+    +  light <span class="built_in">red</span>
++  <span class="built_in">green</span>
++  <span class="built_in">blue</span>
+
+-  <span class="built_in">red</span>
+-  <span class="built_in">green</span>
+-  <span class="built_in">blue</span>  
+</code></pre><p>效果如下：</p>
+<blockquote>
+<ul>
+<li>red<ul>
+<li>dark red</li>
+<li>light red</li>
+</ul>
+</li>
+<li>green</li>
+<li>blue  </li>
+</ul>
+</blockquote>
+<p>通过书写数字和<code>.</code>可以生成有序列表，其中数字不是有序的也无所谓。  </p>
+<pre><code><span class="number">1.</span> red
+<span class="number">49.</span> green
+<span class="number">30.</span> blue
+</code></pre><p>效果如下:</p>
+<blockquote>
+<ol>
+<li>red</li>
+<li>green</li>
+<li>blue  </li>
+</ol>
+</blockquote>
+<p><br></p>
+<p></p><h2 id="codeblock">代码块</h2><br>如果想要插入一段代码（即形成一个代码块），并且保持代码的一定样式，只需要简单缩进4个空格或者1个制表符就可以了。<p></p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="built_in">printf</span>(<span class="string">"hello world."</span>);
+}  
+</code></pre><p>当我们使用了一些高亮代码块的插件之后。我们则还可以通过三个`符号来包含代码块，例如:</p>
+<pre><code><span class="comment"><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"hello world."</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></span>
+</code></pre><p>效果如下： </p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="built_in">printf</span>(<span class="string">"hello world."</span>);
+}
+</code></pre><p><br></p>
+<p></p><h2 id="hr">分隔线</h2><br>在一行中使用连续三个及以上的 <code>*</code>, <code>-</code>, <code>_</code> 号，且这行中不包含别的符号，就可以生成一条分割线。符号之间还可以包括空格。  <p></p>
+<pre><code><span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span>
+<span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span>
+<span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span>
+---
+______________________
+</code></pre><p>效果如下：  </p>
+<hr>
+<hr>
+<h2 id="**"><strong><strong><em>**</em></strong></strong></h2><hr>
+<p><br></p>
+<p>持续更行中…(最新更新时间：2015/8/23)</p>
 ]]></content>
     <summary type="html">
     <![CDATA[<p>Maekdown语法都是由一些符号所组成，并且这些符号简单易懂，一看就能了解它的含义。现在好多博客和网站的输入框都可以支持Markdown语法进行文本编辑了。最后使用Markdown的一个最大的好处就是文本可以离线编辑，还可以确保文本的格式，不一定要在线的输入框里进行编辑。<br>]]>
