@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[林友松の博客]]></title>
+  <subtitle><![CDATA[少泡妹子多看书，多吃多睡多搞基]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://lysongzi.com/"/>
+  <updated>2015-08-24T14:23:58.955Z</updated>
+  <id>http://lysongzi.com/</id>
+  
+  <author>
+    <name><![CDATA[lysongzZ_]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[数据结构——SimpleList的java实现]]></title>
+    <link href="http://lysongzi.com/2015/08/24/%E7%AE%80%E5%8D%95%E6%95%B0%E7%BB%84%E7%9A%84%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94SimpleList/"/>
+    <id>http://lysongzi.com/2015/08/24/简单数组的实现——SimpleList/</id>
+    <published>2015-08-24T12:57:59.000Z</published>
+    <updated>2015-08-24T14:23:58.955Z</updated>
+    <content type="html"><![CDATA[<p>这个<strong>SimepleList</strong>就是一个最简单的用数组实现的表。为了更好的表达表这个结构的特点，只实现存储int型数组的形式。并且没有结合泛型，接口等机制进行更高层次的抽象处理，不过以后我会在这个基础上编写一个类似JDK中的ArrayList类的数据结构。<br><a id="more"></a></p>
+<p>这个SimpleList主要涉及以下功能点：  </p>
+<ul>
+<li>创建表；</li>
+<li>重置表；</li>
+<li>查询表中数据元素个数；</li>
+<li>在位置x插入数据元素；</li>
+<li>删除位置x的数据元素；</li>
+<li>在尾部追加数据元素；</li>
+<li>修改位置x的元素值；</li>
+<li>获取位置x的元素值；</li>
+<li>判断表是否为空表；</li>
+<li>判断表是否已经满；</li>
+<li>输出数组当前所有元素。</li>
+</ul>
+<h2 id="属性">属性</h2><ul>
+<li>public static int DEFAULT_CAPACITY ： 默认表大小</li>
+<li>private int size ： 表中元素个数</li>
+<li>private int[] elements ： 元素数组 </li>
+</ul>
+<p></p>
+<h2 id="构造器">构造器</h2><blockquote>
+<p>共有两个构造器，一个为使用默认容器大小来构造表，一个则是使用自定义大小。<br>clear()和init()函数功能见后，主要是用来初始化成员变量的。</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> SimpleList(){
+    <span class="built_in">clear</span>();
+}
+
+<span class="keyword">public</span> SimpleList(<span class="built_in">int</span> <span class="built_in">size</span>){
+    <span class="built_in">size</span> = <span class="number">0</span>;
+    init(<span class="built_in">size</span>);
+}
+</code></pre><h2 id="函数">函数</h2><blockquote>
+<p>inti()初始化元素数组。</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> capacity)</span></span>{
+    elements = <span class="keyword">new</span> <span class="keyword">int</span>[capacity];
+}
+</code></pre><blockquote>
+<p>clear()函数用默认构造函数重置表的状态</p>
+</blockquote>
+<pre><code><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>{
+    size = <span class="number">0</span>;
+    init(DEFAULT_CAPACITY);
+}
+</code></pre><blockquote>
+<p>接下来是典型的一行代码实现的功能。</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">size</span>(){<span class="keyword">return</span> <span class="keyword">size</span>;}
+<span class="keyword">public</span> <span class="keyword">boolean</span> isEmpty(){
+    <span class="keyword">return</span> <span class="keyword">size</span> == <span class="number">0</span> ? <span class="keyword">true</span> : <span class="keyword">false</span>;
+}
+<span class="keyword">public</span> <span class="keyword">boolean</span> isFull(){
+    <span class="keyword">return</span> <span class="keyword">size</span>() == elements.length ? <span class="keyword">true</span> : <span class="keyword">false</span>;
+}
+</code></pre><blockquote>
+<p>insert()在指定位置idx插入一个元素，idx的取值范围为0~size.  idx为size则在尾部插入元素,其余则是idx位置的前面插入元素。<br>在插入操作中，其花销是比较昂贵的。因为插入元素时，会涉及到元素的移动。最坏的情况则是在头部插入元素，则需要把原来的所有元素都后移一位，这个函数的时间复杂度是线性增长的。</p>
+</blockquote>
+<pre><code><span class="function"><span class="keyword">public</span> boolean <span class="title">insert</span><span class="params">(<span class="keyword">int</span> idx, <span class="keyword">int</span> ele)</span></span>{
+    <span class="comment">/* 表已满 */</span>
+    <span class="keyword">if</span>(isFull())
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    <span class="comment">/* 判断传入的参数pos是否合法 ,= =,这个和上面的可以合并？*/</span>
+    <span class="keyword">if</span>(idx &lt; <span class="number">0</span> || idx &gt; size)
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    <span class="comment">/* idx位置及其后所有数据后移一位 */</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=size()-<span class="number">1</span>; i &gt;= idx; i--){
+        elements[i+<span class="number">1</span>] = elements[i];
+    }
+    elements[idx] = ele;
+    size++;
+    <span class="keyword">return</span> <span class="literal">true</span>;
+}
+</code></pre><blockquote>
+<p>append()复用insert()方法，只在数组尾部插入的元素。该方法的时间复杂度是常数，并不涉及元素的移动。</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="keyword">append</span>(<span class="keyword">int</span> ele){
+    <span class="keyword">return</span> insert(<span class="keyword">size</span>(), ele);
+}
+</code></pre><blockquote>
+<p>根据提供的索引获取对应元素的值，这里可能就会涉及到当提供的索引是非法的情况，本实现中该情况处理为抛出一个异常。<br>同样的根据索引设置新的元素值也是类似的。</p>
+</blockquote>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getElementByPos</span><span class="params">(<span class="keyword">int</span> idx)</span> <span class="keyword">throws</span> IllegalArgumentException</span>{
+    <span class="keyword">if</span>(idx &lt; <span class="number">0</span> || idx &gt; size())
+        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"The param idx is illegal."</span>);
+    <span class="keyword">return</span> elements[idx];
+}
+
+<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">setElementByPos</span><span class="params">(<span class="keyword">int</span> idx, <span class="keyword">int</span> ele)</span> <span class="keyword">throws</span> IllegalArgumentException</span>{
+    <span class="keyword">if</span>(idx &lt; <span class="number">0</span> || idx &gt; size())
+        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"The param idx is illegal."</span>);
+    elements[idx] = ele;
+}
+</code></pre><blockquote>
+<p>移除数组中的元素的时间复杂度也是线性增长的。当有元素被删除时，可能需要把该元素后的所有元素前移一位，最坏情况就是删除第一个元素。</p>
+</blockquote>
+<pre><code><span class="function"><span class="keyword">public</span> boolean <span class="title">remove</span><span class="params">(<span class="keyword">int</span> idx)</span></span>{
+    <span class="comment">/* 判断是否空表 */</span>
+    <span class="keyword">if</span>(isEmpty())
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    <span class="comment">/* 判断idx是否合法 */</span>
+    <span class="keyword">if</span>(idx&lt;<span class="number">0</span> || idx&gt;size()-<span class="number">1</span>)
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    <span class="comment">/* idx往后的元素前移一位 */</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=idx; i&lt;size()-<span class="number">1</span>; i++){
+        elements[i] = elements[i+<span class="number">1</span>];
+    }
+    size--;
+    elements[size] = <span class="number">0</span>; <span class="comment">/* 初始化移位产生的多余元素 */</span>
+    <span class="keyword">return</span> <span class="literal">true</span>;
+}
+</code></pre><blockquote>
+<p>这里重写了toString()方法，打印数组元素，只是为了方便测试看结果。哈哈哈哈哈。。。。</p>
+</blockquote>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">public</span> <span class="function">String <span class="title">toString</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="string">"ArrayTable [element="</span> + Arrays.toString(elements) + <span class="string">"] size="</span> + size;
+}
+</code></pre><h2 id="总结">总结</h2><p>该数据结构实现还是很简单的，纯属入门的练手之作。<br>全部源码:<a href=""><strong>传送门</strong></a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>这个<strong>SimepleList</strong>就是一个最简单的用数组实现的表。为了更好的表达表这个结构的特点，只实现存储int型数组的形式。并且没有结合泛型，接口等机制进行更高层次的抽象处理，不过以后我会在这个基础上编写一个类似JDK中的ArrayList类的数据结构。<br>]]>
+    
+    </summary>
+    
+      <category term="Java" scheme="http://lysongzi.com/tags/Java/"/>
+    
+      <category term="List" scheme="http://lysongzi.com/tags/List/"/>
+    
+      <category term="数据结构" scheme="http://lysongzi.com/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Markdown语法学习笔记]]></title>
+    <link href="http://lysongzi.com/2015/08/22/Markdown%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>http://lysongzi.com/2015/08/22/Markdown语法学习笔记/</id>
+    <published>2015-08-22T14:21:33.000Z</published>
+    <updated>2015-08-23T14:20:55.247Z</updated>
+    <content type="html"><![CDATA[<p>Maekdown语法都是由一些符号所组成，并且这些符号简单易懂，一看就能了解它的含义。现在好多博客和网站的输入框都可以支持Markdown语法进行文本编辑了。最后使用Markdown的一个最大的好处就是文本可以离线编辑，还可以确保文本的格式，不一定要在线的输入框里进行编辑。<br><a id="more"></a></p>
+<h1 id="Markdown_语法说明_缩减版/(完全版传送门)">Markdown 语法说明_缩减版/(<a href="http://www.appinn.com/markdown/" target="_blank" rel="external">完全版传送门</a>)</h1><ul>
+<li><a href="#Overview">区块元素</a><ul>
+<li><a href="#p">段落和换行</a></li>
+<li><a href="#headline">标题</a></li>
+<li><a href="#blockquote">区块引用</a></li>
+<li><a href="#list">列表</a></li>
+<li><a href="#codeblock">代码块</a></li>
+<li><a href="#hr">分隔线</a></li>
+</ul>
+</li>
+</ul>
+<p></p><h1 id="Overview">区块元素</h1><p></p>
+<p></p><h2 id="p">段落和换行</h2><p></p>
+<blockquote>
+<p>1) 在段落中可以通过手动输入 <code>&lt;br/&gt;</code> 来实现文本中的强制换行。<br>2) 如果一定要Markdown来自动生成 <code>&lt;br/&gt;</code> 来实现换行的话，就在插入的地方按两个以上空格然后回车。</p>
+</blockquote>
+<p><br></p>
+<p></p><h2 id="headline">标题</h2><br>Markdown支持两种方式来实现标题：<br>1) 利用 “<code>=</code>“ 来表示一级标题，用 “<code>-</code>“  来表示二级标题，其中符号可以是任意多个的。  <p></p>
+<pre><code><span class="header">一级标题
+======</span>
+二级标题
+<span class="bullet">-------  </span>
+</code></pre><p>效果如下：  </p>
+<blockquote>
+<h1 id="一级标题">一级标题</h1><h2 id="二级标题">二级标题</h2></blockquote>
+<p>2) 利用 “<code>#</code>“ 来表示一级标题，用 “<code>##</code>“ 来表示二级标题。等级可以由1-6，分别为 <code>#</code> 的个数</p>
+<pre><code><span class="preprocessor"># 一级标题 h1</span>
+<span class="preprocessor">## 二级标题 h2</span>
+<span class="preprocessor">###### 六级标题 h6  </span>
+</code></pre><p>效果如下：</p>
+<blockquote>
+<h1 id="一级标题_h1">一级标题 h1</h1><h2 id="二级标题_h2">二级标题 h2</h2><h6 id="六级标题_h6">六级标题 h6</h6></blockquote>
+<p><br></p>
+<p></p><h2 id="blockquote">区块引用</h2><br>只需要在要引用的段落前添加 <code>&gt;</code> 符号，还允许偷懒只在段落第一行使用 <code>&gt;</code> 符号。<p></p>
+<pre><code>&gt;This is a blockquote with two paragraphs. Lo<span class="comment">rem ipsum dolor sit</span>
+amet,consectetuer adipiscing elit. Aliquam hendrerit mi posuere 
+lectus.Vestibulum enim wisi, viverra nec, fringilla <span class="flow">in</span>, laoreet
+vitae, risus.
+
+&gt;Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
+id sem consectetuer libero luctus adipiscing.
+</code></pre><p>并且 <code>&gt;</code> 可以嵌套使用，且在其中还可以使用别的Markdown语法。</p>
+<pre><code>&gt; <span class="comment">## 这是一个标题。</span>
+&gt; 
+&gt; <span class="number">1</span>.   这是第一行列表项。
+&gt; <span class="number">2</span>.   这是第二行列表项。
+&gt; 
+&gt; 给出一些例子代码：
+&gt; 
+&gt;     <span class="built_in">return</span> shell_<span class="built_in">exec</span>(<span class="string">"echo <span class="variable">$input</span> | <span class="variable">$markdown_script</span>"</span>);
+</code></pre><p>效果如下：</p>
+<blockquote>
+<h2 id="这是一个标题。">这是一个标题。</h2><ol>
+<li>这是第一行列表项。</li>
+<li>这是第二行列表项。</li>
+</ol>
+<p>给出一些例子代码：</p>
+<pre><code><span class="built_in">return</span> shell_<span class="built_in">exec</span>(<span class="string">"echo <span class="variable">$input</span> | <span class="variable">$markdown_script</span>"</span>);
+</code></pre></blockquote>
+<p><br>  </p>
+<p></p><h2 id="list">列表</h2><br>Markdown支持无序列表和有序列表。这个不止可以用来编列列表，还可以让长段的文字也按列表形式排列，可自行尝试。<br>其中可以使用 <code>*</code>, <code>+</code>, <code>-</code> 号来实现列表。并且通过缩进可以书写二级列表。如下：  <p></p>
+<pre><code>*  <span class="built_in">red</span>
+*  <span class="built_in">green</span>
+*  <span class="built_in">blue</span>
+
++  <span class="built_in">red</span>
+    +  dark <span class="built_in">red</span>
+    +  light <span class="built_in">red</span>
++  <span class="built_in">green</span>
++  <span class="built_in">blue</span>
+
+-  <span class="built_in">red</span>
+-  <span class="built_in">green</span>
+-  <span class="built_in">blue</span>  
+</code></pre><p>效果如下：</p>
+<blockquote>
+<ul>
+<li>red<ul>
+<li>dark red</li>
+<li>light red</li>
+</ul>
+</li>
+<li>green</li>
+<li>blue  </li>
+</ul>
+</blockquote>
+<p>通过书写数字和<code>.</code>可以生成有序列表，其中数字不是有序的也无所谓。  </p>
+<pre><code><span class="number">1.</span> red
+<span class="number">49.</span> green
+<span class="number">30.</span> blue
+</code></pre><p>效果如下:</p>
+<blockquote>
+<ol>
+<li>red</li>
+<li>green</li>
+<li>blue  </li>
+</ol>
+</blockquote>
+<p><br></p>
+<p></p><h2 id="codeblock">代码块</h2><br>如果想要插入一段代码（即形成一个代码块），并且保持代码的一定样式，只需要简单缩进4个空格或者1个制表符就可以了。<p></p>
+<pre><code><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
+    <span class="built_in">printf</span>(<span class="string">"hello world."</span>);
+}  
+</code></pre><p>当我们使用了一些高亮代码块的插件之后。我们则还可以通过三个`符号来包含代码块，例如:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello world."</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<p></p><h2 id="hr">分隔线</h2><br>在一行中使用连续三个及以上的 <code>*</code>, <code>-</code>, <code>_</code> 号，且这行中不包含别的符号，就可以生成一条分割线。符号之间还可以包括空格。  <p></p>
+<pre><code><span class="bullet">* </span><span class="bullet">* *</span>
+<span class="emphasis">***</span>
+<span class="emphasis">***</span>
+<span class="bullet">- </span>- -
+<span class="strong">_____</span><span class="strong">_____</span><span class="strong">_____</span><span class="strong">_____</span>__
+</code></pre><p>效果如下：  </p>
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+<p><br></p>
+<p>持续更行中…(最新更新时间：2015/8/23)</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Maekdown语法都是由一些符号所组成，并且这些符号简单易懂，一看就能了解它的含义。现在好多博客和网站的输入框都可以支持Markdown语法进行文本编辑了。最后使用Markdown的一个最大的好处就是文本可以离线编辑，还可以确保文本的格式，不一定要在线的输入框里进行编辑。<br>]]>
+    
+    </summary>
+    
+      <category term="Markdown" scheme="http://lysongzi.com/tags/Markdown/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[你好，世界！]]></title>
+    <link href="http://lysongzi.com/2015/08/22/%E4%BD%A0%E5%A5%BD%EF%BC%8C%E4%B8%96%E7%95%8C%EF%BC%81/"/>
+    <id>http://lysongzi.com/2015/08/22/你好，世界！/</id>
+    <published>2015-08-21T16:02:30.458Z</published>
+    <updated>2015-08-21T16:02:30.458Z</updated>
+    <content type="html"><![CDATA[<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.lysongzi.Main</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Main</span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span>&#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="l]]>
+    </summary>
+    
+      <category term="HelloWorld" scheme="http://lysongzi.com/tags/HelloWorld/"/>
+    
+      <category term="Hexo" scheme="http://lysongzi.com/tags/Hexo/"/>
+    
+      <category term="Java" scheme="http://lysongzi.com/tags/Java/"/>
+    
+  </entry>
+  
+</feed>
