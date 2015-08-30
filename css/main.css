@@ -1055,7 +1055,11 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 50%;
+<<<<<<< HEAD
   background: #ff7c05;
+=======
+  background: #0dafec;
+>>>>>>> origin/theme-next
 }
 .sidebar-nav {
   margin: 0;
