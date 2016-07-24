@@ -1,0 +1,1116 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="CustomScrollView&amp;emsp;&amp;emsp;使用官方UIScrollView组件定制的一个横向滚动的视图。由于能力有限，暂没有抽象成一个UI组件，如果有大神能进行抽象封装，非常欢迎，大家多多交流！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS实战-自定义的横向滚动控件CustomScrollView">
+<meta property="og:url" content="http://lysongzi.com/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="CustomScrollView&amp;emsp;&amp;emsp;使用官方UIScrollView组件定制的一个横向滚动的视图。由于能力有限，暂没有抽象成一个UI组件，如果有大神能进行抽象封装，非常欢迎，大家多多交流！">
+<meta property="og:image" content="http://lysongzi.com/Screenshots/1.png">
+<meta property="og:image" content="http://lysongzi.com/Screenshots/2.png">
+<meta property="og:image" content="http://lysongzi.com/Screenshots/3.png">
+<meta property="og:image" content="http://lysongzi.com/Screenshots/4.png">
+<meta property="og:updated_time" content="2016-01-08T06:53:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS实战-自定义的横向滚动控件CustomScrollView">
+<meta name="twitter:description" content="CustomScrollView&amp;emsp;&amp;emsp;使用官方UIScrollView组件定制的一个横向滚动的视图。由于能力有限，暂没有抽象成一个UI组件，如果有大神能进行抽象封装，非常欢迎，大家多多交流！">
+<meta name="twitter:image" content="http://lysongzi.com/Screenshots/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/"/>
+
+  <title> iOS实战-自定义的横向滚动控件CustomScrollView | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS实战-自定义的横向滚动控件CustomScrollView
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-07T23:44:25+08:00" content="2016-01-07">
+              2016-01-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/" class="leancloud_visitors" data-flag-title="iOS实战-自定义的横向滚动控件CustomScrollView">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="CustomScrollView"><a href="#CustomScrollView" class="headerlink" title="CustomScrollView"></a>CustomScrollView</h1><p>&emsp;&emsp;使用官方UIScrollView组件定制的一个横向滚动的视图。由于能力有限，暂没有抽象成一个UI组件，如果有大神能进行抽象封装，非常欢迎，大家多多交流！ </p>
+<a id="more"></a> 
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>&emsp;&emsp;CustomScrollView包括诺干个子视图，可以横向滚动，滚动过程中会根据子视图所在位置进行大小缩放。即最中间的视图最大，两边呈对称状态逐渐减小。且可以通过点击按钮进行滚动，选定某个子视图居中。还可以动态进行新增和删除子视图的操作，其中删除操作为在子视图上进行上滑手势操作。  </p>
+<p><a href="https://github.com/lysongzi/CustomScrollView" target="_blank" rel="external">Github 传送门</a>   </p>
+<h2 id="截图"><a href="#截图" class="headerlink" title="截图"></a>截图</h2><p><img src="/Screenshots/1.png" width="350px" hspace="10"></p>
+<h1 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h1><blockquote>
+<p>接下来我们来看看是怎么一步一步实现这种效果的。</p>
+</blockquote>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>这里的模型只是我们简单定义的一个数据模型，模型包含了一个名称和对应的logo图标的名字。</p>
+<blockquote>
+<p>//YSModel.h</p>
+</blockquote>
+<pre><code>#import &lt;Foundation/Foundation.h&gt;
+
+@interface YSModel : NSObject
+
+@property (copy, nonatomic) NSString *name;
+@property (copy, nonatomic) NSString *logoName;
+
+- (instancetype)initWithName:(NSString *)name logoName:(NSString *)logoName;
+
+@end
+</code></pre><blockquote>
+<p>//YSModel.m</p>
+</blockquote>
+<pre><code>#import &quot;YSModel.h&quot;
+
+@implementation YSModel
+
+- (instancetype)init
+{
+    return [self initWithName:@&quot;自定义&quot; logoName:@&quot;custom&quot;];
+}
+
+- (instancetype)initWithName:(NSString *)name logoName:(NSString *)logoName
+{
+    self = [super init];
+    if (self)
+    {
+        _name = name;
+        _logoName = logoName;
+    }
+    return self;
+}
+
+@end
+</code></pre><h2 id="界面实现和控件绑定"><a href="#界面实现和控件绑定" class="headerlink" title="界面实现和控件绑定"></a>界面实现和控件绑定</h2><p>&emsp;&emsp;界面直接在xib文件里实现。只需要一个UIScrollView和UILabel就可以了，UILabel是为了当UIScrollView中的子视图滚动式，也会跟着切换。效果如图:   </p>
+<p><img src="/Screenshots/2.png" width="250px" hspace="10"></p>
+<h2 id="ViewController的实现"><a href="#ViewController的实现" class="headerlink" title="ViewController的实现"></a>ViewController的实现</h2><p>首先我们需要一些宏定义的常量:   </p>
+<pre><code>//默认scrollView显示的模型数目
+#define MODEL_NUMBER 5
+//屏幕宽度
+#define UISCREEN_WIDTH [[UIScreen mainScreen] bounds].size.width
+//默认图标缩放比率
+#define SCALE_RATE 0.6
+</code></pre><p>其次我们需要一些变量,比如Outlet变量，数据模型数组等变量，详见demon里的代码。接下来我们主要详细介绍几个重点方法。</p>
+<h3 id="计算每个cell的宽高，以及初始化数据和UI视图"><a href="#计算每个cell的宽高，以及初始化数据和UI视图" class="headerlink" title="计算每个cell的宽高，以及初始化数据和UI视图"></a>计算每个cell的宽高，以及初始化数据和UI视图</h3><pre><code>- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    //计算ScrollView中每个cell的宽高
+    self.cellWidth = self.scrollView.frame.size.width / MODEL_NUMBER;
+    self.cellHeight = self.scrollView.frame.size.height;
+
+    [self initModels];
+    [self initScrollView];
+}
+</code></pre><blockquote>
+<p>1.[self initModels] 方法主要是初始化模型数据，比较简单。<br>2.其主要的ScrollView初始化实现为方法[self initScrollView]。<br>该方法中，主要设置了ScrollView的初始化属性，例如禁用水平，垂直方向的滚动条，设定ScrollView初始位置等。</p>
+</blockquote>
+<pre><code>- (void)initScrollView
+{
+    //设定scrollView的contentSize，即scrollView中包含的cell个数计算出来的内容大小
+    //+4是因为前后分别有两个空白的cell视图
+    self.scrollView.contentSize = CGSizeMake(self.cellWidth * (self.models.count + 4), self.cellHeight);
+
+    //清除scrollView的子视图
+    //[self.scrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
+    //设置scrollView的委托对象
+    self.scrollView.delegate = self;
+    //隐藏水平和竖直方向的滚动条
+    self.scrollView.showsHorizontalScrollIndicator = NO;
+    self.scrollView.showsVerticalScrollIndicator = YES;
+    //设置scrollView滚动的减速速率
+    self.scrollView.decelerationRate = 0.95f;
+
+    if (!self.cellView)
+    {
+        self.cellView = [NSMutableArray array];
+    }
+    else
+    {
+        [self.cellView removeAllObjects];
+    }
+
+    //添加两个空白的cell块
+    for (int i = 0; i &lt; 2; i++)
+    {
+        UIView *view = [self createEmptyCell:CGRectMake(self.cellWidth * i, 0, self.cellWidth, self.cellHeight)];
+        [self.scrollView addSubview:view];
+    }
+
+    //默认的六个块
+    for (int i = 2; i &lt; self.models.count + 2; i++)
+    {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.cellWidth * i, 0, self.cellWidth, self.cellHeight)];
+
+        //创建一个ImageView用于显示图标logo
+        UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, self.cellWidth - 10, self.cellWidth - 10)];
+        //设置图片为logo图片
+        image.image = [UIImage imageNamed:[self.models[i - 2] logoName]];
+        //开启可交互模式
+        [image setUserInteractionEnabled:YES];
+
+        image.tag = i - 2;
+        view.tag = i -2;
+
+
+        //最后一个&quot;自定义&quot;按钮添加特定触摸手势
+        if (i == self.models.count + 1)
+        {
+            UITapGestureRecognizer *tapAddModel = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                          action:@selector(tapToAddModel:)];
+            [image addGestureRecognizer:tapAddModel];
+        }
+        //别的模型添加点击手势和向上滑动删除手势
+        else
+        {
+            //添加点击手势
+            UITapGestureRecognizer *tapEditModel = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                           action:@selector(tapToEditModel:)];
+            [image addGestureRecognizer:tapEditModel];
+
+            //添加滑动手势
+            UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                               action:@selector(swipeToDeleteModel:)];
+            //设置滑动方向为向上
+            [swipeGesture setDirection:UISwipeGestureRecognizerDirectionUp];
+            [image addGestureRecognizer:swipeGesture];
+        }
+
+        [view addSubview:image];
+        //记录下对应的cell视图
+        [self.cellView addObject:view];
+        [self.scrollView addSubview:view];
+    }
+
+    //添加两个空白的块
+    for (long i = self.models.count + 2; i &lt; self.models.count + 4; i++)
+    {
+        UIView *view = [self createEmptyCell:CGRectMake(self.cellWidth * i, 0, self.cellWidth, self.cellHeight)];
+        [self.scrollView addSubview:view];
+    }
+
+    //设置默认居中为第三个模型
+    [self.scrollView setContentOffset:CGPointMake(self.cellWidth * 2, 0) animated:YES];
+    self.cellIndex = 2;
+    //设置背景颜色和文字
+    [self updateCellBackground:(int)self.cellIndex];
+}
+
+//创建空白cell视图
+- (UIView *)createEmptyCell:(CGRect)frame
+{
+    UIView *view = [[UIView alloc] initWithFrame:frame];
+    //设置背景透明
+    view.backgroundColor = [UIColor clearColor];
+    return view;
+}
+</code></pre><p>此时我们应该会得到这样一个界面了。<br><img src="/Screenshots/3.png" width="250px" hspace="10"></p>
+<h3 id="实现UIScrollViewDelegate"><a href="#实现UIScrollViewDelegate" class="headerlink" title="实现UIScrollViewDelegate"></a>实现UIScrollViewDelegate</h3><p>&emsp;&emsp;我们的很多滚动动画效果都是基于UIScrollViewDelegate中的回调方法的。接下来我们就看看如何实现这些效果。   </p>
+<blockquote>
+<p>首先我们看看官方API中UIScrollView有哪些协议方法。   </p>
+<p><img src="/Screenshots/4.png" width="450px" hspace="10"></p>
+<p>我们这里用的主要是这几个方法。   </p>
+<ol>
+<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView</li>
+<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate</li>
+<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView</li>
+<li>(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView</li>
+</ol>
+</blockquote>
+<p>接下来我们详细看一下每个方法的实现。</p>
+<blockquote>
+<p>(void)scrollViewDidScroll:(UIScrollView *)scrollView</p>
+</blockquote>
+<pre><code>//滑动过程中回调的函数，无论是手动滑动的，还是代码动画滑动都会回调该方法
+//在这里计算那个cell是可见的，然后计算缩放比例，进行动画缩放
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    //处理每一个cell，计算它的缩放比例
+    for (int i = 0; i &lt; self.models.count; i++)
+    {
+        //cell左侧x位置
+        float lead = self.cellWidth * (i + 2);
+        //cell右侧x位置
+        float tail = self.cellWidth * (i + 3);
+
+        float rate = SCALE_RATE;
+
+        //cell在屏幕左,右侧，不可见，设置为默认缩放比例0.6
+        if (self.scrollView.contentOffset.x &gt;= tail || (self.scrollView.contentOffset.x + UISCREEN_WIDTH) &lt;= lead)
+        {
+            //暂时啥都不干
+        }
+        //cell在屏幕上
+        else
+        {
+            float sub = lead - self.scrollView.contentOffset.x;
+            //前半部分
+            if (sub &lt;= 2 * self.cellWidth)
+            {
+                rate = sub / (2 * self.cellWidth) * SCALE_RATE + SCALE_RATE;
+            }
+            else
+            {
+                rate = (UISCREEN_WIDTH - sub - self.cellWidth) / (2 * self.cellWidth) * SCALE_RATE + SCALE_RATE;
+            }
+        }
+        //缩放该cell的视图
+        [self viewToScale:rate target:self.cellView[i]];
+    }
+}
+</code></pre><blockquote>
+<p>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate</p>
+</blockquote>
+<pre><code>//scrollView 拖拽操作结束   
+//判断接下来是否会进行减速操作，如果不需要减速则在这里进行计算，得出当前那个cell最靠近中间位置，并把该cell滑动到居中的位置
+//否则，不做任何处理。其实则就是要进行减速，减速完毕会回调scrollViewDidEndDecelerating。
+//综上，都会计算需要居中哪个cell
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate)
+    {
+        [self cellJumpToIndex:scrollView];
+    }
+}
+</code></pre><blockquote>
+<p>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView</p>
+</blockquote>
+<pre><code>//scrollView 滑动过程减速完毕后回调的方法
+//在这里进行计算，得出当前那个cell最靠近中间位置，并把该cell滑动到居中的位置
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self cellJumpToIndex:scrollView];
+}
+</code></pre><blockquote>
+<p>(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView</p>
+</blockquote>
+<pre><code>//滑动动画结束时调用的函数
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    //根据居中的选项更新背景和文字
+    [self updateCellBackground:(int)self.cellIndex];
+    [self.scrollView setUserInteractionEnabled:YES];
+}
+</code></pre><blockquote>
+<p>我们要实现自动滑动居中的效果，这里有一个很关键的方法。该方法用于计算当前最靠近居中位置的是哪一个cell子视图。我们首先计算当前ScrollView的contentOffset.x的位置，从而得知当前显示的cell有哪些，然后计算出处于中间位置的cell的索引下标，再计算出该cell居中时的contentOffset.x位置，再进行动画移动到该位置即可。</p>
+</blockquote>
+<pre><code>- (void)cellJumpToIndex:(UIScrollView *)scrollView
+{
+    if (self.scrollView.contentOffset.x &lt; self.cellWidth * 0.5)
+    {
+        [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else if (self.scrollView.contentOffset.x &gt; self.cellWidth * (self.models.count + 1.5))
+    {
+        [self.scrollView setContentOffset:CGPointMake(self.cellWidth * (self.models.count + 1), 0) animated:YES];
+    }
+
+    int index = (int)(self.scrollView.contentOffset.x / self.cellWidth + 0.5);
+    [self.scrollView setContentOffset:CGPointMake(self.cellWidth * index, 0) animated:YES];
+
+    //选定某个模式，进行模式更新等操作
+    self.cellIndex = index;
+}
+</code></pre><blockquote>
+<p>最后就是一个是进行缩放的方法，还有一个更新cell对应的视图的方法。</p>
+</blockquote>
+<pre><code>//按比例缩放视图
+- (void)viewToScale:(float)scale target:(UIView *)view
+{
+    UIImageView *image = [[view subviews] lastObject];
+    [UIView beginAnimations:@&quot;scale&quot; context:nil];
+    image.transform = CGAffineTransformMakeScale(scale, scale);
+    [UIView commitAnimations];
+}
+
+//滑动到某个cell时更新视图的方法
+- (void)updateCellBackground:(int)index
+{
+    self.name.text = [self.models[index] name];
+}
+</code></pre><p>此时我们基本可以实现一开始希望得到的滚动缩放效果了。接下来我们的任务就是实现动态的cell增加和删除等功能。  </p>
+<p>期待ing…</p>
+<h1 id="个人博客"><a href="#个人博客" class="headerlink" title="个人博客"></a>个人博客</h1><p>林友松。一个逗比的开发者。<br>Email：lysongzi.hnu@gmail.com<br>博客地址：<a href="http://lysongzi.com">lysongzi.com</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/06/iOS实战-我的笔记/" rel="next" title="iOS实战-我的笔记">
+                <i class="fa fa-chevron-left"></i> iOS实战-我的笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/12/iOS-应用的国际化和本地化/" rel="prev" title="iOS-应用的国际化和本地化">
+                iOS-应用的国际化和本地化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/"
+           data-title="iOS实战-自定义的横向滚动控件CustomScrollView" data-url="http://lysongzi.com/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CustomScrollView"><span class="nav-number">1.</span> <span class="nav-text">CustomScrollView</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#截图"><span class="nav-number">1.2.</span> <span class="nav-text">截图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体实现"><span class="nav-number">2.</span> <span class="nav-text">具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型"><span class="nav-number">2.1.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#界面实现和控件绑定"><span class="nav-number">2.2.</span> <span class="nav-text">界面实现和控件绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewController的实现"><span class="nav-number">2.3.</span> <span class="nav-text">ViewController的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算每个cell的宽高，以及初始化数据和UI视图"><span class="nav-number">2.3.1.</span> <span class="nav-text">计算每个cell的宽高，以及初始化数据和UI视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现UIScrollViewDelegate"><span class="nav-number">2.3.2.</span> <span class="nav-text">实现UIScrollViewDelegate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#个人博客"><span class="nav-number">3.</span> <span class="nav-text">个人博客</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

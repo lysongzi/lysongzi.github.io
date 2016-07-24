@@ -1,0 +1,955 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="AutoLayout是苹果在iOS6.0以后推出的多屏幕适配的布局工具，然而实际上它不仅仅是一种布局工具，它还是一种全新的布局思想。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-AutoLayout布局学习">
+<meta property="og:url" content="http://lysongzi.com/2016/02/12/iOS-AutoLayout布局学习/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="AutoLayout是苹果在iOS6.0以后推出的多屏幕适配的布局工具，然而实际上它不仅仅是一种布局工具，它还是一种全新的布局思想。">
+<meta property="og:updated_time" content="2016-02-12T04:48:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-AutoLayout布局学习">
+<meta name="twitter:description" content="AutoLayout是苹果在iOS6.0以后推出的多屏幕适配的布局工具，然而实际上它不仅仅是一种布局工具，它还是一种全新的布局思想。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/02/12/iOS-AutoLayout布局学习/"/>
+
+  <title> iOS-AutoLayout布局学习 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-AutoLayout布局学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-12T12:45:17+08:00" content="2016-02-12">
+              2016-02-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/12/iOS-AutoLayout布局学习/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/12/iOS-AutoLayout布局学习/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/02/12/iOS-AutoLayout布局学习/" class="leancloud_visitors" data-flag-title="iOS-AutoLayout布局学习">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>AutoLayout是苹果在iOS6.0以后推出的多屏幕适配的布局工具，然而实际上它不仅仅是一种布局工具，它还是一种全新的布局思想。<br><a id="more"></a><br>AutoLayout是通过约束来实现布局的，一个UIView对象一旦使用的AutoLayout，那么它的frame属性将一直为0。<br>在使用AutoLayout进行布局之前我们先要做一些准备工作：   </p>
+<ol>
+<li>设置<code>translatesAutoresizingMaskIntoConstraints = NO</code>。简单来说，Autoresizing和AutoLayout是两种不同的布局理念，但是默认情况是是可以转化的，这里我们需要指定使用AutoLayout进行布局，禁止Autoresizing。</li>
+<li>如果当前需要设置视图的对象是UIViewController，则将约束写在<code>- (void)updateViewConstraints</code>方法中；如果是UIView则可以将约束写在<code>- (void)updateConstraints</code>方法中。</li>
+</ol>
+<p>AutoLayout我们可以看成主要是对视图进行三种类型的约束：  </p>
+<ul>
+<li>视图大小约束  </li>
+<li>视图间相对位置约束  </li>
+<li>视图对齐约束  </li>
+</ul>
+<p>而无论是哪种约束，其在底层的实现主要是依赖于<code>NSLayoutConstraint</code>这个类。</p>
+<h2 id="NSLayoutConstraint"><a href="#NSLayoutConstraint" class="headerlink" title="NSLayoutConstraint"></a>NSLayoutConstraint</h2><p><code>NSLayoutConstraint</code>这个类主要有两个类方法，用于给视图添加约束的。其中可以以<code>VFS</code>方式进行约束的描述，或者以常规方式描述视图间约束条件。<br>我们可以先来看一下这两个添加约束条件的方法。</p>
+<pre><code>+ (NSArray&lt;__kindof NSLayoutConstraint *&gt; *)constraintsWithVisualFormat:(NSString *)format 
+    options:(NSLayoutFormatOptions)opts 
+    metrics:(NSDictionary&lt;NSString *,id&gt; *)metrics 
+      views:(NSDictionary&lt;NSString *,id&gt; *)views
+</code></pre><blockquote>
+<p>第一个添加约束的方法是使用<code>VFS</code>，<code>fotmat</code>则为传入的表达式，<code>options</code>选项可以对描述的约束进行进一步的设置。</p>
+</blockquote>
+<p>我们更常用的是使用以下这个方法对约束进行描述，该方法可以对单个视图进行设置，也可以设置两个视图间的约束关系。</p>
+<pre><code>+ (instancetype)constraintWithItem:(id)view1 
+    attribute:(NSLayoutAttribute)attr1 
+    relatedBy:(NSLayoutRelation)relation 
+       toItem:(id)view2 
+    attribute:(NSLayoutAttribute)attr2 
+   multiplier:(CGFloat)multiplier 
+     constant:(CGFloat)c
+</code></pre><blockquote>
+<p>参数说明：</p>
+<ul>
+<li>view1: 被约束对象</li>
+<li>attribute: 被约束对象的属性（比如说是上下左右边距之类的）</li>
+<li>relatedBy: 约束关系。主要是等于，大于等于，小于等于三种关系。</li>
+<li>toItem: 约束源</li>
+<li>attribute: 约束源的属性，同被约束源。这两个结合说明了两者之间某两个属性的关系。</li>
+<li>multiplier: 约束系数。</li>
+<li>constant: 约束常数。</li>
+</ul>
+</blockquote>
+<p>在官方说明中是这样描述约束的计算的。</p>
+<pre><code>view1.attr1 = view2.attr2 * multiplier + constant
+</code></pre><p>接下来我们将对三种约束种类做一个简单说明。</p>
+<h2 id="视图大小约束"><a href="#视图大小约束" class="headerlink" title="视图大小约束"></a>视图大小约束</h2><p>视图大小的约束的话主要是值针对被约束对象的，可以看做是没有约束源的约束。我们可以通过把约束源设置为<code>nil</code>来实现约束。</p>
+<pre><code>[self.view1 addConstraint:
+    [NSLayoutConstraint constraintWithItem:self.view1
+                                 attribute:NSLayoutAttributeWidth
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                 attribute:NSLayoutAttributeNotAnAttribute
+                                multiplier:0.0f
+                                  constant:200]];
+
+[self.view1 addConstraint:
+    [NSLayoutConstraint constraintWithItem:self.view1
+                                 attribute:NSLayoutAttributeHeight
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                 attribute:NSLayoutAttributeNotAnAttribute
+                                multiplier:0.0f
+                                  constant:200]];
+</code></pre><p>这里我们把约束源设置为了<code>nil</code>，如果此时约束源的属性也不存在时。可以用<code>NSLayoutAttributeNotAnAttribute</code>来描述，表示没有属性。上面那个设置的意思则是说明指定view1的宽度和高度都等于200。<br><em>PS:最后别忘了把获取的NSLayoutConstraint约束实例添加到对应的视图中！！！！！！！，其中视图大小的约束应该只添加到视图自身</em></p>
+<h2 id="视图间相对位置约束"><a href="#视图间相对位置约束" class="headerlink" title="视图间相对位置约束"></a>视图间相对位置约束</h2><p>视图间相对位置包括了上下左右间距之类的位置关系。需要注意的是视图间相对位置的约束可能会有以下情况。</p>
+<ul>
+<li>两个视图拥有共同父视图，则他们之间位置约束应该添加到父视图中。</li>
+<li><p>如果两个视图关系为父子关系（一个为另一个的父视图），则他们之间的位置约束应该添加到父视图中。</p>
+<pre><code>[self.view2 addConstraint:
+    [NSLayoutConstraint constraintWithItem:self.view2
+                                 attribute:NSLayoutAttributeWidth
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                 attribute:NSLayoutAttributeNotAnAttribute
+                                multiplier:0.0f
+                                  constant:100]];
+
+[self.view2 addConstraint:
+    [NSLayoutConstraint constraintWithItem:self.view2
+                                 attribute:NSLayoutAttributeHeight
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:nil
+                                 attribute:NSLayoutAttributeNotAnAttribute
+                                multiplier:0.0f
+                                  constant:100]];
+
+[self.view addConstraint:
+    [NSLayoutConstraint constraintWithItem:self.view2
+                                 attribute:NSLayoutAttributeTopMargin
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:self.view1
+                                 attribute:NSLayoutAttributeBottom
+                                multiplier:1.0f
+                                  constant:20]];
+</code></pre></li>
+</ul>
+<p>正如上面的代码所示，前两个是约束视图大小的约束则添加到其自身，而第三个约束是让view2位于view1下方距离20的位置，并且它们有共同的父视图，所以这个约束是添加到它们共同的父视图中的。</p>
+<h2 id="视图对齐约束"><a href="#视图对齐约束" class="headerlink" title="视图对齐约束"></a>视图对齐约束</h2><p>视图对齐约束的话包括中心X/Y的对齐，上下左右边界的对齐等等。其视图添加原则和上面是类似的。</p>
+<pre><code>[self.view3 addConstraint:
+ [NSLayoutConstraint constraintWithItem:self.view3
+                              attribute:NSLayoutAttributeWidth
+                              relatedBy:NSLayoutRelationEqual
+                                 toItem:nil
+                              attribute:NSLayoutAttributeNotAnAttribute
+                             multiplier:0.0f
+                               constant:100]];
+
+[self.view3 addConstraint:
+ [NSLayoutConstraint constraintWithItem:self.view3
+                              attribute:NSLayoutAttributeHeight
+                              relatedBy:NSLayoutRelationEqual
+                                 toItem:nil
+                              attribute:NSLayoutAttributeNotAnAttribute
+                             multiplier:0.0f
+                               constant:100]];
+
+[self.view addConstraint:
+ [NSLayoutConstraint constraintWithItem:self.view3
+                              attribute:NSLayoutAttributeCenterX
+                              relatedBy:NSLayoutRelationEqual
+                                 toItem:self.view1
+                              attribute:NSLayoutAttributeCenterX
+                             multiplier:1.0f
+                               constant:0]];
+
+[self.view addConstraint:
+ [NSLayoutConstraint constraintWithItem:self.view3
+                              attribute:NSLayoutAttributeCenterY
+                              relatedBy:NSLayoutRelationEqual
+                                 toItem:self.view1
+                              attribute:NSLayoutAttributeCenterY
+                             multiplier:1.0f
+                               constant:0]];
+</code></pre><p>这段代码实现了约束view3的宽高为100，并且其中心位置在X/Y轴方向上居中于view1。</p>
+<p>我们可以看到上面代码的实现效果图。红色为view1,蓝色为view2,绿色为view3。</p>
+<image src="http://7xqqkw.com1.z0.glb.clouddn.com/20160212.png" style="width:300px">
+
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>&emsp;&emsp;我们通过上面很简单的例子可以看到，虽然可以实现铜鼓约束来进行布局，但是代码还是比较冗长的，而且约束间关系也需要非常细心的思考才能确保约束的正确。<br>&emsp;&emsp;实际上现在已经有很多开源的第三方库，它们都封装了AutoLayout，以达到简化代码量，提高代码复用性的目的。比如常用的有<code>AutoLayout</code>、<code>Masonry</code>等，接下来我们也会对这些第三方库进行一个学习。</p>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>这里给出的是Github上的源码地址。<br><a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">iOS-Demon——AutoLayoutDemon</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>苹果官方文档   </li>
+<li><a href="http://doc.okbase.net/u013263917/archive/121406.html" target="_blank" rel="external">AutoLayout代码布局使用大全—一种全新的布局思想</a></li>
+</ol>
+</image>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/09/C-C-Java-OC的编译和运行/" rel="next" title="C/C++/Java/OC在终端下编译和运行（持续更新...）">
+                <i class="fa fa-chevron-left"></i> C/C++/Java/OC在终端下编译和运行（持续更新...）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/20/iOS-Masonry学习笔记/" rel="prev" title="iOS-Masonry学习笔记">
+                iOS-Masonry学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/12/iOS-AutoLayout布局学习/"
+           data-title="iOS-AutoLayout布局学习" data-url="http://lysongzi.com/2016/02/12/iOS-AutoLayout布局学习/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSLayoutConstraint"><span class="nav-number">1.</span> <span class="nav-text">NSLayoutConstraint</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视图大小约束"><span class="nav-number">2.</span> <span class="nav-text">视图大小约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视图间相对位置约束"><span class="nav-number">3.</span> <span class="nav-text">视图间相对位置约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视图对齐约束"><span class="nav-number">4.</span> <span class="nav-text">视图对齐约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">5.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">6.</span> <span class="nav-text">源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

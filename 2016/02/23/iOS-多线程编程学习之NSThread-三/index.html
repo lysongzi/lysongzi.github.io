@@ -1,0 +1,914 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,多线程,NSThread," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;一个NSThread对象控制一个线程的执行。使用这个类你可以在线程中执行自定义的OC方法。当你需要执行长任务时使用线程是非常好的方式，它可以避免需要执行事件处理和UI更新的主线程被阻塞。此外，线程还可以通过把大任务划分为更小的任务在多线程中进行处理，这种方式在多核计算机中可以显著提升性能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-多线程编程学习之NSThread(三)">
+<meta property="og:url" content="http://lysongzi.com/2016/02/23/iOS-多线程编程学习之NSThread-三/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;一个NSThread对象控制一个线程的执行。使用这个类你可以在线程中执行自定义的OC方法。当你需要执行长任务时使用线程是非常好的方式，它可以避免需要执行事件处理和UI更新的主线程被阻塞。此外，线程还可以通过把大任务划分为更小的任务在多线程中进行处理，这种方式在多核计算机中可以显著提升性能。">
+<meta property="og:updated_time" content="2016-02-23T14:12:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-多线程编程学习之NSThread(三)">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;一个NSThread对象控制一个线程的执行。使用这个类你可以在线程中执行自定义的OC方法。当你需要执行长任务时使用线程是非常好的方式，它可以避免需要执行事件处理和UI更新的主线程被阻塞。此外，线程还可以通过把大任务划分为更小的任务在多线程中进行处理，这种方式在多核计算机中可以显著提升性能。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/02/23/iOS-多线程编程学习之NSThread-三/"/>
+
+  <title> iOS-多线程编程学习之NSThread(三) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-多线程编程学习之NSThread(三)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-23T11:13:28+08:00" content="2016-02-23">
+              2016-02-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/23/iOS-多线程编程学习之NSThread-三/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/23/iOS-多线程编程学习之NSThread-三/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/02/23/iOS-多线程编程学习之NSThread-三/" class="leancloud_visitors" data-flag-title="iOS-多线程编程学习之NSThread(三)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;一个NSThread对象控制一个线程的执行。使用这个类你可以在线程中执行自定义的OC方法。当你需要执行长任务时使用线程是非常好的方式，它可以避免需要执行事件处理和UI更新的主线程被阻塞。此外，线程还可以通过把大任务划分为更小的任务在多线程中进行处理，这种方式在多核计算机中可以显著提升性能。<br><a id="more"></a><br>&emsp;&emsp;在<code>OS X v10.5</code>之前，只能通过<code>detachNewThreadSelector: toTarget: withObject:</code>这个类方法来创建一个新线程来执行某个方法。而在<code>OS X v10.5</code>之后，可以创建一个NSThread类的实例，并通过发送<code>start</code>消息来启动一个线程。<br>&emsp;&emsp;NSThread提供了和NSOperation类似的语法来进行线程运行时控制。你可以取消一个线程的执行，决定线程是否还需要继续执行或结束线程任务。取消线程需要手动进行管理。</p>
+<h2 id="创建线程的方式"><a href="#创建线程的方式" class="headerlink" title="创建线程的方式"></a>创建线程的方式</h2><p>创建线程主要有三种方式。</p>
+<blockquote>
+<p>第一种：先创建NSThread的实例，然后再启动线程。这又称为动态创建方式。</p>
+</blockquote>
+<pre><code>//创建一个线程实例
+NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(run) object:nil];
+//启动线程
+[thread start];
+</code></pre><blockquote>
+<p>第二种：直接创建并启动线程。这个即OS X v10.5前支持的方式，又称静态创建方式。</p>
+</blockquote>
+<pre><code>[NSThread detachNewThreadSelector:@selector(run) toTarget:self withObject:nil];
+</code></pre><blockquote>
+<p>第三种方式：隐式的创建并启动线程。本质是通过NSObject类的实力方法<code>performSelectorInBackground: withObject:</code>创建一个后台线程执行特定方法的。NSObject中还有类似的方法指定在主线程或某个特定线程上执行方法。</p>
+</blockquote>
+<pre><code>[self performSelectorInBackground:@selector(run) withObject:nil];
+</code></pre><h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><p>&emsp;&emsp;方法二和方法三的优点就是快捷，适合于不需要太多线程控制的短任务。<br>&emsp;&emsp;方法一最大的优点就是可以轻松获取线程对象。通过该对象引用可以手动管理线程的状态，而且还方便线程间通信的实现。</p>
+<h2 id="自定义NSThread子类"><a href="#自定义NSThread子类" class="headerlink" title="自定义NSThread子类"></a>自定义NSThread子类</h2><p>&emsp;&emsp;正如上面所说的，现在已经支持继承NSThread实现他的子类。所以这次将继承NSThread实现自定义的子类，通过重写<code>main</code>方法实现来处理县城任务。</p>
+<blockquote>
+<p>LYSThread.h //声明自定义子类继承于NSThread</p>
+</blockquote>
+<pre><code>#import &lt;Foundation/Foundation.h&gt;
+
+@interface LYSThread : NSThread
+@end
+</code></pre><blockquote>
+<p>LYSThread.m //重写main方法</p>
+</blockquote>
+<pre><code>#import &quot;LYSThread.h&quot;
+
+@implementation LYSThread
+
+//重写main方法，执行任务
+-(void)main
+{
+    [self setName:@&quot;LYSThread&quot;];
+    for (int i = 0; i &lt; 100; i++) {
+        NSLog(@&quot;%zd ===&gt; %@&quot;, i, [NSThread currentThread]);
+    }
+}
+
+@end
+</code></pre><h2 id="取消和退出线程"><a href="#取消和退出线程" class="headerlink" title="取消和退出线程"></a>取消和退出线程</h2><h3 id="退出"><a href="#退出" class="headerlink" title="退出"></a>退出</h3><p>NSThread类中有一个方法用于终止线程。</p>
+<pre><code>+ (void)exit
+</code></pre><p>&emsp;&emsp;这个方法需要先使用<code>currentThread</code>类方法获取当前执行的线程。在线程退出前，该方法会向默认消息中心(Default notification center)发出一个<code>NSThreadWillExitNotification</code>消息。由于notifications的消息是异步分发的，所以所有注册到该消息中的观察者都将收到这个线程即将退出的消息。<br>&emsp;&emsp;但是我们应该尽量避免调用这个方法终止线程，因为这样线程将没有机会去清理执行期间分配的那些资源了。</p>
+<h3 id="取消"><a href="#取消" class="headerlink" title="取消"></a>取消</h3><p>&emsp;&emsp;NSThread类中提供了一个方法修改线程状态为取消状态，暗示线程应该终止。</p>
+<pre><code>- (void)cancel
+</code></pre><p>&emsp;&emsp;这个方法的语义和NSOperation对象的操作是类似的。这个方法会改变线程的状态信息，通过调用<code>isCancleled</code>获取状态信息的话就可以看到这个方法的作用了。支持取消操作的线程应该先调用<code>isCancelled</code>查看线程当前状态是否已是取消状态，或者是否线程是否已终止。</p>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="线程权值"><a href="#线程权值" class="headerlink" title="线程权值"></a>线程权值</h3><p>&emsp;&emsp;线程可以设置权值，为0~1.0的double类型值，其中1.0为权值最高。权值越高的线程将会更频繁的获取系统资源执行任务。</p>
+<pre><code>[thread setThreadPriority:1.0f];
+</code></pre><h3 id="线程休眠"><a href="#线程休眠" class="headerlink" title="线程休眠"></a>线程休眠</h3><p>线程休眠主要有两个方法。两个都是NSThread类的类方法。</p>
+<blockquote>
+<p>第一个方法是让线程休眠直到指定时间。</p>
+</blockquote>
+<pre><code>[NSThread sleepUntilDate:[NSDate new]];
+</code></pre><blockquote>
+<p>第二个方法是设置睡眠的时间。</p>
+</blockquote>
+<pre><code>//设置休眠2秒
+[NSThread sleepForTimeInterval:2.0f];
+</code></pre><h3 id="主线程"><a href="#主线程" class="headerlink" title="主线程"></a>主线程</h3><blockquote>
+<p>获取主线程的NSThread对象。</p>
+</blockquote>
+<pre><code>NSThread *mainThread = [NSThread mainThread];
+</code></pre><blockquote>
+<p>判断是否是主线程。</p>
+</blockquote>
+<pre><code>//+ (BOOL)isMainThread
+[NSThread isMainThread];
+</code></pre><h3 id="获取当前线程"><a href="#获取当前线程" class="headerlink" title="获取当前线程"></a>获取当前线程</h3><p>NSThread还提供了方法获取当前执行的线程的NSThread对象。</p>
+<pre><code>NSThread *thread = [NSThread currentThread];
+</code></pre><h3 id="判断线程执行状态"><a href="#判断线程执行状态" class="headerlink" title="判断线程执行状态"></a>判断线程执行状态</h3><blockquote>
+<p>线程是否正在执行。</p>
+</blockquote>
+<pre><code>//正在执行返回YES，否则返回NO
+if([thread isExecuting])
+    NSLog(@&quot;Thread is excuting.&quot;);
+</code></pre><blockquote>
+<p>线程是否已经完成执行。</p>
+</blockquote>
+<pre><code>//已完成返回YES，否则返回NO
+if([thread isFinished])
+    NSLog(@&quot;Thread is finished.&quot;);
+</code></pre><blockquote>
+<p>线程是否取消。</p>
+</blockquote>
+<pre><code>//已取消返回YES，否则返回NO
+if([thread isCancelled])
+    NSLog(@&quot;Thread is cancelled.&quot;);
+</code></pre><h2 id="Demon源代码"><a href="#Demon源代码" class="headerlink" title="Demon源代码"></a>Demon源代码</h2><p>这里给出Github项目上的源代码。<br>传送门：<a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">Github-iOS_Framework_study-ThreadDemon</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Reference/Foundation/Classes/NSThread_Class/" target="_blank" rel="external">苹果官方文档-NSThread</a></li>
+<li><a href="http://www.jianshu.com/p/b91b42235285" target="_blank" rel="external">iOS开发–四种多线程技术方案</a></li>
+<li><a href="http://www.cocoachina.com/ios/20160129/15153.html" target="_blank" rel="external">谈iOS多线程(NSThread、NSOperation、GCD)编程</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/多线程/" rel="tag">#多线程</a>
+          
+            <a href="/tags/NSThread/" rel="tag">#NSThread</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/23/iOS-多线程编程学习之pthread创建线程-二/" rel="next" title="iOS-多线程编程学习之pthread创建线程(二)">
+                <i class="fa fa-chevron-left"></i> iOS-多线程编程学习之pthread创建线程(二)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/23/iOS-多线程编程学习之NSOperation-四/" rel="prev" title="iOS-多线程编程学习之NSOperation(四)">
+                iOS-多线程编程学习之NSOperation(四) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/23/iOS-多线程编程学习之NSThread-三/"
+           data-title="iOS-多线程编程学习之NSThread(三)" data-url="http://lysongzi.com/2016/02/23/iOS-多线程编程学习之NSThread-三/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程的方式"><span class="nav-number">1.</span> <span class="nav-text">创建线程的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#比较"><span class="nav-number">1.1.</span> <span class="nav-text">比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义NSThread子类"><span class="nav-number">2.</span> <span class="nav-text">自定义NSThread子类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#取消和退出线程"><span class="nav-number">3.</span> <span class="nav-text">取消和退出线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#退出"><span class="nav-number">3.1.</span> <span class="nav-text">退出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#取消"><span class="nav-number">3.2.</span> <span class="nav-text">取消</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线程权值"><span class="nav-number">4.1.</span> <span class="nav-text">线程权值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程休眠"><span class="nav-number">4.2.</span> <span class="nav-text">线程休眠</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主线程"><span class="nav-number">4.3.</span> <span class="nav-text">主线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取当前线程"><span class="nav-number">4.4.</span> <span class="nav-text">获取当前线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断线程执行状态"><span class="nav-number">4.5.</span> <span class="nav-text">判断线程执行状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Demon源代码"><span class="nav-number">5.</span> <span class="nav-text">Demon源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

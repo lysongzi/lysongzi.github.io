@@ -1,0 +1,873 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MQTT," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="MQTT（Message Queuing Telemetry Transport，消息队列遥测传输）是IBM开发的一个即时通讯协议，有可能成为物联网的重要组成部分。该协议支持所有平台，几乎可以把所有联网物品和外部连接起来，被用来当做传感器和致动器（比如通过Twitter让房屋联网）的通信协议。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络-MQTT简介">
+<meta property="og:url" content="http://lysongzi.com/2016/02/04/计算机网络-MQTT简介/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="MQTT（Message Queuing Telemetry Transport，消息队列遥测传输）是IBM开发的一个即时通讯协议，有可能成为物联网的重要组成部分。该协议支持所有平台，几乎可以把所有联网物品和外部连接起来，被用来当做传感器和致动器（比如通过Twitter让房屋联网）的通信协议。">
+<meta property="og:updated_time" content="2016-07-24T05:21:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机网络-MQTT简介">
+<meta name="twitter:description" content="MQTT（Message Queuing Telemetry Transport，消息队列遥测传输）是IBM开发的一个即时通讯协议，有可能成为物联网的重要组成部分。该协议支持所有平台，几乎可以把所有联网物品和外部连接起来，被用来当做传感器和致动器（比如通过Twitter让房屋联网）的通信协议。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/02/04/计算机网络-MQTT简介/"/>
+
+  <title> 计算机网络-MQTT简介 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                计算机网络-MQTT简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-04T12:29:50+08:00" content="2016-02-04">
+              2016-02-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/04/计算机网络-MQTT简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/04/计算机网络-MQTT简介/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/02/04/计算机网络-MQTT简介/" class="leancloud_visitors" data-flag-title="计算机网络-MQTT简介">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MQTT（Message Queuing Telemetry Transport，消息队列遥测传输）是IBM开发的一个即时通讯协议，有可能成为物联网的重要组成部分。该协议支持所有平台，几乎可以把所有联网物品和外部连接起来，被用来当做传感器和致动器（比如通过Twitter让房屋联网）的通信协议。<br><a id="more"></a></p>
+<h2 id="MQTT简介"><a href="#MQTT简介" class="headerlink" title="MQTT简介"></a>MQTT简介</h2><p>&emsp;&emsp;早在1999年，IBM的Andy Stanford-Clark博士以及Arcom公司ArlenNipper博士发明了MQTT（Message Queuing Telemetry Transport，消息队列遥测传输）技术[1] 。据Andy Stanford-Clark博士称，MQTT将在今年和明年呈现爆炸式增长。</p>
+<p>&emsp;&emsp;MQTT的话题是我俩谈论开源物联网平台Pachube时提到的。Stanford-Clark认为Pachube很酷，其不足之处是不具备真正的推送功能。你需要不断不断轮询才能得到即时数据。这正是MQTT能够实现的，他提到了使用推送通信系统的石油管道检测系统。</p>
+<h2 id="MQTT应用"><a href="#MQTT应用" class="headerlink" title="MQTT应用"></a>MQTT应用</h2><p>&emsp;&emsp;IBM和St.Jude医疗中心通过MQTT开发了一套Merlin系统，该系统使用了用于家庭保健的传感器。St. Jude医疗中心设计了一个叫做Merlin@home的心脏装置，这种无线发射器可以用来监控那些已经植入复律-除颤器和起搏器（两者都是基本的传感器）的心脏病人。   </p>
+<p>&emsp;&emsp;该产品利用MQTT把病人的即时更新信息传给医生/医院，然后医院进行保存。这样的话，病人就不用亲自去医院检查心脏仪器了，医生可以随时查看病人的数据，给出建议，病人在家里就可以自行检查。<br>IBM称该发射器包括一个大型触摸屏，一个嵌入式键盘平台，以及一个Linux操作系统。   </p>
+<p>&emsp;&emsp;在未来几年，MQTT的应用会越来越广，值得关注。<br>通过MQTT协议，目前已经扩展出了数十个MQTT服务器端程序，可以通过PHP，JAVA，Python，C，C#等系统语言来向MQTT发送相关消息。  </p>
+<p>&emsp;&emsp;此外，国内很多企业都广泛使用MQTT作为Android手机客户端与服务器端推送消息的协议。其中Sohu，Cmstop手机客户端中均有使用到MQTT作为消息推送消息。据Cmstop主要负责消息推送的高级研发工程师李文凯称，随着移动互联网的发展，MQTT由于开放源代码，耗电量小等特点，将会在移动消息推送领域会有更多的贡献，在物联网领域，传感器与服务器的通信，信息的收集，MQTT都可以作为考虑的方案之一。在未来MQTT会进入到我们生活的各各方面。   </p>
+<p>&emsp;&emsp;如果需要下载MQTT服务器端，可以直接去MQTT官方网站点击Software进行下载MQTT协议衍生出来的各个不同版本。</p>
+<h2 id="MQTT特点"><a href="#MQTT特点" class="headerlink" title="MQTT特点"></a>MQTT特点</h2><p>&emsp;&emsp;MQTT协议是为大量计算能力有限，且工作在低带宽、不可靠的网络的远程传感器和控制设备通讯而设计的协议，它具有以下主要的几项特性：   </p>
+<ol>
+<li>使用发布/订阅消息模式，提供一对多的消息发布，解除应用程序耦合；   </li>
+<li>对负载内容屏蔽的消息传输；   </li>
+<li>使用 TCP/IP 提供网络连接；   </li>
+<li>有三种消息发布服务质量：    <ul>
+<li>“至多一次”，消息发布完全依赖底层 TCP/IP 网络。会发生消息丢失或重复。这一级别可用于如下情况，环境传感器数据，丢失一次读记录无所谓，因为不久后还会有第二次发送。</li>
+<li>“至少一次”，确保消息到达，但消息重复可能会发生。</li>
+<li>“只有一次”，确保消息到达一次。这一级别可用于如下情况，在计费系统中，消息重复或丢失会导致不正确的结果。</li>
+</ul>
+</li>
+<li>小型传输，开销很小（固定长度的头部是 2 字节），协议交换最小化，以降低网络流量；    </li>
+<li>使用 Last Will 和 Testament 特性通知有关各方客户端异常中断的机制；</li>
+</ol>
+<h2 id="MQTT协议"><a href="#MQTT协议" class="headerlink" title="MQTT协议"></a>MQTT协议</h2><ol>
+<li>轻量级的 machine-to-machine 通信协议。</li>
+<li>publish/subscribe模式。</li>
+<li>基于TCP/IP。</li>
+<li>支持QoS。</li>
+<li>适合于低带宽、不可靠连接、嵌入式设备、CPU内存资源紧张。</li>
+<li>是一种比较不错的Android消息推送方案。</li>
+<li>FacebookMessenger采用了MQTT。</li>
+<li>MQTT有可能成为物联网的重要协议。</li>
+</ol>
+<h3 id="消息体"><a href="#消息体" class="headerlink" title="消息体"></a>消息体</h3><image src="http://images.cnitblog.com/i/1408/201403/151002110437924.png">
+
+<h3 id="MessageType"><a href="#MessageType" class="headerlink" title="MessageType"></a>MessageType</h3><image src="http://images.cnitblog.com/i/1408/201403/151002431369685.png"> 
+
+<h3 id="CONNECT"><a href="#CONNECT" class="headerlink" title="CONNECT"></a>CONNECT</h3><p>&emsp;&emsp;TCP连接建立完毕后，Client向Server发出一个Request。   </p>
+<p>&emsp;&emsp;如果一段时间内接收不到Server的Response，则关闭socket，重新建立一个session连接。</p>
+<p>&emsp;&emsp;如果一个ClientID已经与服务器连接，则持有同样ClientID的旧有连接必须由服务器关闭后，新建立才能建立。</p>
+<h3 id="CONNECT-1"><a href="#CONNECT-1" class="headerlink" title="CONNECT"></a>CONNECT</h3><p>&emsp;&emsp;TCP连接建立完毕后，Client向Server发出一个Request。   </p>
+<p>&emsp;&emsp;如果一段时间内接收不到Server的Response，则关闭socket，重新建立一个session连接。</p>
+<p>&emsp;&emsp;如果一个ClientID已经与服务器连接，则持有同样ClientID的旧有连接必须由服务器关闭后，新建立才能建立。</p>
+<h3 id="CONNACK"><a href="#CONNACK" class="headerlink" title="CONNACK"></a>CONNACK</h3><p>Server发出Response响应。   </p>
+<ul>
+<li>0x00 Connection Accepted   </li>
+<li>0x01 Connection Refused: unacceptable protocol version   </li>
+<li>0x02 Connection Refused: identifier rejected   </li>
+<li>0x03 Connection Refused: server unavailable   </li>
+<li>0x04 Connection Refused: bad user name or password   </li>
+<li>0x05 Connection Refused: not authorized   </li>
+</ul>
+<h3 id="PUBLISH-发布消息"><a href="#PUBLISH-发布消息" class="headerlink" title="PUBLISH 发布消息"></a>PUBLISH 发布消息</h3><p>&emsp;&emsp;Client/Servier均可以进行PUBLISH。publish message 应该包含一个TopicName(Subject/Channel)，即订阅关键词。</p>
+<h3 id="PUBACK-发布消息后的确认"><a href="#PUBACK-发布消息后的确认" class="headerlink" title="PUBACK 发布消息后的确认"></a>PUBACK 发布消息后的确认</h3><p>&emsp;&emsp;QoS=1时，Server向Client发布该确认（Client收到确认后删除），订阅者向Server发布确认。</p>
+<h3 id="PINGREQ-PINGRES-心跳"><a href="#PINGREQ-PINGRES-心跳" class="headerlink" title="PINGREQ / PINGRES 心跳"></a>PINGREQ / PINGRES 心跳</h3><p>&emsp;&emsp;Client有责任发送KeepAliveTime时长告诉给Server。在一个时长内，发送PINGREQ，Server发送PINGRES确认。<br>&emsp;&emsp;Server在1.5个时长内未收到PINGREQ，就断开连接。<br>&emsp;&emsp;Client在1个时长内未收到PINGRES，断开连接。<br>&emsp;&emsp;一般来说，时长设置为几个分钟。最大18hours，0表示一直未断开。   </p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="http://blog.csdn.net/chenyufeng1991/article/details/48572319" target="_blank" rel="external">MQTT简要介绍</a>    </li>
+<li><a href="http://www.cnblogs.com/caca/p/mqtt.html" target="_blank" rel="external">MQTT协议简记</a>   </li>
+<li><a href="http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/mqtt-v3r1.html" target="_blank" rel="external">http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/mqtt-v3r1.html</a></li>
+</ol>
+</image></image>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MQTT/" rel="tag">#MQTT</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/30/iOS-延迟操作方法总结/" rel="next" title="iOS-延迟操作方法总结">
+                <i class="fa fa-chevron-left"></i> iOS-延迟操作方法总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/04/iOS-圆形图像显示/" rel="prev" title="iOS-圆形图像显示(UIImageView)">
+                iOS-圆形图像显示(UIImageView) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/04/计算机网络-MQTT简介/"
+           data-title="计算机网络-MQTT简介" data-url="http://lysongzi.com/2016/02/04/计算机网络-MQTT简介/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT简介"><span class="nav-number">1.</span> <span class="nav-text">MQTT简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT应用"><span class="nav-number">2.</span> <span class="nav-text">MQTT应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT特点"><span class="nav-number">3.</span> <span class="nav-text">MQTT特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT协议"><span class="nav-number">4.</span> <span class="nav-text">MQTT协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息体"><span class="nav-number">4.1.</span> <span class="nav-text">消息体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MessageType"><span class="nav-number">4.2.</span> <span class="nav-text">MessageType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONNECT"><span class="nav-number">4.3.</span> <span class="nav-text">CONNECT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONNECT-1"><span class="nav-number">4.4.</span> <span class="nav-text">CONNECT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONNACK"><span class="nav-number">4.5.</span> <span class="nav-text">CONNACK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUBLISH-发布消息"><span class="nav-number">4.6.</span> <span class="nav-text">PUBLISH 发布消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PUBACK-发布消息后的确认"><span class="nav-number">4.7.</span> <span class="nav-text">PUBACK 发布消息后的确认</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PINGREQ-PINGRES-心跳"><span class="nav-number">4.8.</span> <span class="nav-text">PINGREQ / PINGRES 心跳</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

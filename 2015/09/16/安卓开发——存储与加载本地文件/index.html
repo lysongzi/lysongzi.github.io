@@ -1,0 +1,830 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="数据存储,I/O,应用沙盒," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="安卓的所有应用都有一个放置在沙盒(sandbox)中的文件目录。文件保存在沙盒中可以阻止别的应用的访问，甚至是其他用户的窥探。但是有时候我们也需要共享一些文件（比如图片，音频，视频等），这时候我们可以将这些数据文件存储在外部存储介质上，比如SD卡。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓开发——存储与加载本地文件">
+<meta property="og:url" content="http://lysongzi.com/2015/09/16/安卓开发——存储与加载本地文件/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="安卓的所有应用都有一个放置在沙盒(sandbox)中的文件目录。文件保存在沙盒中可以阻止别的应用的访问，甚至是其他用户的窥探。但是有时候我们也需要共享一些文件（比如图片，音频，视频等），这时候我们可以将这些数据文件存储在外部存储介质上，比如SD卡。">
+<meta property="og:updated_time" content="2016-07-24T04:33:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安卓开发——存储与加载本地文件">
+<meta name="twitter:description" content="安卓的所有应用都有一个放置在沙盒(sandbox)中的文件目录。文件保存在沙盒中可以阻止别的应用的访问，甚至是其他用户的窥探。但是有时候我们也需要共享一些文件（比如图片，音频，视频等），这时候我们可以将这些数据文件存储在外部存储介质上，比如SD卡。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2015/09/16/安卓开发——存储与加载本地文件/"/>
+
+  <title> 安卓开发——存储与加载本地文件 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                安卓开发——存储与加载本地文件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-09-16T22:35:04+08:00" content="2015-09-16">
+              2015-09-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/09/16/安卓开发——存储与加载本地文件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/16/安卓开发——存储与加载本地文件/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2015/09/16/安卓开发——存储与加载本地文件/" class="leancloud_visitors" data-flag-title="安卓开发——存储与加载本地文件">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>安卓的所有应用都有一个放置在<code>沙盒(sandbox)</code>中的文件目录。文件保存在沙盒中可以阻止别的应用的访问，甚至是其他用户的窥探。<br>但是有时候我们也需要共享一些文件（比如图片，音频，视频等），这时候我们可以将这些数据文件存储在外部存储介质上，比如SD卡。<br><a id="more"></a></p>
+<h2 id="应用目录中存取数据"><a href="#应用目录中存取数据" class="headerlink" title="应用目录中存取数据"></a>应用目录中存取数据</h2><p>&emsp;&emsp;文件的存取不外乎就是通过文件路径，建立一个输入输出流，然后进行数据的读写。<br>&emsp;&emsp;如果我们需要直接在应用的沙盒目录中存取数据，我们可以直接调用系统自带的函数：<code>Context.openFileOutput(...)</code>和<code>Context.openFileInput(...)</code>。该方法接受文件名以及文件操作模式参数，会自动将传入的文件名附加到应用沙盒文件目录路径之后，形成一个新路径，然后在新路径下创建并打开文件，等待数据写入。如选择手动获取私有文件目录并在其下创建和打开文件，记得总是使用<code>Context.getFilesDir()</code>替代方法。</p>
+<p>&emsp;&emsp;而且在具体的实现中，我们一般会把数据序列化成适当的数据格式，然后再转换成字符或字节数据存取到文件中。通常我们常用的两种存取数据的格式就是<code>JSON</code>和<code>XML</code>。安卓的开发包中都已经集成了这两种数据格式的相关序列化和反序列的包。  </p>
+<p>(1)写出数据的简单操作：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Writer writer = <span class="keyword">null</span>;</div><div class="line">writer = <span class="keyword">new</span> OutputStreamWriter(myAppContext.openFileOutput(mFileName, Context.MODE_PRIVATE));</div><div class="line">writer.write(json.toString());</div></pre></td></tr></table></figure>
+<p>(2)读入数据的简单操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">BufferedReader reader = <span class="keyword">null</span>;</div><div class="line">String line;</div><div class="line"></div><div class="line">reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(myAppContext.openFileInput(mFileName)));</div><div class="line">	</div><div class="line"><span class="keyword">while</span>((line = reader.readLine()) != <span class="keyword">null</span>)</div><div class="line">    sb.append(line);</div></pre></td></tr></table></figure>
+<h2 id="外部设备存储"><a href="#外部设备存储" class="headerlink" title="外部设备存储"></a>外部设备存储</h2><p>&emsp;&emsp;外部设备的存储一般主要是SD的文件存储。在SD卡的文件存储中，我们首先要做的就是要设置应用获取SD卡的相关操作权限。  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.MOUNT_UNMOUNT_FILESYSTEMS"</span>/&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.WRITE_EXTERNAL_STORAGE"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后就是结合JAVA的相关I/O操作，进行一些常规的文件操作。对此简单封装了一个类实现在SD卡中进行文件读取操作。（暂时没支持SD卡中创建目录文件）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> android.os.Environment;</div><div class="line"><span class="keyword">import</span> android.util.Log;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.*;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by Bingo on 2015/9/16.</div><div class="line">	*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SDCardHelper</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String TAG_SDCARD = <span class="string">"SDCardHelper"</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *  当存在SD卡，且SD卡挂载成功，可以读写时返回true，否则返回false</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">hasSDCard</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">if</span> (android.os.Environment.getExternalStorageState()</div><div class="line">                .equals(Environment.MEDIA_MOUNTED))</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 写出数据到文件</div><div class="line">     * <span class="doctag">@param</span> fileName 文件名格式如下：“xxx.xxx”</div><div class="line">     * <span class="doctag">@param</span> data</div><div class="line">     * <span class="doctag">@throws</span> IOException</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">write2SDCard</span><span class="params">(String fileName, String data)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">if</span>(!hasSDCard()) &#123;</div><div class="line">            Log.d(TAG_SDCARD, <span class="string">"sdcard doesn't exist."</span>);</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        File filePath = createSDFile(fileName);</div><div class="line">        filePath.setWritable(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">        Writer writer = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            writer = <span class="keyword">new</span> OutputStreamWriter(<span class="keyword">new</span> FileOutputStream(filePath));</div><div class="line">            writer.write(data);</div><div class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</div><div class="line">            Log.d(TAG_SDCARD, <span class="string">"write2SDCard() file doesn't exist."</span>);</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">if</span>(writer != <span class="keyword">null</span>)</div><div class="line">                writer.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">readFromSDCard</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        <span class="keyword">if</span>(!hasSDCard()) &#123;</div><div class="line">            Log.d(TAG_SDCARD, <span class="string">"sdcard doesn't exist."</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        File filePath = createSDFile(fileName);</div><div class="line"></div><div class="line">        BufferedReader reader = <span class="keyword">null</span>;</div><div class="line">        StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(<span class="keyword">new</span> FileInputStream(filePath)));</div><div class="line">            String line;</div><div class="line"></div><div class="line">            <span class="keyword">while</span>((line = reader.readLine()) != <span class="keyword">null</span>)</div><div class="line">                sb.append(line);</div><div class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</div><div class="line">            Log.d(TAG_SDCARD, <span class="string">"readFromSDCard() file doesn't exist."</span>);</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">if</span>(reader != <span class="keyword">null</span>)</div><div class="line">                reader.close();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> sb.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> File <span class="title">SDCardRoot</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> android.os.Environment.getExternalStorageDirectory();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> File <span class="title">createSDFile</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">        File file = <span class="keyword">new</span> File(SDCardHelper.SDCardRoot(), fileName);</div><div class="line">        <span class="keyword">if</span>(!file.exists())</div><div class="line">            file.createNewFile();</div><div class="line">        <span class="keyword">return</span> file;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;其中有些函数是很关键的用来检测SD是否存在。比如说<code>android.os.Environment.getExternalStorageState()</code>方法，将会返回当前外部存储的状态，具体状态值有哪些可以参考详细文档内容。<code>android.os.Environment.getExternalStorageState()</code>则会返回SD卡的根目录。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据存储/" rel="tag">#数据存储</a>
+          
+            <a href="/tags/I-O/" rel="tag">#I/O</a>
+          
+            <a href="/tags/应用沙盒/" rel="tag">#应用沙盒</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/15/安卓开发——操作栏(Action Bar)的学习/" rel="next" title="安卓开发——操作栏(Action Bar)的学习">
+                <i class="fa fa-chevron-left"></i> 安卓开发——操作栏(Action Bar)的学习
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/16/安卓开发——浮动上下文选项与上下文菜单栏的实现/" rel="prev" title="安卓开发——浮动上下文选项与上下文菜单栏的实现">
+                安卓开发——浮动上下文选项与上下文菜单栏的实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/09/16/安卓开发——存储与加载本地文件/"
+           data-title="安卓开发——存储与加载本地文件" data-url="http://lysongzi.com/2015/09/16/安卓开发——存储与加载本地文件/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#应用目录中存取数据"><span class="nav-number">1.</span> <span class="nav-text">应用目录中存取数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#外部设备存储"><span class="nav-number">2.</span> <span class="nav-text">外部设备存储</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

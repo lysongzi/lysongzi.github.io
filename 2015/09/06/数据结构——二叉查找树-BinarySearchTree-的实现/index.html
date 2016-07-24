@@ -1,0 +1,858 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="二叉搜索树,二叉查找树,BST," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="二叉搜索树是二叉树的一种扩展。树中的元素可以看作是有序的。由于特殊的结构，它非常适合进行二分查找操作，且查找的平均时间复杂度为O(logN)。不过其也可能退化为一个链表，此时查找的最坏时间复杂度变为O(N)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构——二叉搜索树(BinarySearchTree)的实现">
+<meta property="og:url" content="http://lysongzi.com/2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="二叉搜索树是二叉树的一种扩展。树中的元素可以看作是有序的。由于特殊的结构，它非常适合进行二分查找操作，且查找的平均时间复杂度为O(logN)。不过其也可能退化为一个链表，此时查找的最坏时间复杂度变为O(N)。">
+<meta property="og:updated_time" content="2016-07-24T05:02:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构——二叉搜索树(BinarySearchTree)的实现">
+<meta name="twitter:description" content="二叉搜索树是二叉树的一种扩展。树中的元素可以看作是有序的。由于特殊的结构，它非常适合进行二分查找操作，且查找的平均时间复杂度为O(logN)。不过其也可能退化为一个链表，此时查找的最坏时间复杂度变为O(N)。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/"/>
+
+  <title> 数据结构——二叉搜索树(BinarySearchTree)的实现 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                数据结构——二叉搜索树(BinarySearchTree)的实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-09-06T21:28:43+08:00" content="2015-09-06">
+              2015-09-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/" class="leancloud_visitors" data-flag-title="数据结构——二叉搜索树(BinarySearchTree)的实现">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>二叉搜索树是二叉树的一种扩展。树中的元素可以看作是有序的。由于特殊的结构，它非常适合进行二分查找操作，且查找的平均时间复杂度为O(logN)。不过其也可能退化为一个链表，此时查找的最坏时间复杂度变为O(N)。<br><a id="more"></a></p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><p>&emsp;&emsp;对于树中的任意节点X，它大于它的左子树中的所有节点值，且小于它的右子树中的所有节点值。（假设树中的元素都是互异的，不存在相等的元素值）  </p>
+<h2 id="BinarySearchTree"><a href="#BinarySearchTree" class="headerlink" title="BinarySearchTree"></a>BinarySearchTree</h2><p>&emsp;&emsp;本次实现中对于树中存储的元素并没有要求必须要实现<code>Comparable</code>接口。而是同时结合了<code>Comparator</code>和<code>Comparable</code>接口。使用者可以在构造二叉搜索树时传入一个自定义的比较器，或者不使用比较器而是在存储的元素中实现<code>Comparable</code>接口（此时<code>Comparable</code>接口必须实现）。  </p>
+<h2 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h2><ol>
+<li>private BinaryNode<t> root; //二叉搜索树的根节点</t></li>
+<li>private Comparator<t> cmp; //元素的自定义比较器</t></li>
+</ol>
+<h2 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h2><p>&emsp;&emsp;有两个构造器，其中一个是含参的构造器，可以传入一个自定义的比较器。在构造器中主要是初始化树根节点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">BinarySearchTree</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">this</span>(<span class="keyword">null</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">BinarySearchTree</span><span class="params">(Comparator&lt;T&gt; cmp)</span></span>&#123;</div><div class="line">	<span class="keyword">this</span>.cmp = <span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setComparator</span><span class="params">(Comparator&lt;T&gt; cmp)</span></span>&#123;</div><div class="line">	<span class="keyword">this</span>.cmp = cmp;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">return</span> root == <span class="keyword">null</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clearTree</span><span class="params">()</span></span>&#123;</div><div class="line">	root = <span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;内部比较方法，比较两个数的大小并返回结果。在方法中会判断是否有自定义比较器，有则用自定义比较器比较两个数大小，否则使用Comparable接口的comparaTo函数进行比较。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">innerCompareTo</span><span class="params">(T lhs, T rhs)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span>(cmp != <span class="keyword">null</span>)</div><div class="line">		<span class="keyword">return</span> cmp.compare(lhs, rhs);</div><div class="line">	<span class="keyword">else</span></div><div class="line">		<span class="keyword">return</span> ((Comparable&lt;T&gt;)lhs).compareTo(rhs);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<code>contains()</code>：查找树中是否包含某个元素，用递归的方法进行二分搜索。二分搜索法：用待查找的值x与当前结点比较，如果比节点值小，则在其左子树继续搜索；如果x比当前节点值大，则在其右子树中搜索。重复以上操作直到根节点位置，如果还没有搜索到匹配值则树中不包含x值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(T x)</span></span>&#123;</div><div class="line">	<span class="keyword">return</span> contains(x, root);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	<span class="comment">/* 通过比较x和节点的值,来决定在左子树还是右子树中继续递归查找 */</span></div><div class="line">	<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">	<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> contains(x, tree.left);</div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">		<span class="keyword">return</span> contains(x, tree.right);</div><div class="line">	<span class="comment">/* result = 0,说明已经查找到匹配的元素 */</span></div><div class="line">	<span class="keyword">else</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<code>insert()</code>：插入元素。每个元素都是作为树的新的叶子节点插入树中的。插入操作的平均时间复杂度为O(logN)，但是如果是有序的元素进行插入操作的话则会是最坏情况，时间复杂度为O(logN),且会得到一棵退化的二叉搜索树(变成链表)，这时候无论是删除还是查找操作时间复杂度就都变成了O(N)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(T x)</span></span>&#123;</div><div class="line">	root = insert(x, root);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> BinaryNode&lt;T&gt; <span class="title">insert</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">	<span class="comment">/*是否插入第一个元素,或者是在叶子节点处插入元素*/</span></div><div class="line">	<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> BinaryNode&lt;T&gt;(x);</div><div class="line">	</div><div class="line">	<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">	<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">		tree.left = insert(x, tree.left);</div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">		tree.right = insert(x, tree.right);</div><div class="line">	<span class="keyword">else</span>&#123;</div><div class="line">		<span class="comment">//存在相同的元素，这里不做任何处理</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> tree;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<code>remove()</code>：删除元素x。二叉搜索树的删除操作还是相对比较简单的。待删除的节点主要为以下几种情况：  </p>
+<ol>
+<li>不存在该节点，删除失败；  </li>
+<li>待删除节点为叶子结点，则直接删除该节点；  </li>
+<li>待删除节点有一个孩子，只要删除该节点，将其孩子节点返回给其父节点即可；  </li>
+<li>待删除节点有两个孩子，这种情况下相对复杂一点点。通常的解决方法是用它的右子树中最小值替换节点值，然后删除右子树中的最小值即可（因为此时其右子树的最小值节点必没有左孩子，则变为2，3情况了）。但是这种删除元素的方法在若干次操作后可能会导致树失衡，即右子树高度普遍较低。所以我们可以采取随机删除右子树最小值或删除左子树最大值的方式。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(T x)</span></span>&#123;</div><div class="line">	root = remove(x, root);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> BinaryNode&lt;T&gt; <span class="title">remove</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">	<span class="comment">/* 空树或者没找相应的元素 */</span></div><div class="line">	<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">	<span class="comment">/* 在左子树中删除元素 */</span></div><div class="line">	<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">		tree.left = remove(x, tree.left);</div><div class="line">	<span class="comment">/* 在右子树中删除元素 */</span></div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">		tree.right = remove(x, tree.right);</div><div class="line">	<span class="comment">/* 1.找到匹配元素的节点,且该节点有左,右子节点 </span></div><div class="line">	 * 这种情况一般用其右子树中的最小元素来替代这个节点值</div><div class="line">	 * 然后再删除右子树中最小元素的那个节点(因为右子树最小节点没有左子树,则变为下面的情况之一（见2）)</div><div class="line">	 */</div><div class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(tree.left != <span class="keyword">null</span> &amp;&amp; tree.right != <span class="keyword">null</span>)&#123;</div><div class="line">		tree.element = findMax();</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/* 2.找到匹配元素,该元素为叶子结点或者只包含一个孩子节点</span></div><div class="line">	 * - 如果是叶子节点则直接删除</div><div class="line">	 * - 如果包含一个子节点，则将改子节点上提</div><div class="line">	 */</div><div class="line">	<span class="keyword">else</span>&#123;</div><div class="line">		tree = (tree.left != <span class="keyword">null</span>) ? tree.left : tree.right; </div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> tree;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<code>findMin()</code>：查询最小值。树中最小值为左子树中最小元素。采用递归实现。<br>&emsp;&emsp;<code>findMax()</code>：查询最大值。树中最大值为右子树中最大元素。采用非递归实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">findMin</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> findMin(root);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> T <span class="title">findMin</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/* 判断是不是空树 */</span></div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		<span class="comment">/* 如果没有到达最左边的元素，则递归查找左子树的最小值 */</span></div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(tree.left != <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> findMin(tree.left);</div><div class="line">		<span class="comment">/* 查找到最小值 */</span></div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> tree.element;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">findMax</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> findMax(root);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> T <span class="title">findMax</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/* 不是空树 */</span></div><div class="line">		<span class="keyword">if</span>(tree != <span class="keyword">null</span>)</div><div class="line">			<span class="comment">/* 循环遍历直到右子树的最大值节点处,</span></div><div class="line">			 * ps:此处的tree是一个拷贝引用,故不会影响原来树的结构.</div><div class="line">			 * 这点在处理非递归时候需要时刻注意,不要改变原来的值！</div><div class="line">			 * 例如 tree.right = tree.left这种操作是会破坏原来的树的结构的.</div><div class="line">			 */</div><div class="line">			<span class="keyword">while</span>(tree.right != <span class="keyword">null</span>)</div><div class="line">				tree = tree.right;</div><div class="line">		<span class="keyword">return</span> tree.element;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&gt;print()：顺序输出树中的元素值。采用的中序遍历的方式实现。</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</div><div class="line">		print(root);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		print(tree.left);</div><div class="line">		System.out.println(tree.element + <span class="string">" l:"</span> + tree.left + <span class="string">" r:"</span> + tree.right);</div><div class="line">		print(tree.right);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&gt;height()：采用后序遍历的方式递归的求树的高度。</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">height</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> height(root);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">height</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">		<span class="comment">/* 先计算左子树和右子树的高度,求出最大值,然后高度加一 */</span>	</div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> <span class="number">1</span> + Math.max(height(tree.left), height(tree.right));</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h2 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h2><p>&emsp;&emsp;内部类实现二叉搜索树的节点。节点主要维护了数据和左、右孩子节点的引用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BinaryNode</span>&lt;<span class="title">T</span>&gt;</span>&#123;</div><div class="line">	<span class="keyword">public</span> T element;</div><div class="line">	<span class="keyword">public</span> BinaryNode&lt;T&gt; left;</div><div class="line">	<span class="keyword">public</span> BinaryNode&lt;T&gt; right;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">BinaryNode</span><span class="params">(T ele)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>(ele, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">BinaryNode</span><span class="params">(T ele, BinaryNode&lt;T&gt; l, BinaryNode&lt;T&gt; r)</span></span>&#123;</div><div class="line">		element = ele;</div><div class="line">		left = l;</div><div class="line">		right = r;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Comparator;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 二叉搜索树</div><div class="line"> * <span class="doctag">@author</span> Bingo</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> &lt;T&gt; 泛型对象需要实现Comparable接口，或者可传入一个比较器</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BinarySearchTree</span> &lt;<span class="title">T</span>&gt;</span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 树的根节点</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> BinaryNode&lt;T&gt; root;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 元素T的比较器</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> Comparator&lt;T&gt; cmp;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 默认不带比较器的构造器</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">BinarySearchTree</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>(<span class="keyword">null</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 带比较器的构造器</div><div class="line">	 * <span class="doctag">@param</span> cmp 比较器</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">BinarySearchTree</span><span class="params">(Comparator&lt;T&gt; cmp)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.cmp = <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 设置新的比较器</div><div class="line">	 * <span class="doctag">@param</span> cmp</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setComparator</span><span class="params">(Comparator&lt;T&gt; cmp)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.cmp = cmp;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> root == <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clearTree</span><span class="params">()</span></span>&#123;</div><div class="line">		root = <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">height</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> height(root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 查询树中是否包含元素x</div><div class="line">	 * <span class="doctag">@param</span> x 查询的元素</div><div class="line">	 * <span class="doctag">@return</span> 有匹配的元素返回true，否则返回false</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(T x)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> contains(x, root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 查找树中最小元素值</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">findMin</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> findMin(root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 查找树中最大元素值</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">findMax</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> findMax(root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 插入一个元素x</div><div class="line">	 * <span class="doctag">@param</span> x</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(T x)</span></span>&#123;</div><div class="line">		root = insert(x, root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 移除元素x</div><div class="line">	 * <span class="doctag">@param</span> x</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(T x)</span></span>&#123;</div><div class="line">		root = remove(x, root);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 打印数的的内容</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</div><div class="line">		print(root);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 二分搜索的方法查询元素(递归版本)</div><div class="line">	 * <span class="doctag">@param</span> x</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="comment">/* 通过比较x和节点的值,来决定在左子树还是右子树中继续递归查找 */</span></div><div class="line">		<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">		<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">			<span class="keyword">return</span> contains(x, tree.left);</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">			<span class="keyword">return</span> contains(x, tree.right);</div><div class="line">		<span class="comment">/* result = 0,说明已经查找到匹配的元素 */</span></div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 采用递归的方式查找树中最小值.</div><div class="line">	 * 根据二叉搜索树定义我们可以知道树中最小值就是左子树中最小值.</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> T <span class="title">findMin</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/* 判断是不是空树 */</span></div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		<span class="comment">/* 如果没有到达最左边的元素，则递归查找左子树的最小值 */</span></div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(tree.left != <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> findMin(tree.left);</div><div class="line">		<span class="comment">/* 查找到最小值 */</span></div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> tree.element;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 采用非递归方式查找树中最大值</div><div class="line">	 * 根据二叉搜索树定义我们可以知道树中最大值就是右子树中最大值.</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> T <span class="title">findMax</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/* 不是空树 */</span></div><div class="line">		<span class="keyword">if</span>(tree != <span class="keyword">null</span>)</div><div class="line">			<span class="comment">/* 循环遍历直到右子树的最大值节点处,</span></div><div class="line">			 * ps:此处的tree是一个拷贝引用,故不会影响原来树的结构.</div><div class="line">			 * 这点在处理非递归时候需要时刻注意,不要改变原来的值！</div><div class="line">			 * 例如 tree.right = tree.left这种操作是会破坏原来的树的结构的.</div><div class="line">			 */</div><div class="line">			<span class="keyword">while</span>(tree.right != <span class="keyword">null</span>)</div><div class="line">				tree = tree.right;</div><div class="line">		<span class="keyword">return</span> tree.element;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 插入一个新的元素x，如果该元素已经存在，则不做任何改变</div><div class="line">	 * <span class="doctag">@param</span> x 插入的元素</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> BinaryNode&lt;T&gt; <span class="title">insert</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/*是否插入第一个元素,或者是在叶子节点处插入元素*/</span></div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">new</span> BinaryNode&lt;T&gt;(x);</div><div class="line">		</div><div class="line">		<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">		<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">			tree.left = insert(x, tree.left);</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">			tree.right = insert(x, tree.right);</div><div class="line">		<span class="keyword">else</span>&#123;</div><div class="line">			<span class="comment">//存在相同的元素，这里不做任何处理</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> tree;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 移除元素x的节点</div><div class="line">	 * <span class="doctag">@param</span> x</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> BinaryNode&lt;T&gt; <span class="title">remove</span><span class="params">(T x, BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="comment">/* 空树或者没找相应的元素 */</span></div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		</div><div class="line">		<span class="keyword">int</span> result = innerCompareTo(x, tree.element);</div><div class="line">		<span class="comment">/* 在左子树中删除元素 */</span></div><div class="line">		<span class="keyword">if</span>(result &lt; <span class="number">0</span>)</div><div class="line">			tree.left = remove(x, tree.left);</div><div class="line">		<span class="comment">/* 在右子树中删除元素 */</span></div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(result &gt; <span class="number">0</span>)</div><div class="line">			tree.right = remove(x, tree.right);</div><div class="line">		<span class="comment">/* 1.找到匹配元素的节点,且该节点有左,右子节点 </span></div><div class="line">		 * 这种情况一般用其右子树中的最小元素来替代这个节点值</div><div class="line">		 * 然后再删除右子树中最小元素的那个节点(因为右子树最小节点没有左子树,则变为下面的情况之一（见2）)</div><div class="line">		 */</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(tree.left != <span class="keyword">null</span> &amp;&amp; tree.right != <span class="keyword">null</span>)&#123;</div><div class="line">			tree.element = findMax();</div><div class="line">		&#125;</div><div class="line">		<span class="comment">/* 2.找到匹配元素,该元素为叶子结点或者只包含一个孩子节点</span></div><div class="line">		 * - 如果是叶子节点则直接删除</div><div class="line">		 * - 如果包含一个子节点，则将改子节点上提</div><div class="line">		 */</div><div class="line">		<span class="keyword">else</span>&#123;</div><div class="line">			tree = (tree.left != <span class="keyword">null</span>) ? tree.left : tree.right; </div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> tree;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 中序遍历输出的方式,吧树中元素按从小到大输出</div><div class="line">	 * <span class="doctag">@param</span> tree</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		print(tree.left);</div><div class="line">		System.out.println(tree.element + <span class="string">" l:"</span> + tree.left + <span class="string">" r:"</span> + tree.right);</div><div class="line">		print(tree.right);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 内部方法,利用后序遍历计算树的高度</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">height</span><span class="params">(BinaryNode&lt;T&gt; tree)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(tree == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">		<span class="comment">/* 先计算左子树和右子树的高度,求出最大值,然后高度加一 */</span>	</div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> <span class="number">1</span> + Math.max(height(tree.left), height(tree.right));</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 内部比较方法</div><div class="line">	 * <span class="doctag">@param</span> lhs</div><div class="line">	 * <span class="doctag">@param</span> rhs</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">innerCompareTo</span><span class="params">(T lhs, T rhs)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(cmp != <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> cmp.compare(lhs, rhs);</div><div class="line">		<span class="keyword">else</span></div><div class="line">			<span class="keyword">return</span> ((Comparable&lt;T&gt;)lhs).compareTo(rhs);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 私有类，二叉搜索树中的节点类</div><div class="line">	 * <span class="doctag">@author</span> Bingo</div><div class="line">	 *</div><div class="line">	 * <span class="doctag">@param</span> &lt;T&gt;</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BinaryNode</span>&lt;<span class="title">T</span>&gt;</span>&#123;</div><div class="line">		<span class="keyword">public</span> T element;</div><div class="line">		<span class="keyword">public</span> BinaryNode&lt;T&gt; left;</div><div class="line">		<span class="keyword">public</span> BinaryNode&lt;T&gt; right;</div><div class="line">		</div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="title">BinaryNode</span><span class="params">(T ele)</span></span>&#123;</div><div class="line">			<span class="keyword">this</span>(ele, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="title">BinaryNode</span><span class="params">(T ele, BinaryNode&lt;T&gt; l, BinaryNode&lt;T&gt; r)</span></span>&#123;</div><div class="line">			element = ele;</div><div class="line">			left = l;</div><div class="line">			right = r;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/二叉搜索树/" rel="tag">#二叉搜索树</a>
+          
+            <a href="/tags/二叉查找树/" rel="tag">#二叉查找树</a>
+          
+            <a href="/tags/BST/" rel="tag">#BST</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/08/30/数据结构——LinkedQueue的实现/" rel="next" title="数据结构——LinkedQueue的实现">
+                <i class="fa fa-chevron-left"></i> 数据结构——LinkedQueue的实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/07/数据结构——平衡二叉树-AvlTree-的实现/" rel="prev" title="数据结构——平衡二叉搜索树(AvlTree)的实现">
+                数据结构——平衡二叉搜索树(AvlTree)的实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/"
+           data-title="数据结构——二叉搜索树(BinarySearchTree)的实现" data-url="http://lysongzi.com/2015/09/06/数据结构——二叉查找树-BinarySearchTree-的实现/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BinarySearchTree"><span class="nav-number">2.</span> <span class="nav-text">BinarySearchTree</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#成员变量"><span class="nav-number">3.</span> <span class="nav-text">成员变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造器"><span class="nav-number">4.</span> <span class="nav-text">构造器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">5.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内部类"><span class="nav-number">6.</span> <span class="nav-text">内部类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">7.</span> <span class="nav-text">源代码</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

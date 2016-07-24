@@ -1,0 +1,965 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,CoreLocation,定位," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="要使用Core Location首先我们要先了解CLLocation、CLLocationManager、CLLocationManagerDelegate等相关概念。这些是构成我们获取设备定位，朝向，速度等数据的基本类。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-使用CoreLocation定位">
+<meta property="og:url" content="http://lysongzi.com/2016/01/24/iOS-使用CoreLocation定位/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="要使用Core Location首先我们要先了解CLLocation、CLLocationManager、CLLocationManagerDelegate等相关概念。这些是构成我们获取设备定位，朝向，速度等数据的基本类。">
+<meta property="og:updated_time" content="2016-01-28T09:48:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-使用CoreLocation定位">
+<meta name="twitter:description" content="要使用Core Location首先我们要先了解CLLocation、CLLocationManager、CLLocationManagerDelegate等相关概念。这些是构成我们获取设备定位，朝向，速度等数据的基本类。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/01/24/iOS-使用CoreLocation定位/"/>
+
+  <title> iOS-使用CoreLocation定位 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-使用CoreLocation定位
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-24T15:14:48+08:00" content="2016-01-24">
+              2016-01-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/24/iOS-使用CoreLocation定位/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/24/iOS-使用CoreLocation定位/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/01/24/iOS-使用CoreLocation定位/" class="leancloud_visitors" data-flag-title="iOS-使用CoreLocation定位">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>要使用Core Location首先我们要先了解CLLocation、CLLocationManager、CLLocationManagerDelegate等相关概念。这些是构成我们获取设备定位，朝向，速度等数据的基本类。<br><a id="more"></a></p>
+<h2 id="CLLocation"><a href="#CLLocation" class="headerlink" title="CLLocation"></a>CLLocation</h2><p>&emsp;&emsp;一个CLLocation对象里存储了由CLLocationManager对象产生的数据。其中的数据包括地理坐标（经纬度坐标）和海拔高度。用户可以通过设定测量精度来获取需要的数据。在iOS设备中这个类还可以获取设备速度和朝向等信息。<br>&emsp;&emsp;通常情况下我们会使用CLLocationManager生成的实例来获取设备当前位置。然而，如果你想缓存某些定位数据和计算两点间距离等的话，可以通过创建一个自定义的实例来实现。   </p>
+<p>&emsp;&emsp;首先我们先来看一下这个类存储了一些什么数据。其中主要的包括CLLocationAccuracy、CLLocationCoordinate2D、CLLocationDegrees、CLLocationDirection、CLLocationDistance、CLLocationSpeed。要使用这些类型，都要先引入CoreLocation框架。</p>
+<pre><code>@import CoreLocation;
+</code></pre><h3 id="CLLocationAccuracy"><a href="#CLLocationAccuracy" class="headerlink" title="CLLocationAccuracy"></a>CLLocationAccuracy</h3><p>一个类型表示测量的精度。</p>
+<blockquote>
+<p>//最佳测量精度<br>extern const CLLocationAccuracy kCLLocationAccuracyBest;<br>//精确度十米以内<br>extern const CLLocationAccuracy    kCLLocationAccuracyNearestTenMeters;<br>//精确度一百米以内<br>extern const CLLocationAccuracy kCLLocationAccuracyHundredMeters;<br>//精确度一千米以内<br>extern const CLLocationAccuracy kCLLocationAccuracyKilometer;<br>//精确度三千米以内<br>extern const CLLocationAccuracy kCLLocationAccuracyThreeKilometers;    </p>
+</blockquote>
+<h3 id="CLLocationCoordinate2D"><a href="#CLLocationCoordinate2D" class="headerlink" title="CLLocationCoordinate2D"></a>CLLocationCoordinate2D</h3><p>一个包含了地理坐标（经度和纬度）的结构体。</p>
+<blockquote>
+<p>CLLocationDegrees latitude; //纬度<br>CLLocationDegrees longitude; //经度    </p>
+</blockquote>
+<h3 id="CLLocationDegrees"><a href="#CLLocationDegrees" class="headerlink" title="CLLocationDegrees"></a>CLLocationDegrees</h3><p>表示一个经度或纬度值。实际上就是一个double类型的值。</p>
+<blockquote>
+<p>typedef double CLLocationDegrees</p>
+</blockquote>
+<h3 id="CLLocationDirection"><a href="#CLLocationDirection" class="headerlink" title="CLLocationDirection"></a>CLLocationDirection</h3><p>表示相对于现实世界北方的方向的值。也是一个double类型的值。</p>
+<blockquote>
+<p>typedef double CLLocationDirection</p>
+</blockquote>
+<h3 id="CLLocationDistance"><a href="#CLLocationDistance" class="headerlink" title="CLLocationDistance"></a>CLLocationDistance</h3><p>距离值(单位：米)。double类型的值。</p>
+<blockquote>
+<p>typedef double CLLocationDistance</p>
+</blockquote>
+<h3 id="CLLocationSpeed"><a href="#CLLocationSpeed" class="headerlink" title="CLLocationSpeed"></a>CLLocationSpeed</h3><p>设备每秒移动的速度。double类型的值。</p>
+<blockquote>
+<p>typedef double CLLocationSpeed</p>
+</blockquote>
+<p>&emsp;&emsp;了解了这个类的相关数据结构之后，我们来接着看看可以使用这个类来做一些什么事。通过查阅稳当我们发现这个类还可以实现的最主要的功能就是计算两点间的距离，尤其是计算设定的某一点和当前设备位置之间的距离。   </p>
+<pre><code>//返回当前设备距离设定的位置之间的距离
+- (CLLocationDistance)distanceFromLocation:(const CLLocation *)location
+</code></pre><h2 id="CLLocationManager"><a href="#CLLocationManager" class="headerlink" title="CLLocationManager"></a>CLLocationManager</h2><p>一个location manager对象可以提供一下相关的定位服务：<br>（1）追踪用户当前位置的变化。<br>（2）从罗盘中获取朝向信息。（只有iOS可用）<br>（3）监控特定区域，当用户进入或离开该区域时同时生成位置信息。<br>（4）设置用户位置更新在后台运行。<br>（5）查找附近的beacons设备。</p>
+<p>一下是配置一个location manage，并使用它的步骤：<br>（1）总是请求用户授权定位服务，并确认需要启用的服务正确获取授权。<br>（2）创建一个CLLocationManager类的实例，并存储为强引用变量。因为大多数的定位任务都是异步执行的，以局部变量的方式存储location manager对象是非常低效的。<br>（3）分配一个特定的delegate对象。这个对象需要遵循CLLocationManagerDelegate协议。<br>（4）根据需要的服务配置一些额外的属性。<br>（5）调用方法启动定位服务。</p>
+<h3 id="获取权限"><a href="#获取权限" class="headerlink" title="获取权限"></a>获取权限</h3><pre><code>- (void)requestWhenInUseAuthorization
+</code></pre><p>这个方法是异步的，并且会及时的提示用户授权定位服务的权限。另一个方法可以调用以下方法获取权限。</p>
+<pre><code>- (void)requestAlwaysAuthorization
+</code></pre><p>当用户授权了“Always”权限后，你的App可以在前后台中使用任何的定位服务。此外，那些允许你的应用在后台执行的服务也可以继续运行。   </p>
+<p>接下来介绍几个常用的启动特定服务的方法。</p>
+<h3 id="启动标准定位服务"><a href="#启动标准定位服务" class="headerlink" title="启动标准定位服务"></a>启动标准定位服务</h3><pre><code>- (void)startUpdatingLocation
+</code></pre><p>这个方法会立即返回结果。调用这个方法会使得Location对象生成一个定位器，然后会通知委托对象，回调其<code>locationManager:didUpdateLocations:</code>消息。此后，当设备移动的距离超过设定的distanceFilter属性值时，接收器会再次生成一条更新消息。</p>
+<pre><code>- (void)stopUpdatingLocation
+</code></pre><p>当不再需要接受定位信息的时候可以调用这个方法。如果需要再次使用定位服务，可再次调用<code>startUpdatingLocation</code>方法。   </p>
+<pre><code>- (void)requestLocation
+</code></pre><p>这个方法和<code>startUpdatingLocation</code>类似，也会将获取的定位信息传递给委托对象的<code>locationManager:didUpdateLocations:</code>消息。而不同的是，这个方法只产生一次定位信息，在此之后定位服务就停止了。当使用这个方法时，委托对象必须要实现<code>locationManager:didUpdateLocations:</code>和<code>locationManager:didFailWithError:</code>方法。</p>
+<p>后面还有类似于特定的定位服务，设备朝向服务、区域监听等服务，可以自行查阅开发者文档中的说明。    </p>
+<h2 id="CLLocationManagerDelegate"><a href="#CLLocationManagerDelegate" class="headerlink" title="CLLocationManagerDelegate"></a>CLLocationManagerDelegate</h2><p>&emsp;&emsp;CLLocationManagerDelegte对象是定义来接收来自CLLocation对象传递来的设备定位和朝向信息的更新的。在成功获取定位和朝向更新信息后，你可以在用户交互界面进行一些更新操作。<br>&emsp;&emsp;委托对象的方法会在你启动定位服务的同一个线程中被调用。因此，那个线程必须是处于激活的循环状态（active run loop），比如说应用的主线程。<br>&emsp;&emsp;由于我们上面主要说的是定位服务，所以接下来介绍的方法中主要是和定位相关的，其他的更多方法可以查阅文档。   </p>
+<pre><code>- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray&lt;CLLocation *&gt; *)locations
+</code></pre><p>当有新的可用定位信息是会被调用。<code>manager</code>参数为产生定位数据的location对象。<code>locations</code>中存储了传递过来的定位数据。这个数组通常包含至少一个定位数据。如果更新被延时或多个定位数据在被传递之前通知到达，则会导致该数组中包含多个定位信息。但是这个数组中的数据存储是有序的，所以最新的定位数据一定是最后一个定位数据对象！！！   </p>
+<pre><code>- (void)locationManager:(CLLocationManager *)manager
+       didFailWithError:(NSError *)error
+</code></pre><p>这个方法是可选的，但是官方文档中推荐尽量实现该方法。<br>这个方法会在location对象尝试获取定位和朝向信息并发生错误时调用。如果定位服务无法马上获取一个定位信息，则会返回一个<code>kCLErrorLocationUnknown</code>错误并继续尝试。在这种情况下，你可以简单的忽略该错误信息，并等待下一个定位信息的到来。如果因为附近的强磁场干扰导致无法获取朝向信息，则会返回<code>kCLErrorHeadingFailure</code>错误。<br>如果用户拒绝你的应用使用定位服务，这个方法则会返回<code>kCLErrorDenied</code>错误。如果接收到这样一个错误信息，那么你就应该停止继续使用定位服务。</p>
+<h2 id="Demon"><a href="#Demon" class="headerlink" title="Demon"></a>Demon</h2><pre><code>//
+//  ViewController.m
+//  CoreLocationTest
+//
+//  Created by lysongzi on 16/1/24.
+//  Copyright © 2016年 lysongzi. All rights reserved.
+//
+
+#import &quot;ViewController.h&quot;
+
+#import &lt;CoreLocation/CoreLocation.h&gt;
+
+@interface ViewController () &lt;CLLocationManagerDelegate&gt;
+
+@property (strong, nonatomic) CLLocationManager *manager;
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusRestricted
+        || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied)
+    {
+        NSLog(@&quot;应用不可以使用定位服务.&quot;);
+        return;
+    }
+
+    [self initLocation];
+
+    //如果是IOS请求获取权限        
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
+    {
+        //请求获取用户定位服务权限
+        [self.manager requestWhenInUseAuthorization];
+        NSLog(@&quot;请求定位服务.&quot;);
+    }
+
+    //启动定位服务
+    [self.manager startUpdatingLocation];
+    NSLog(@&quot;开始定位服务.&quot;);
+}
+
+- (void)initLocation
+{
+    //懒加载
+    if (!self.manager)
+    {
+        self.manager = [[CLLocationManager alloc] init];
+        self.manager.delegate = self;
+        self.manager.desiredAccuracy = kCLLocationAccuracyBest;
+        self.manager.distanceFilter = 10;
+    }
+}
+
+#pragma mark CLLocationManagerDelegate委托实现
+
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray&lt;CLLocation *&gt; *)locations
+{
+    //获取最新定位信息
+    CLLocation *location = [locations lastObject];
+
+    if (location.horizontalAccuracy &gt; 0)
+    {
+        NSLog(@&quot;最新位置：%f %f, 海拔高度：%f&quot;, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
+
+        //定位成功，关闭定位服务
+        [self.manager stopUpdatingLocation];
+    }
+}
+
+-(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    if ([error code] == kCLErrorLocationUnknown) {
+        NSLog(@&quot;获取定位失败.&quot;);
+    }
+    else if ([error code] == kCLErrorHeadingFailure){
+        NSLog(@&quot;获取朝向信息失败.&quot;);
+    }
+    else if ([error code] == kCLErrorDenied){
+        NSLog(@&quot;用户拒绝访问定位服务.&quot;);
+    }
+}
+
+@end
+</code></pre><p>然后我们会获取响应的位置信息:   </p>
+<pre><code>2016-01-28 17:05:54.955 CoreLocationTest[460:64113] 开始定位服务.
+2016-01-28 17:05:54.972 CoreLocationTest[460:64113] 最新位置：21.478879 109.101213, 海拔高度：21.719454
+</code></pre><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>苹果开发者官方文档   </li>
+<li><a href="http://blog.csdn.net/chenyufeng1991/article/details/47440477" target="_blank" rel="external">iOS项目开发实战——使用CoreLocation获取当前位置信息</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/CoreLocation/" rel="tag">#CoreLocation</a>
+          
+            <a href="/tags/定位/" rel="tag">#定位</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/23/iOS-XML文档解析(NSXMLParser)/" rel="next" title="iOS-XML文档解析(NSXMLParser)">
+                <i class="fa fa-chevron-left"></i> iOS-XML文档解析(NSXMLParser)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/28/iOS-使用NSURLConnection进行Http-Get和Post请求网络数据/" rel="prev" title="iOS-使用NSURLConnection进行Http Get和Post请求网络数据">
+                iOS-使用NSURLConnection进行Http Get和Post请求网络数据 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/24/iOS-使用CoreLocation定位/"
+           data-title="iOS-使用CoreLocation定位" data-url="http://lysongzi.com/2016/01/24/iOS-使用CoreLocation定位/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CLLocation"><span class="nav-number">1.</span> <span class="nav-text">CLLocation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationAccuracy"><span class="nav-number">1.1.</span> <span class="nav-text">CLLocationAccuracy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationCoordinate2D"><span class="nav-number">1.2.</span> <span class="nav-text">CLLocationCoordinate2D</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationDegrees"><span class="nav-number">1.3.</span> <span class="nav-text">CLLocationDegrees</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationDirection"><span class="nav-number">1.4.</span> <span class="nav-text">CLLocationDirection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationDistance"><span class="nav-number">1.5.</span> <span class="nav-text">CLLocationDistance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLLocationSpeed"><span class="nav-number">1.6.</span> <span class="nav-text">CLLocationSpeed</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CLLocationManager"><span class="nav-number">2.</span> <span class="nav-text">CLLocationManager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取权限"><span class="nav-number">2.1.</span> <span class="nav-text">获取权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动标准定位服务"><span class="nav-number">2.2.</span> <span class="nav-text">启动标准定位服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CLLocationManagerDelegate"><span class="nav-number">3.</span> <span class="nav-text">CLLocationManagerDelegate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Demon"><span class="nav-number">4.</span> <span class="nav-text">Demon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,831 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="第三章的内容主要是说接口和API设计相关的注意事项。比如说我们自己写的代码需要设计以便于代码复用时，应该注意的一些问题包括哪些。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-Effective Objective-C 2.0 读书笔记(三)">
+<meta property="og:url" content="http://lysongzi.com/2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="第三章的内容主要是说接口和API设计相关的注意事项。比如说我们自己写的代码需要设计以便于代码复用时，应该注意的一些问题包括哪些。">
+<meta property="og:updated_time" content="2016-04-29T14:28:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-Effective Objective-C 2.0 读书笔记(三)">
+<meta name="twitter:description" content="第三章的内容主要是说接口和API设计相关的注意事项。比如说我们自己写的代码需要设计以便于代码复用时，应该注意的一些问题包括哪些。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/"/>
+
+  <title> iOS-Effective Objective-C 2.0 读书笔记(三) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-Effective Objective-C 2.0 读书笔记(三)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-29T22:27:00+08:00" content="2016-04-29">
+              2016-04-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/" class="leancloud_visitors" data-flag-title="iOS-Effective Objective-C 2.0 读书笔记(三)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>第三章的内容主要是说接口和API设计相关的注意事项。比如说我们自己写的代码需要设计以便于代码复用时，应该注意的一些问题包括哪些。<br><a id="more"></a></p>
+<h2 id="简单总结"><a href="#简单总结" class="headerlink" title="简单总结"></a>简单总结</h2><p>&emsp;&emsp;有些注意事项实际上很简单，而且很常见，我觉得并不需要太长篇幅来解释说明大家也能理解，所以这里主要以归纳的形式列出。</p>
+<h3 id="1-1用前缀命名方式避免命名空间冲突"><a href="#1-1用前缀命名方式避免命名空间冲突" class="headerlink" title="1.1用前缀命名方式避免命名空间冲突"></a>1.1用前缀命名方式避免命名空间冲突</h3><p>&emsp;&emsp;包括变量命名（尤其是全局变量，C函数等），类名，方法名，类别名等。作者推荐的方式是使用三个字母的缩写来表示前缀。对于引入的第三方库，一个最稳妥的方式则所有引入的库文件也都加上自己的前缀。</p>
+<h3 id="1-2-提供“指定初始化方法”-designated-initializer"><a href="#1-2-提供“指定初始化方法”-designated-initializer" class="headerlink" title="1.2 提供“指定初始化方法”(designated initializer)"></a>1.2 提供“指定初始化方法”(designated initializer)</h3><p>&emsp;&emsp;如果一个类有多个初始化方法，一般都会指定需要参数最多的那个方法为指定初始化方法，然后别的初始化方法调用该方法进行初始化。<br>&emsp;&emsp;这里有一个需要注意的问题就是：如果子类的指定初始化方法与超类的指定初始化方法的名称不同，那么总应覆写超类的指定初始化方法，然后在其中调用子类指定初始化方法或者抛出异常。</p>
+<h3 id="1-3-实现description方法"><a href="#1-3-实现description方法" class="headerlink" title="1.3 实现description方法"></a>1.3 实现description方法</h3><p>&emsp;&emsp;这个主要是为了方便调试时候打印的信息可读性更好，方便调试。因为默认的方法实现是有NSObject根类实现的，其只是简单输出了类名和实例的地址。对于我们自定义的子类，重写该方法，然后输出一些有用的信息能更好的辅助调试工作的进行。<br>&emsp;&emsp;一个小技巧:如果需要输出一些属性值，可以把这些属性和值放到一个字典NSDictionary中，然后输出则是键值对的形式了。</p>
+<h3 id="1-4-尽量使用不可变对象"><a href="#1-4-尽量使用不可变对象" class="headerlink" title="1.4 尽量使用不可变对象"></a>1.4 尽量使用不可变对象</h3><p>&emsp;&emsp;这个建议的出发点可以用这么一个例子解释。如果把可变对象放入一个collection之后又修改其内容，那么很容易就会破坏set的内部数据结构。<br>&emsp;&emsp;在具体编程时间中，则应该尽量把对外公布出来的属性设为只读，而且只在有必要的时候才将属性对外公布。（给出的例子是在.h文件中将属性设置为readonly，然后在实现文件的扩展或分类文件中，重新声明该变量并设置为readwrite）。但是对于KVC机制“暴力”修改变量值的行为还是不太好处理的鸟。<br>&emsp;&emsp;如果有时候属性里有collection类型的对象时，通常会设置为reaonly，提供一个访问接口给外部，然后该属性再提供一个接口返回不可变的set，而且这个set只是内部那个可变set的一个拷贝。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">//LYSPerson.h</div><div class="line">@interface LYSPerson : NSObject</div><div class="line">@property (noatomic, copy, readonly) NSString *firstName;</div><div class="line">@property (noatomic, copy, readonly) NSString *lastName;</div><div class="line">@property (noatomic, strong, readonly) NSSet *friends;</div><div class="line"></div><div class="line">- (instancetype)initWithFirstName:(NSString *)firstName andLastName:(NSString *)lastName;</div><div class="line">- (void)addFriend:(LYSPerson *)person;</div><div class="line">- (void)removeFriend:(LYSPerson *)person;</div><div class="line">@end</div><div class="line"></div><div class="line">//LYSPerson.m</div><div class="line">@interface LYSPerson ()</div><div class="line">@property (noatomic, copy, readwrite) NSString *firstName;</div><div class="line">@property (noatomic, copy, readwrite) NSString *lastName;</div><div class="line">@end</div><div class="line"></div><div class="line">@implementation LYSPerson</div><div class="line">&#123;</div><div class="line">	NSMutableSet *_internalFriends;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (NSSet *)friends&#123;</div><div class="line">	//返回一个不可变的拷贝对象</div><div class="line">	return [_internalFriends copy];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)addFriend:(LYSPerson *)person&#123;</div><div class="line">	[_internalFriends addObject:person];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)removeFriend:(LYSPerson *)person&#123;</div><div class="line">	[_internalFriends removeObject:person];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (instancetype)initWithFirstName:(NSString *)firstName andLastName:(NSString *)lastName</div><div class="line">&#123;</div><div class="line">	if(self = [super init])&#123;</div><div class="line">		_firstName = firstName;</div><div class="line">		_lastName = lastName;</div><div class="line">		_internalFriends = [NSMutableSet new];</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;但是上面的做法还是有它的缺陷的，比如说并不能保证通过<code>friends</code>返回的数据一定和当前可变集合中的数据是一致的，并且如果集合很大的哈，拷贝也需要一定的花销。<br>&emsp;&emsp;所以无论什么方案都会有其优点和有其缺点，所以需要根据实际情况具体分析。</p>
+<h3 id="1-5-OC错误模型"><a href="#1-5-OC错误模型" class="headerlink" title="1.5 OC错误模型"></a>1.5 OC错误模型</h3><p>&emsp;&emsp;这里所指的错误模型主要是指当程序运行过程中如果发生错误，我们应该怎么处理，比如说在其他类似java这样的语言中则会有很完善的抛出异常的机制。<br>&emsp;&emsp;然而在OC里抛出异常不是“安全”的。就是说如果抛出异常，那么本应该在作用域末尾释放的对象现在却不会自动释放了。所以这是一个非常需要注意的事情。<br>&emsp;&emsp;所以OC里所采用的方法主要是：只有在极其罕见的情况下才抛出异常，异常抛出之后，无需考虑恢复的问题，而且应用程序此时也应该退出。如果出现“不那么严重的错误”时，OC主要的方式是令方法返回nil/0，或是使用NSError，以表明其中有错误发生。<br>&emsp;&emsp;在API设计中，NSError第一常见的用法是通过委托协议来传递错误。如果有错误发生时。当前对象会把错误信息经由协议中的某个方法传给其委托对象。比如说我们在网络请求时候涉及的类NSURLConnection在其委托协议中NSURLConnectionDelegate中就有如下定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当NSURLConnection发生错误时，就会调用该方法处理相关错误。这样做比抛出异常要好，因为调用者至少可以决定如何处理可能出现的错误。</p>
+<p>&emsp;&emsp;另一种常见的用法则是经由方法的参数返回给调用者。比如这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (BOOL) doSomething:(NSError **)error</div><div class="line"></div><div class="line">//使用</div><div class="line">NSError *error = nil;</div><div class="line">BOOL ret = [object doSomthing:&amp;error];</div><div class="line">if(error)&#123;</div><div class="line">	// 处理错误</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这种方式的好处就是不影响函数的返回值，同时如果需要关注函数出现的错误，只需要根据传入的参数来做相对的处理。</p>
+<blockquote>
+<p>PS：这里回顾了一下，在函数里传一个对象的指针与传指向对象的指针的指针的区别。实际上第二种方式更灵活点，可以说其包括了前一种方式的功能，同时更重要的是其可以改变指向具体的错误对象的指针。或许我们可以这样理解，第一种方式可以改变我们传入的特定对象的内容，第二种方式不止能改变传入的对象的内容，甚至还可以重新指定该指针所指向的对象地址。</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/24/iOS-Effective-Objective-C-2-0-读书笔记-二/" rel="next" title=" iOS-Effective Objective-C 2.0 读书笔记(二)">
+                <i class="fa fa-chevron-left"></i>  iOS-Effective Objective-C 2.0 读书笔记(二)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/06/iOS-监听UITextField值改变事件/" rel="prev" title="iOS-监听UITextField值改变事件">
+                iOS-监听UITextField值改变事件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/"
+           data-title="iOS-Effective Objective-C 2.0 读书笔记(三)" data-url="http://lysongzi.com/2016/04/29/iOS-Effective-Objective-C-2-0-读书笔记-三/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单总结"><span class="nav-number">1.</span> <span class="nav-text">简单总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1用前缀命名方式避免命名空间冲突"><span class="nav-number">1.1.</span> <span class="nav-text">1.1用前缀命名方式避免命名空间冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-提供“指定初始化方法”-designated-initializer"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 提供“指定初始化方法”(designated initializer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-实现description方法"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 实现description方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-尽量使用不可变对象"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 尽量使用不可变对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-OC错误模型"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 OC错误模型</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

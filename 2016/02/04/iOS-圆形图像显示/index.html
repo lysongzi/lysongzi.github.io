@@ -1,0 +1,888 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在现在很多App中开始使用圆形的图像显示方式，比如说QQ中的头像和图标，微博的头像等。这次我们就对UIImageView进行相应的设置，以便达到圆形图像的显示效果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-圆形图像显示(UIImageView)">
+<meta property="og:url" content="http://lysongzi.com/2016/02/04/iOS-圆形图像显示/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="在现在很多App中开始使用圆形的图像显示方式，比如说QQ中的头像和图标，微博的头像等。这次我们就对UIImageView进行相应的设置，以便达到圆形图像的显示效果。">
+<meta property="og:updated_time" content="2016-02-04T07:04:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-圆形图像显示(UIImageView)">
+<meta name="twitter:description" content="在现在很多App中开始使用圆形的图像显示方式，比如说QQ中的头像和图标，微博的头像等。这次我们就对UIImageView进行相应的设置，以便达到圆形图像的显示效果。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/02/04/iOS-圆形图像显示/"/>
+
+  <title> iOS-圆形图像显示(UIImageView) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-圆形图像显示(UIImageView)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-04T14:07:26+08:00" content="2016-02-04">
+              2016-02-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/04/iOS-圆形图像显示/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/04/iOS-圆形图像显示/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/02/04/iOS-圆形图像显示/" class="leancloud_visitors" data-flag-title="iOS-圆形图像显示(UIImageView)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在现在很多App中开始使用圆形的图像显示方式，比如说QQ中的头像和图标，微博的头像等。这次我们就对<code>UIImageView</code>进行相应的设置，以便达到圆形图像的显示效果。<br><a id="more"></a><br>实现圆形图像显示的代码很简单，我们为了能让其更好的应用到项目中，我们结合之前的<a href="http://lysongzi.com/2016/01/29/iOS-对话框的应用/">iOS对话框</a>的实践，做了个小demon来展示如何拍照或从相册读取图片，然后以圆形图像的方式显示出来。</p>
+<h2 id="界面"><a href="#界面" class="headerlink" title="界面"></a>界面</h2><p>我们的界面设计很简单，直接在storyboard中加入一个<code>UIImageView</code>和<code>UIButton</code>，<code>UIButton</code>将会触发对话框。此外还涉及到了<code>UIImagePickerController</code>的使用，可以便捷的获取拍照或相册中的图片资源。</p>
+<image src="http://7xqqkw.com1.z0.glb.clouddn.com/20160204_01.png" style="width:350px">
+
+<h2 id="圆形图像"><a href="#圆形图像" class="headerlink" title="圆形图像"></a>圆形图像</h2><p>设置圆形图像的原理很简单，通过设置UIImageView的圆角属性即可。首先我们需要保证待设置的图片资源大小为方形的（稍后我们会提供图像裁剪方法）。由于我们使用<code>UIImagePickerController</code>并设置其allowEditing属性之后获取的图像资源大小为正方形，故可以暂时忽略这一步。<br>因为图像为正方形的，所以我们只需要把UIImageView控件的圆角设置为正方形边长的一半即可得到一个圆。<br>我们除了可以设置控件的圆角之外，还可以设置控件的边框大小以及颜色。（似乎这些主要涉及就是CALayer相关的东西？！）</p>
+<pre><code>//设置图像显示控件为圆形
+- (void)changeToCirclePicture
+{
+    //设置圆角半径为方形边长一半
+    [self.imageView.layer setCornerRadius:CGRectGetHeight([self.imageView bounds]) / 2];
+    [self.imageView.layer setMasksToBounds:YES];
+
+    //设置边框宽度和颜色
+    [self.imageView.layer setBorderWidth:10];
+    [self.imageView.layer setBorderColor:[[UIColor grayColor] CGColor]];
+}
+</code></pre><h2 id="图像裁剪"><a href="#图像裁剪" class="headerlink" title="图像裁剪"></a>图像裁剪</h2><p>虽然我们这个demon中并没有用到图片的裁剪，但是很有可能实践项目中会涉及到图片裁剪成正方形。裁剪算法也很简单，以最短边边长为裁剪正方形的边长，在图像剧中的位置进行裁剪。</p>
+<pre><code>//截取居中的方形图像
+- (UIImage *)cutPicture:(UIImage *)raw
+{
+    CGSize origImageSize = raw.size;
+    CGRect newRect = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_WIDTH);
+
+    float ratio = MAX(newRect.size.width / origImageSize.width, newRect.size.height / origImageSize.height);
+
+    //创建透明位图上下文
+    UIGraphicsBeginImageContextWithOptions(newRect.size, NO, 0.0);
+    //创建圆角矩形的对象，这里设置圆角为0
+    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:newRect cornerRadius:0.0];
+    //裁剪图形上下文
+    [path addClip];
+
+    //让图片在缩略图绘制范围内居中
+    CGRect projectRect;
+    projectRect.size.width = ratio * origImageSize.width;
+    projectRect.size.height = ratio * origImageSize.height;
+    projectRect.origin.x = (newRect.size.width - projectRect.size.width) / 2.0;
+    projectRect.origin.y = (newRect.size.height - projectRect.size.height) / 2.0;
+
+    //在上下文中绘制图片
+    [raw drawInRect:projectRect];
+
+    //从上下文获取图片，并复制给item
+    UIImage *smallImage = UIGraphicsGetImageFromCurrentImageContext();
+
+    //清理图形上下文
+    UIGraphicsEndImageContext();
+
+    return smallImage;
+}
+</code></pre><p>到这里可能有人会想到，我们不可以直接在这里把图片处理成圆形图片不就好了么，的确可以这样！只是我们可以简单几行代码设置显示方式即可，除非有特殊要求把图像处理为圆形，不然何必多此一举对吧啊哈哈哈哈。再说正方形图像更常用，说不定什么地方还能用上呢~~</p>
+<h2 id="UIImagePickerController"><a href="#UIImagePickerController" class="headerlink" title="UIImagePickerController"></a>UIImagePickerController</h2><p><code>UIImagePickerController</code>是系统提供的一个ViewController,可以让我们通过拍照或相册选择图片的方式获取图片资源。这个类需要实现两个协议，<code>UIImagePickerControllerDelegate</code>和<code>UINavigationControllerDelegate</code>。在这里我们主要实现了两个委托方法，分别是图像选取完后的处理，以及取消图像选取操作的处理。PS:<code>UIImagePickerController</code>的实例是以模态方式显示的。</p>
+<pre><code>#pragma mark - UIImagePickerControllerDelegate 协议的实现
+
+//这个为图像选择完毕之后的回调
+//在这里获取我们选择的图像的UIImage对象，其中info字典中存储了获取的图片资源
+//这里我们获取的是编辑过后的资源，所以使用的键值是：UIImagePickerControllerEditedImage
+//如果需要获取原图像的资源则使用：UIImagePickerControllerOriginalImage
+//此外通过info字典还可以获取其他信息，详细查看官方文档
+- (void)imagePickerController:(UIImagePickerController *)picker
+didFinishPickingMediaWithInfo:(NSDictionary&lt;NSString *,id&gt; *)info
+{
+    UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
+    self.imageView.image = image;
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+//这个为点击取消选择图片之后的回调，关闭controller
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+</code></pre><h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>这里给出的是Github上的源码地址。<br><a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">iOS-Demon——CircleImageView</a></p>
+<h3 id="Demon显示效果"><a href="#Demon显示效果" class="headerlink" title="Demon显示效果"></a>Demon显示效果</h3><image src="http://7xqqkw.com1.z0.glb.clouddn.com/20160204_02.png" style="width:350px"></image></image>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/04/计算机网络-MQTT简介/" rel="next" title="计算机网络-MQTT简介">
+                <i class="fa fa-chevron-left"></i> 计算机网络-MQTT简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/04/iOS-NSNotificationCenter的应用/" rel="prev" title="iOS-NSNotificationCenter的应用">
+                iOS-NSNotificationCenter的应用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/04/iOS-圆形图像显示/"
+           data-title="iOS-圆形图像显示(UIImageView)" data-url="http://lysongzi.com/2016/02/04/iOS-圆形图像显示/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#界面"><span class="nav-number">1.</span> <span class="nav-text">界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#圆形图像"><span class="nav-number">2.</span> <span class="nav-text">圆形图像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图像裁剪"><span class="nav-number">3.</span> <span class="nav-text">图像裁剪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIImagePickerController"><span class="nav-number">4.</span> <span class="nav-text">UIImagePickerController</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">5.</span> <span class="nav-text">源代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Demon显示效果"><span class="nav-number">5.1.</span> <span class="nav-text">Demon显示效果</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

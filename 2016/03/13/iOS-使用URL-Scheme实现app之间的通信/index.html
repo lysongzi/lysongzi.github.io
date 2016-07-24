@@ -1,0 +1,925 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="iOS平台的进程间通信是一件很蛋疼的事，通过窝大量的资料搜索，最后发现好像比较普遍的实现方式则是使用URL Scheme（好吧好像别的方式我还没搞懂，准备看英文文献学习学习先哈哈哈哈哈）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-使用URL Scheme实现app的进程间通信">
+<meta property="og:url" content="http://lysongzi.com/2016/03/13/iOS-使用URL-Scheme实现app之间的通信/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="iOS平台的进程间通信是一件很蛋疼的事，通过窝大量的资料搜索，最后发现好像比较普遍的实现方式则是使用URL Scheme（好吧好像别的方式我还没搞懂，准备看英文文献学习学习先哈哈哈哈哈）。">
+<meta property="og:image" content="http://img.blog.csdn.net/20160313161048910">
+<meta property="og:image" content="http://img.blog.csdn.net/20160313161113879">
+<meta property="og:image" content="http://img.blog.csdn.net/20160313161906866">
+<meta property="og:updated_time" content="2016-03-13T14:00:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-使用URL Scheme实现app的进程间通信">
+<meta name="twitter:description" content="iOS平台的进程间通信是一件很蛋疼的事，通过窝大量的资料搜索，最后发现好像比较普遍的实现方式则是使用URL Scheme（好吧好像别的方式我还没搞懂，准备看英文文献学习学习先哈哈哈哈哈）。">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160313161048910">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/03/13/iOS-使用URL-Scheme实现app之间的通信/"/>
+
+  <title> iOS-使用URL Scheme实现app的进程间通信 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-使用URL Scheme实现app的进程间通信
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-13T15:34:37+08:00" content="2016-03-13">
+              2016-03-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/13/iOS-使用URL-Scheme实现app之间的通信/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/13/iOS-使用URL-Scheme实现app之间的通信/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/03/13/iOS-使用URL-Scheme实现app之间的通信/" class="leancloud_visitors" data-flag-title="iOS-使用URL Scheme实现app的进程间通信">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>iOS平台的进程间通信是一件很蛋疼的事，通过窝大量的资料搜索，最后发现好像比较普遍的实现方式则是使用URL Scheme（好吧好像别的方式我还没搞懂，准备看英文文献学习学习先哈哈哈哈哈）。<br><a id="more"></a><br>&emsp;&emsp;URL Scheme就是将一个应用自身“绑定”到一个自定义的URL上，该Scheme可以用于在浏览器或别的应用中启动。PS：一个应用是可以自定义多个URL Scheme的。</p>
+<h2 id="注册自定义的URL-Scheme"><a href="#注册自定义的URL-Scheme" class="headerlink" title="注册自定义的URL Scheme"></a>注册自定义的URL Scheme</h2><p>&emsp;&emsp;首先我们在工程项目的Info.plist文件中添加以下信息。<code>URL identifier</code>一般推荐使用倒置域名方式以确保唯一性。而Scheme是一个数组，所以我们可以设置多个Scheme，之后我们会测试的。<br><img src="http://img.blog.csdn.net/20160313161048910" alt="Info.plist配置1"></p>
+<p>当然我们可以看一些生成的源码。<br><img src="http://img.blog.csdn.net/20160313161113879" alt="Info.plist配置2"></p>
+<h3 id="URL-Scheme启动应用初尝试"><a href="#URL-Scheme启动应用初尝试" class="headerlink" title="URL Scheme启动应用初尝试"></a>URL Scheme启动应用初尝试</h3><p>&emsp;&emsp;通过上一步在Info.plist文件里配置了应用的URL Scheme之后，Build并Run一下应用。当应用被安装到模拟器上之后。我们则可以首先尝试用Safari来启动我们的应用了。</p>
+<p>步骤：</p>
+<ol>
+<li>运行以上应用。</li>
+<li>Shift+Command+H返回模拟器主界面。</li>
+<li>然后打开Safari。</li>
+<li>输入<code>urlSchemeOne://</code>，并点击确定。</li>
+<li>就会弹出如下图，点击Open。然后我们的应用就打开了！</li>
+</ol>
+<p><img src="http://img.blog.csdn.net/20160313161906866" alt="open url scheme"></p>
+<p>&emsp;&emsp;有兴趣的童子试试<code>urlSchemeTwo://</code>也是可以打开应用的了,并且实际上URL Scheme是大小写不敏感的？= =因为我在safari中全输入的小谢也能打开。。。</p>
+<h3 id="在另一个app中启动自定义URL-Scheme"><a href="#在另一个app中启动自定义URL-Scheme" class="headerlink" title="在另一个app中启动自定义URL Scheme"></a>在另一个app中启动自定义URL Scheme</h3><p>&emsp;&emsp;此时我们创建另一个工程，只需要实现一个功能，就是启动我们刚才设定了自定义URL Scheme的app。所以我们在里面设置了一个按钮。当我们点击该按钮时，则会触发打开URL Scheme的事件。首先我们来看一下代码的实现。</p>
+<blockquote>
+<p>AppToOpenURLScheme</p>
+</blockquote>
+<pre><code>- (IBAction)openUrlScheme:(id)sender
+{
+    NSURL *url = [NSURL URLWithString:@&quot;urlSchemeOne://&quot;];
+
+    //先判断一下是否可以启动该url
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
+    }
+    else{
+        NSLog(@&quot;No such url.&quot;);
+    }
+}
+</code></pre><h3 id="解决问题-canOpenURL-failed-for-URL-XXX"><a href="#解决问题-canOpenURL-failed-for-URL-XXX" class="headerlink" title="解决问题-canOpenURL: failed for URL:XXX"></a>解决问题-canOpenURL: failed for URL:XXX</h3><p>&emsp;&emsp;如果你是iOS 9.0以上的系统，当你运行上面的第二个工程后点击按钮，你应该会看到一串类似标题的异常输出，并且应用没有想期望的那样进行跳转。哈哈哈哈，这就是蛋疼的iOS 9.0以后的加入的新机制，我们应该还记得9.0同样限制了http请求，再次我们也需要像解除http请求一样在Info.plist中进行一些配置才行。<br>下面这个应该是会出现的异常信息。（如果没有你就忽略吧…）</p>
+<pre><code>2016-03-13 20:36:19.622 AppToOpenURLScheme[2637:1248171] -canOpenURL: failed for URL: &quot;urlSchemeOne://&quot; - error: &quot;This app is not allowed to query for scheme urlSchemeOne&quot;
+2016-03-13 20:36:19.624 AppToOpenURLScheme[2637:1248171] No such url.
+</code></pre><p>&emsp;&emsp;通过我们查阅资料。我们发现传说有两种方式可以解除这个限制？= =。好吧说实话我两种都试了，但是有一个没弄出来。但是我还是介绍一下两种方法吧。</p>
+<p>（1）第一种：支持http协议。额，这种方式我尝试了，没成功，如果有谁成功了记得教教我。。（后面我会贴上我查到的资料链接你们可以参考）这种方式就是在Info.plist中配置一下。</p>
+<pre><code>&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;
+&lt;dict&gt;
+    &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;
+    &lt;true/&gt;
+&lt;/dict&gt;
+</code></pre><p>（2）第二种：配置scheme到LSApplicationQueriesSchemes。这种方式我是成功了的。下面介绍这种方法的配置方法。同样的是只需要配置Info.plist文件，而且是只需要在想要启动别人URL的app里设置就可以了！    </p>
+<blockquote>
+<p><strong>PS：传说在模拟器下是会有问题，需要真机测试，我测试了真机上的确是正常的！！！</strong></p>
+</blockquote>
+<p>= =。比如说查到的资料，如果你是用了一些第三方SDK，一般都会要求在你自己的应用中配置别人的URL Scheme到LSApplicationQueriesSchemes中，这样你就能通过URL和别人的应用通信鸟~   </p>
+<blockquote>
+<p>AppToOpenURLScheme</p>
+</blockquote>
+<pre><code>&lt;key&gt;LSApplicationQueriesSchemes&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;urlSchemeOne&lt;/string&gt;
+        &lt;string&gt;urlSchemeTwo&lt;/string&gt;
+    &lt;/array&gt;
+</code></pre><p>进过以上配置之后，我们再次安装应用并点击按钮，应该就可以进行跳转了！</p>
+<p>参考资料：<a href="https://segmentfault.com/q/1010000003741815" target="_blank" rel="external">适配ios9出现的问题：-canOpenURL: failed for URL</a></p>
+<h2 id="二、进程间数据传输"><a href="#二、进程间数据传输" class="headerlink" title="二、进程间数据传输"></a>二、进程间数据传输</h2><p>&emsp;&emsp;我们之前讲了这么多最终的目标是什么！！！通信啊！！！传数据啊！！！= =。在这里就科普一个啥URL标准（虽然我也没看过），传说URL传递参数需要遵循<a href="https://tools.ietf.org/html/rfc1808" target="_blank" rel="external">RFC 1808</a>标准。话不多说，我们开始吧！</p>
+<p>&emsp;&emsp;首先我们先实现接受数据的一端的方法。所以我们需要先返回先前创建了URL Scheme的应用中，在appDelegate.m文件中重写这两个方法。这些方法是在当有别的应用通过URL Scheme的方式启动时会调用的方法。</p>
+<blockquote>
+<p>URLSchemaDemon</p>
+</blockquote>
+<pre><code>//实际过程中这个函数没被调用？- -。一脸懵逼。。。
+-(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    NSLog(@&quot;%@ %@&quot;, NSStringFromSelector(_cmd), url);
+    return YES;
+}
+
+-(BOOL)application:(UIApplication *)application
+           openURL:(NSURL *)url
+ sourceApplication:(NSString *)sourceApplication
+        annotation:(id)annotation
+{
+    NSLog(@&quot;%@ %@&quot;, sourceApplication, url);
+    if ([[url scheme] isEqualToString:@&quot;urlSchemeOne&quot;]) {
+        NSLog(@&quot;%@ %@&quot;, [url scheme], [url query]);
+    }
+    return YES;
+}
+</code></pre><p>&emsp;&emsp;解决了接收端的问题后，我们来看发送数据的一方。我们只需要做一些小修改，将数据放在URL中进行传递就好了，当然实际中传递数据时是会对数据进行加密的。因为不排除有同名的URL Scheme的存在，这样可能会拦截传递的数据？然后导致数据泄露？</p>
+<blockquote>
+<p>AppToOpenURLScheme</p>
+</blockquote>
+<pre><code>NSURL *url = [NSURL URLWithString:@&quot;urlSchemeOne://?token=123456&amp;id=10086&quot;];
+</code></pre><p>&emsp;&emsp;然后我们重新编译运行应用，然后通过另一个应用打开该应用。则会看到如下输出信息。哈哈哈我们可以很清楚的看到通过URL传递的数据正确传递过来了~耶耶耶~对于sourceApplication参数我们一般可以用来限制只有特定的app启动我们应用时才做处理，因为我们无法限制被别的应用调用。</p>
+<pre><code>2016-03-13 21:25:13.915 URLSchemaDemon[2675:1257006] com.lysongzi.AppToOpenURLScheme urlSchemeOne://?token=123456&amp;id=10086
+2016-03-13 21:25:13.920 URLSchemaDemon[2675:1257006] urlSchemeOne token=123456&amp;id=10086
+</code></pre><p>&emsp;&emsp;如果你是基于iOS 9.0进行开发的话，你会发现<code>handleOpenURL</code>和<code>openURL:sourceApplication:annotation:</code>两个方法在iOS 9.0以后官方已经不推荐使用了，转而推荐使用的则是这个方法``。</p>
+<pre><code>-(BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary&lt;NSString *,id&gt; *)options
+{
+    //可以通过option字典对象取出相应数据
+    if ([[options objectForKey:UIApplicationOpenURLOptionsSourceApplicationKey] isEqualToString:@&quot;com.lysongzi.AppToOpenURLScheme&quot;]) {
+        NSLog(@&quot;%@ %@&quot;, [url scheme], [url query]);
+    }
+    return YES;
+}
+</code></pre><p>我们会发现实际上也是可以正确获取到传递过来的数据的鸟~~~</p>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>这里主要涉及了两个工程项目。</p>
+<ol>
+<li>创建自定义的URL Scheme以及接受数据的工程：<a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">URLSchemaDemon</a></li>
+<li>通过URL Scheme打开另一个应用，并传递数据：<a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">AppToOpenURLScheme</a></li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>苹果官方文档</li>
+<li><a href="https://segmentfault.com/q/1010000003741815" target="_blank" rel="external">适配ios9出现的问题：-canOpenURL: failed for URL</a></li>
+<li><a href="http://wiki.mob.com/ios9-对sharesdk的影响（适配ios-9必读）/" target="_blank" rel="external">ShareSDK for iOS</a></li>
+<li><a href="http://dev.umeng.com/social/ios/ios9" target="_blank" rel="external">友盟分享 iOS9适配</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/12/iOS-UIApplicationDelegate学习笔记/" rel="next" title="iOS-UIApplicationDelegate学习笔记">
+                <i class="fa fa-chevron-left"></i> iOS-UIApplicationDelegate学习笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/16/iOS-RunLoop机制学习笔记/" rel="prev" title="iOS-RunLoop机制学习笔记">
+                iOS-RunLoop机制学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/13/iOS-使用URL-Scheme实现app之间的通信/"
+           data-title="iOS-使用URL Scheme实现app的进程间通信" data-url="http://lysongzi.com/2016/03/13/iOS-使用URL-Scheme实现app之间的通信/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册自定义的URL-Scheme"><span class="nav-number">1.</span> <span class="nav-text">注册自定义的URL Scheme</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#URL-Scheme启动应用初尝试"><span class="nav-number">1.1.</span> <span class="nav-text">URL Scheme启动应用初尝试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在另一个app中启动自定义URL-Scheme"><span class="nav-number">1.2.</span> <span class="nav-text">在另一个app中启动自定义URL Scheme</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决问题-canOpenURL-failed-for-URL-XXX"><span class="nav-number">1.3.</span> <span class="nav-text">解决问题-canOpenURL: failed for URL:XXX</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、进程间数据传输"><span class="nav-number">2.</span> <span class="nav-text">二、进程间数据传输</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">3.</span> <span class="nav-text">源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

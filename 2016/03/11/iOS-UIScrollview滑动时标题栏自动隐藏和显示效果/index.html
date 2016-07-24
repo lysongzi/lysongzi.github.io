@@ -1,0 +1,974 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;本文主要介绍如何实现当UIScrollview滑动时，自动隐藏和显示标题栏的效果。其中布局采用Autolayout的方式，并且为了代码精简，使用了第三方库Masonry，其使用参考【iOS-Masonry学习笔记】。使用它的原因是可以很好的结合动画效果的实现！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-UIScrollview滑动时标题栏自动隐藏和显示效果">
+<meta property="og:url" content="http://lysongzi.com/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;本文主要介绍如何实现当UIScrollview滑动时，自动隐藏和显示标题栏的效果。其中布局采用Autolayout的方式，并且为了代码精简，使用了第三方库Masonry，其使用参考【iOS-Masonry学习笔记】。使用它的原因是可以很好的结合动画效果的实现！">
+<meta property="og:updated_time" content="2016-03-11T05:06:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-UIScrollview滑动时标题栏自动隐藏和显示效果">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;本文主要介绍如何实现当UIScrollview滑动时，自动隐藏和显示标题栏的效果。其中布局采用Autolayout的方式，并且为了代码精简，使用了第三方库Masonry，其使用参考【iOS-Masonry学习笔记】。使用它的原因是可以很好的结合动画效果的实现！">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/"/>
+
+  <title> iOS-UIScrollview滑动时标题栏自动隐藏和显示效果 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-UIScrollview滑动时标题栏自动隐藏和显示效果
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-11T00:09:56+08:00" content="2016-03-11">
+              2016-03-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/" class="leancloud_visitors" data-flag-title="iOS-UIScrollview滑动时标题栏自动隐藏和显示效果">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;本文主要介绍如何实现当UIScrollview滑动时，自动隐藏和显示标题栏的效果。其中布局采用Autolayout的方式，并且为了代码精简，使用了第三方库Masonry，其使用参考【<a href="http://lysongzi.com/2016/02/20/iOS-Masonry学习笔记/">iOS-Masonry学习笔记</a>】。使用它的原因是可以很好的结合动画效果的实现！<br><a id="more"></a>   </p>
+<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>&emsp;&emsp;首先我们来介绍一下整个布局。最外层的是一个UIScrollview(mainScrollview)，其子视图包括一个模拟标题栏的UIView视图，以及一个UIScrollview视图(innerScrollview)，并且其是按顺序上下排列的。其中的innerScrollview包含一个UIView容器子视图，并且该容器中包括若干个UIView子视图来模拟cell。其显示效果大致如下:</p>
+<div style="width:100%" align="center"><br>    <image src="http://7xqqkw.com1.z0.glb.clouddn.com/2016031001.png" style="width:250px"></image></div>
+
+<h3 id="常量设置"><a href="#常量设置" class="headerlink" title="常量设置"></a>常量设置</h3><pre><code>//屏幕宽度
+#define UIScreenWidth [[UIScreen mainScreen] bounds].size.width
+//屏幕高度
+#define UIScreenHeight [[UIScreen mainScreen] bounds].size.height
+
+//标题栏高度
+NSInteger const titleHeight = 100;
+//每个cell高度
+NSInteger const cellHeight = 80;
+//触发标题栏隐藏和显示事件的scrollview在Y方向上的滑动位移阈值
+NSInteger const triggerToHideY = 200;
+</code></pre><h3 id="视图初始化"><a href="#视图初始化" class="headerlink" title="视图初始化"></a>视图初始化</h3><p>&emsp;&emsp;整个布局的视图属性并不多，主要是一下这些。其中cells数组用于存储添加到container中的子UIView视图，以便于此后的视图约束设置。还有一个属性isHide是用来表示标题的状态的，如果标题隐藏则为YES，反之为NO，默认值为NO;</p>
+<pre><code>@property (strong, nonatomic) UIScrollView *mainScrollview;
+@property (strong, nonatomic) UIView *hideView;
+@property (strong, nonatomic) UIScrollView *innerScrollview;
+@property (strong, nonatomic) UIView *container;
+@property (strong, nonatomic) NSMutableArray *cells;
+
+@property (nonatomic) BOOL isHide;
+</code></pre><p>接下来则是手动初始化各个视图对象，并设置它们的父子关系。</p>
+<pre><code>- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    //设置默认值
+    self.isHide = NO;
+    //初始化cells数组
+    self.cells = [NSMutableArray new];
+
+    //初始化mainScrollview视图
+    self.mainScrollview = [UIScrollView new];
+    [self.mainScrollview setBackgroundColor:[UIColor whiteColor]];
+    [self.view addSubview:self.mainScrollview];
+
+    //初始化hideView视图
+    self.hideView = [UIView new];
+    [self.hideView setBackgroundColor:[UIColor colorWithRed:0.000 green:0.502 blue:1.000 alpha:1.000]];
+    [self.mainScrollview addSubview:self.hideView];
+
+    //初始化container
+    self.container = [UIView new];
+    [self.container setBackgroundColor:[UIColor whiteColor]];
+
+    //初始化innerScrollView,默认开启弹簧效果
+    self.innerScrollview = [UIScrollView new];
+    self.innerScrollview.delegate = self;
+    //self.innerScrollview.bounces = NO;
+    [self.innerScrollview setBackgroundColor:[UIColor blackColor]];
+    [self.innerScrollview addSubview:self.container];
+    [self.mainScrollview addSubview:self.innerScrollview];
+
+    //生成若干个子视图，并添加到container中
+    for (int i = 0; i &lt; 20; i++) {
+        UIView *view = [[UIView alloc] init];
+        [view setBackgroundColor:[UIColor colorWithRed:1-(i*10.0/255) green:1-(i*10.0/255) blue:1-(i*10.0/255) alpha:1.0f]];
+
+        [self.container addSubview:view];
+        [self.cells addObject:view];
+    }
+}
+</code></pre><h3 id="视图约束"><a href="#视图约束" class="headerlink" title="视图约束"></a>视图约束</h3><p>&emsp;&emsp;视图的约束主要是采用Autolayout的布局思路，并使用第三方框架Masonry。哈哈大家可以看到使用框架之后省了好多代码量哈哈哈。</p>
+<pre><code>-(void)updateViewConstraints
+{
+    //设置mainScrollview约束
+    [self.mainScrollview mas_makeConstraints:^(MASConstraintMaker *make) {
+           //其边距与sel.view相等，即全屏显示
+        make.edges.equalTo(self.view);
+    }];
+
+    //设置hideView约束
+    [self.hideView mas_makeConstraints:^(MASConstraintMaker *make) {
+        //其上，左，右边距紧靠mainScrollview
+        make.top.left.right.equalTo(self.mainScrollview);
+        //X方向上居中
+        make.centerX.equalTo(self.mainScrollview);
+        //设置标题的高度
+        make.height.equalTo(@(titleHeight));
+    }];
+
+    //设置innerScrollview约束
+    [self.innerScrollview mas_makeConstraints:^(MASConstraintMaker *make) {
+        //其top紧靠标题的bottom，即它位于标题下方
+        make.top.equalTo(self.hideView.mas_bottom);
+        //左，右，下紧靠mainScrollview
+        make.left.and.right.equalTo(self.mainScrollview);
+        make.centerY.equalTo(self.mainScrollview).with.centerOffset(CGPointMake(0, titleHeight));
+    }];
+
+    //设置container约束
+    [self.container mas_makeConstraints:^(MASConstraintMaker *make) {
+        //containt主要约束为和innerScrollview的大小一致
+        make.edges.equalTo(self.innerScrollview);
+        make.width.equalTo(self.innerScrollview);
+    }];
+
+    //设置每个cell的约束
+    for (int i = 0; i &lt; self.cells.count; i++) {
+        //获取需要约束的视图
+        UIView *subview = self.cells[i];
+        [subview mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.left.centerX.equalTo(self.container);
+            make.height.equalTo(@(cellHeight));
+            //如果是第一个cell，则其top属性紧靠container容器
+            //否则每个cell的top属性紧靠上一个cell的bottom属性
+            if (i == 0) {
+                make.top.equalTo(self.container);
+            }
+            else{
+                UIView *topView = self.cells[i - 1];
+                make.top.equalTo(topView.mas_bottom);
+            }
+        }];
+    }
+
+    //设置容器底部约束
+    [self.container mas_makeConstraints:^(MASConstraintMaker *make) {
+        //约束容器的bottom紧靠最后一个cell的bottom
+        //完成这个约束InnerScrollview就可以自动计算contentSize
+        //然后就可以滑动了！很神奇是不是！
+        UIView *lastView = self.cells[self.cells.count - 1];
+        make.bottom.equalTo(lastView.mas_bottom);
+    }];
+
+    //最后不要忘了调用超类的方法
+    [super updateViewConstraints];
+}
+</code></pre><h2 id="自动隐藏和显示"><a href="#自动隐藏和显示" class="headerlink" title="自动隐藏和显示"></a>自动隐藏和显示</h2><p>&emsp;&emsp;接下来就是如何实现自动隐藏和显示了。其实这个也很简单，了解UIScrollview的就会知道其有一个协议为<code>UIScrollViewDelegate</code>，其中包括了一些当scrollview滑动时会回调的函数，滑动动画开始、结束时的回调，用户手指拖拽和结束拖拽等诸多事件的回调。在这里我们主要用到的回调方法为<code>scrollViewDidScroll:</code>，就是当scrollview出现滑动事件时就会回调的方法。<br>所以首先要实现该协议。</p>
+<pre><code>@interface ViewController () &lt;UIScrollViewDelegate&gt;
+</code></pre><p>然后设置innerScrollview的delegate属性。</p>
+<pre><code>self.innerScrollview.delegate = self;
+</code></pre><p>&emsp;&emsp;最后则是实现<code>scrollViewDidScroll:</code>方法。在方法里，先判断scrollview滑动的距离是否达到了触发自动隐藏和显示的阈值，然后判断当前标题栏的状态再是否需要进行动画隐藏和显示。其中动画实现的原理很简单，当需要隐藏标题栏时，则将标题视图移出视图（可以考虑将其也隐藏），并且重新设置InnerScrollview的显示区域。（更多UIScrollView相关参考【<a href="http://lysongzi.com/2016/01/07/iOS实战-自定义的横向滚动控件CustomScrollView/">iOS实战-自定义的横向滚动控件CustomScrollView</a>】）</p>
+<pre><code>-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (scrollView.contentOffset.y &gt; triggerToHideY) {
+        if (!self.isHide) {
+            self.isHide = YES;
+            [UIView animateWithDuration:0.3 animations:^{
+                self.hideView.center = CGPointMake(self.hideView.center.x, -self.hideView.center.y);
+                self.innerScrollview.frame = CGRectMake(0, 0, UIScreenWidth, UIScreenHeight);
+            }];
+        }
+    }
+    else if(scrollView.contentOffset.y &lt; triggerToHideY){
+        if (self.isHide) {
+            self.isHide = NO;
+            [UIView animateWithDuration:0.3 animations:^{
+                self.hideView.center = CGPointMake(self.hideView.center.x, -(self.hideView.center.y));
+                self.innerScrollview.frame = CGRectMake(0, titleHeight, UIScreenWidth, UIScreenHeight);
+            }];
+        }
+    }
+}
+</code></pre><h3 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h3><p>这就是大概的效果图，对于动画的一些设置可以调整一下(动画时间啊，动画时间函数什么的)，可能会有更好的效果。</p>
+<div style="width:100%" align="center"><br>    <image src="http://7xqqkw.com1.z0.glb.clouddn.com/scrollview.gif" style="width:250px"></image></div>
+
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>&emsp;&emsp;工程的源代码已经上传到了Github上。由于本项目是使用了cocoapods进行第三方框架的引入，所以如果有问题的话可以考虑<code>pod install</code>或<code>pod update</code>一下。如果还有别的问题可以联系我。  </p>
+<p>&emsp;&emsp;项目为iOSDemon中的iOS_UI_study目录下的UIScrollviewAndHideView工程。<br>【<a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">传送门-iOSDemon-iOS_UI_study-UIScrollviewAndHideView</a>】</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/09/Objective-C-Runtime-学习-三/" rel="next" title="Objective-C Runtime 学习(三)">
+                <i class="fa fa-chevron-left"></i> Objective-C Runtime 学习(三)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/12/iOS-UIApplicationDelegate学习笔记/" rel="prev" title="iOS-UIApplicationDelegate学习笔记">
+                iOS-UIApplicationDelegate学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/"
+           data-title="iOS-UIScrollview滑动时标题栏自动隐藏和显示效果" data-url="http://lysongzi.com/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#布局"><span class="nav-number">1.</span> <span class="nav-text">布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常量设置"><span class="nav-number">1.1.</span> <span class="nav-text">常量设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图初始化"><span class="nav-number">1.2.</span> <span class="nav-text">视图初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图约束"><span class="nav-number">1.3.</span> <span class="nav-text">视图约束</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动隐藏和显示"><span class="nav-number">2.</span> <span class="nav-text">自动隐藏和显示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#效果图"><span class="nav-number">2.1.</span> <span class="nav-text">效果图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">3.</span> <span class="nav-text">源代码</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

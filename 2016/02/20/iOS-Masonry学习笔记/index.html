@@ -1,0 +1,845 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="lysongzi, iOS" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Masonry目前是Github上很热门的iOS开源项目之一。它是一个轻量级的布局框架，比AutoLayout使用起来更简便。它还有自己的一套DSL，提供了链式的方式来描述传统的NSLayoutConstraint布局。我们将会看到使用Masonry的代码会更简介紧凑，拥有更好的可读性，并且它支持iOS和Mac OS X平台。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-Masonry学习笔记">
+<meta property="og:url" content="http://lysongzi.com/2016/02/20/iOS-Masonry学习笔记/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="Masonry目前是Github上很热门的iOS开源项目之一。它是一个轻量级的布局框架，比AutoLayout使用起来更简便。它还有自己的一套DSL，提供了链式的方式来描述传统的NSLayoutConstraint布局。我们将会看到使用Masonry的代码会更简介紧凑，拥有更好的可读性，并且它支持iOS和Mac OS X平台。">
+<meta property="og:updated_time" content="2016-02-20T10:21:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-Masonry学习笔记">
+<meta name="twitter:description" content="Masonry目前是Github上很热门的iOS开源项目之一。它是一个轻量级的布局框架，比AutoLayout使用起来更简便。它还有自己的一套DSL，提供了链式的方式来描述传统的NSLayoutConstraint布局。我们将会看到使用Masonry的代码会更简介紧凑，拥有更好的可读性，并且它支持iOS和Mac OS X平台。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/02/20/iOS-Masonry学习笔记/"/>
+
+  <title> iOS-Masonry学习笔记 | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-Masonry学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-20T18:19:09+08:00" content="2016-02-20">
+              2016-02-20
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/20/iOS-Masonry学习笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/20/iOS-Masonry学习笔记/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/02/20/iOS-Masonry学习笔记/" class="leancloud_visitors" data-flag-title="iOS-Masonry学习笔记">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Masonry目前是Github上很热门的iOS开源项目之一。它是一个轻量级的布局框架，比<code>AutoLayout</code>使用起来更简便。它还有自己的一套DSL，提供了链式的方式来描述传统的<code>NSLayoutConstraint</code>布局。我们将会看到使用Masonry的代码会更简介紧凑，拥有更好的可读性，并且它支持<code>iOS</code>和<code>Mac OS X</code>平台。<br><a id="more"></a></p>
+<h2 id="NSLayoutConstraint的缺点"><a href="#NSLayoutConstraint的缺点" class="headerlink" title="NSLayoutConstraint的缺点"></a>NSLayoutConstraint的缺点</h2><p>&emsp;&emsp;之前在对AutoLayout进行了解的时候已经对NSLayoutConstraint进行了简单的应用说明，传送门——<a href="http://lysongzi.com/2016/02/12/iOS-AutoLayout布局学习/">iOS-AutoLayout布局学习</a>。我们会发现虽然它可以很灵活的进行约束布局，但是给某个视图创建特定的约束的代码量是比较冗长的。<br>&emsp;&emsp;我们可以想象到在实际项目中视图会很多，此时光是给视图进行约束的代码量就会很大，这样大大降低了代码的可读性，增加了代码维护的成本。可能我们会想到使用VFS来减少代码量，但是这种做法使的我们难以对视图的动画进行控制。</p>
+<h2 id="初遇-Maker"><a href="#初遇-Maker" class="headerlink" title="初遇 Maker"></a>初遇 Maker</h2><p>&emsp;&emsp;首先先来个简单的小例子来使用一下<code>MASConstraintMaker</code>，首先要实现的效果就是一个视图相对父视图四周边距均为50。想象一下如果使用<code>NSLayoutConstraint</code>我们将会创建四个边界的约束，然后添加到父视图中。然而我们现在使用了Masonry后则会大大简化代码。</p>
+<pre><code>UIEdgeInsets padding = UIEdgeInsetsMake(50, 50, 50, 50);
+//添加约束
+[self.view1 mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.top.equalTo(self.view.mas_top).with.offset(padding.top);
+    make.left.equalTo(self.view.mas_left).with.offset(padding.left);
+    make.bottom.equalTo(self.view.mas_bottom).with.offset(-padding.bottom);
+    make.right.equalTo(self.view.mas_right).with.offset(-padding.right);
+}];
+</code></pre><p>&emsp;&emsp;从代码中我们可以看到，通过MASConstraintMaker我们可以简单的创建针对四边边距的约束，而且语义比较容易理解，这种链式的表达方式也正式Masonry的特色之一。其实还有更简单的方法来设置边距。</p>
+<pre><code>[self.view1 mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.edges.equalTo(self.view).with.insets(padding);
+}];
+</code></pre><p><image src="http://7xqqkw.com1.z0.glb.clouddn.com/2016022001.png" style="width:250px"></image></p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><blockquote>
+<p><code>.equalTo</code> = NSLayoutRelationEqual   </p>
+<p><code>.lessThanOrEqualTo</code> = NSLayoutRelationLessThanOrEqual </p>
+<p><code>.greaterThanOrEqualTo</code> = NSLayoutRelationGreaterThanOrEqual  </p>
+</blockquote>
+<p>以下是两种约束方式的对应属性表格。</p>
+<image src="http://7xqqkw.com1.z0.glb.clouddn.com/2016022002.png" style="width:350px">
+
+<h2 id="更多使用"><a href="#更多使用" class="headerlink" title="更多使用"></a>更多使用</h2><h3 id="Edge"><a href="#Edge" class="headerlink" title="Edge"></a>Edge</h3><p>&emsp;&emsp;我们来在以上view1的基础上再添加一个子视图view2，来简单介绍一下MASConstraintMaker相关属性的约束方式。<br>&emsp;&emsp;如果我们想简单的让某个视图的某个属性的约束等于另一个属性，则可以这样设置。比如我们这你将设置view2的边距属性和view1一样。然后我们就会看到view2完全覆盖在view1之上。</p>
+<pre><code>[self.view2 mas_makeConstraints:^(MASConstraintMaker *make) {
+    //edge的设置
+    make.edges.equalTo(self.view1);
+    //这个设置则会使得view2距离view1的边距为10
+    //make.edges.equalTo(self.view1).insets(UIEdgeInsetsMake(10, 10, 10, 10));
+}];
+</code></pre><h3 id="Size"><a href="#Size" class="headerlink" title="Size"></a>Size</h3><p>在实际应用中我们可能还是涉及设定某个视图的大小，那么就需要约束该视图的size属性了。但是需要注意的是只设置视图的size属性的话只能设置该视图的大小而已，如果还要约束它和其他视图的相对位置则需要其他的属性约束，一般结合edge，center等属性一起设置。<br>比如我们先设置view2为一个size等于view1的视图。效果如图。</p>
+<pre><code>[self.view2 mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.size.equalTo(self.view1);
+    //这个设置为view2大小在view1大小基础上宽和高各减100
+    //make.size.equalTo(self.view1).sizeOffset(CGSizeMake(-100, -100));
+}];
+</code></pre><p>我们可以从图中看出，view2只是size大小等于view1而已，而位置则是没有约束的。</p>
+<image src="http://7xqqkw.com1.z0.glb.clouddn.com/2016022003.png" style="width:250px">
+
+<h3 id="Center"><a href="#Center" class="headerlink" title="Center"></a>Center</h3><p>center属性是用来设置子视图相对父视图居中的。当然还可以在居中的基础上进行一定的偏移。只设置center属性时候是不足以约束视图的，我们可以想象一下我们只是说明了子视图相对父视图是居中的，但没有足够的条件计算子视图的宽度和高度，所以往往也是要结合size和edge等属性一起设置的。<br>接下来我们给出一个例子即让一个宽高比view1各小100的view2子视图在父视图view1中居中显示。</p>
+<pre><code>[self.view2 mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.size.equalTo(self.view1).sizeOffset(CGSizeMake(-100, -100));
+    make.center.equalTo(self.view1);
+    //这个设置说明view2相对于view1的中心向左上方x,y方向偏移20
+    //make.center.equalTo(self.view1).centerOffset(CGPointMake(-20, -20));
+}];
+</code></pre><p>效果如下图。</p>
+<image src="http://7xqqkw.com1.z0.glb.clouddn.com/2016022004.png" style="width:250px">
+
+<h3 id="链式属性设置"><a href="#链式属性设置" class="headerlink" title="链式属性设置"></a>链式属性设置</h3><p>链式属性设置是Masonry的一个特色，使用链式属性的话可以更方便的设置某些拥有相等值的属性。比如下面的例子就设置视图四边的边距，而对于特定的top属性由于它与其他并不同可以单独设置。而其他三边值是相等的我们没必要写三行代码来进行设置。其中的<code>and</code>其实现实际只是返回对象本身而已，在这里起了语义连贯的作业，也是很好玩的样子，啊哈哈哈哈哈。</p>
+<pre><code>make.left.bottom.and.right.equalTo(self.view1);
+make.top.equalTo(@50);
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Masonry的使用给我们极大的简化了代码量，并且其较好的语义也使得它很容易上手。在后续的学习中也会更深入的学习它的实现原理和更高级的使用方法。大家可以参考这篇博客——<a href="http://www.cocoachina.com/ios/20141219/10702.html" target="_blank" rel="external">Masonry介绍与使用实践：快速上手Autolayout</a>。</p>
+<h2 id="源代码"><a href="#源代码" class="headerlink" title="源代码"></a>源代码</h2><p>在项目中使用了cocoapods进行类库管理，所以clone了github上的源码之后还需要执行<code>pod install</code>或<code>pod update</code>来下载依赖库。<br>Github项目地址:<a href="https://github.com/lysongzi/iOS-Demon" target="_blank" rel="external">Github-iOS_UI_study-MasonryDemon</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>1.<a href="https://github.com/SnapKit/Masonry" target="_blank" rel="external">Github主页 – SnapKit/Masonry</a><br>2.<a href="http://www.cocoachina.com/ios/20141219/10702.html" target="_blank" rel="external">Masonry介绍与使用实践：快速上手Autolayout</a></p>
+</image></image></image>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/12/iOS-AutoLayout布局学习/" rel="next" title="iOS-AutoLayout布局学习">
+                <i class="fa fa-chevron-left"></i> iOS-AutoLayout布局学习
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/22/iOS-多线程编程学习-一/" rel="prev" title="iOS-多线程编程学习(一)">
+                iOS-多线程编程学习(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/20/iOS-Masonry学习笔记/"
+           data-title="iOS-Masonry学习笔记" data-url="http://lysongzi.com/2016/02/20/iOS-Masonry学习笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSLayoutConstraint的缺点"><span class="nav-number">1.</span> <span class="nav-text">NSLayoutConstraint的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初遇-Maker"><span class="nav-number">2.</span> <span class="nav-text">初遇 Maker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对比"><span class="nav-number">3.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多使用"><span class="nav-number">4.</span> <span class="nav-text">更多使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Edge"><span class="nav-number">4.1.</span> <span class="nav-text">Edge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Size"><span class="nav-number">4.2.</span> <span class="nav-text">Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Center"><span class="nav-number">4.3.</span> <span class="nav-text">Center</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链式属性设置"><span class="nav-number">4.4.</span> <span class="nav-text">链式属性设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源代码"><span class="nav-number">6.</span> <span class="nav-text">源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

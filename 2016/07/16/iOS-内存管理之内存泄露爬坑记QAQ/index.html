@@ -1,0 +1,911 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,内存管理,内存泄露," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
+&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-内存管理之内存泄露爬坑记QAQ">
+<meta property="og:url" content="http://lysongzi.com/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
+&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
+<meta property="og:image" content="http://img.blog.csdn.net/20160716154700748">
+<meta property="og:image" content="http://img.blog.csdn.net/20160716154826851">
+<meta property="og:updated_time" content="2016-07-16T16:10:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-内存管理之内存泄露爬坑记QAQ">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
+&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160716154700748">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/"/>
+
+  <title> iOS-内存管理之内存泄露爬坑记QAQ | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-内存管理之内存泄露爬坑记QAQ
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-16T23:56:59+08:00" content="2016-07-16">
+              2016-07-16
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/" class="leancloud_visitors" data-flag-title="iOS-内存管理之内存泄露爬坑记QAQ">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。</p>
+<p>&emsp;&emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几年前）的代码，QAQ，而这些代码会有很多实现采用的是MRC的方式，所以项目中就经常可以见到混合着ARC和MRC这两种不同内存管理模式的代码。然后ARC文件的代码可能会调用MRC模式实现的代码，当然也还有反过来的情况。</p>
+<p>&emsp;&emsp;除了ARC和MRC混合，有时候还有很多底层库是使用C/C++实现的，而且这些库中也涉及一些OC方面的库类调用，这样的情况就又复杂一点了。 = =，所以C/C++的内存管理也是需要有所了解滴~~~</p>
+<p>&emsp;&emsp;QAQ，接下来在最后部分会简单列举一些碰到过的发生内存泄漏的情况吧。最后大家会发现这些问题都很简单，但熟话说的好，潜水淹死人啊！<br><a id="more"></a></p>
+<h3 id="一、检测工具介绍"><a href="#一、检测工具介绍" class="headerlink" title="一、检测工具介绍"></a>一、检测工具介绍</h3><h4 id="1-1-Instrument-—-Leaks，Allocations，Analyze"><a href="#1-1-Instrument-—-Leaks，Allocations，Analyze" class="headerlink" title="1.1 Instrument — Leaks，Allocations，Analyze"></a>1.1 Instrument — Leaks，Allocations，Analyze</h4><p>&emsp;&emsp;我用到的检测内存泄露的工具主要是Xcode中集成的Leaks组件，这个组件的检测准确率还是比较高的（毕竟水果家亲儿子），可以查看到很多比如说是泄露大小，泄露产生的地方及其堆栈信息等。但是这里的“泄露产生的地方”并不一定可以定位到具体发生泄漏的某一句代码，而是会标出发生泄漏的对象初始化分配内存的地方，然后需要具体去分析该对象来查处泄漏的原因。   </p>
+<blockquote>
+<p>参考资料：  </p>
+<ol>
+<li>【<a href="http://www.jianshu.com/p/c0aa12d91f05" target="_blank" rel="external">使用Instruments定位iOS应用的Memory Leaks</a>】   </li>
+<li>【<a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Instrument-Leaks.html#//apple_ref/doc/uid/TP40004652-CH60-SW1" target="_blank" rel="external">Leaks Instrument</a>】   </li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;Allocations工具是一个跟踪由应用程序分配的对象内存的工具。一般就是用来在疑似内存泄露的地方，通过反复操作，查看某些对象内存是否有被正常的释放，从而得知是否发生内存泄露。（= =。这里我并没使用到这个，这算是以前比较古老的检测内存泄漏的方式了，不过某些情况下也还是挺有用。）   </p>
+<blockquote>
+<p>参考资料：     </p>
+<ol>
+<li>【<a href="https://blog.leancloud.cn/2835/" target="_blank" rel="external">iOS性能优化：Instruments 工具的救命三招</a>】   </li>
+<li>【<a href="http://www.cnblogs.com/ym123/p/4316328.html" target="_blank" rel="external">IOS性能调优系列：使用Allocation动态分析内存使用情况</a>】</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;Analyze是一款静态分析代码的工具。它可以发现一些逻辑错误，内存泄漏和声明错误（未使用变量）等。这里可以发现的一些内存泄漏问题主要是一些常见的循环引用，CF库对象未release等相对简单的问题，通常是在进行其他方式检测之前就使用的方式，把一些简单的问题先发现并处理了。</p>
+<blockquote>
+<p>参考资料：    </p>
+<ol>
+<li>【<a href="http://www.cnblogs.com/ym123/p/4309400.html" target="_blank" rel="external">IOS性能调优系列：Analyze静态分析</a>】   </li>
+<li>【<a href="http://blog.csdn.net/xdrt81y/article/details/11036317" target="_blank" rel="external">IPhone开发工具篇-利用xcode profile和analyze进行性能优化</a>】</li>
+</ol>
+</blockquote>
+<h4 id="1-2-内存检测组件"><a href="#1-2-内存检测组件" class="headerlink" title="1.2 内存检测组件"></a>1.2 内存检测组件</h4><p>&emsp;&emsp;此外还有一些“植入”项目中的内存检测组件，比如说Facebook iOS 内存检测三剑客(FBAllocationTracker/FBMemoryProfiler/FBRetainCycleDetector)，MSLeakHunter，<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">MLeaksFinder</a>，<a href="https://gold.xitu.io/entry/577ba7d9a633bd005be0d0fd" target="_blank" rel="external">PLeakSniffer</a>等等。</p>
+<p>&emsp;&emsp;这些组件的实现原理都是大同小异的。主要就是灵活运用了OC中的Rumtime机制，以及各种OC对象生命周期管理相关的特性。这些组件为了实现对OC对象的内存监控，其本质就是在这些对象被分配和释放的时机进行监测，结合系统对这些对象生命周期管理方法实现是否发生内存泄露检测的目的。</p>
+<p>&emsp;&emsp;比如说需要监测一个UIViewController类型的对象，就可以联想到iOS中VC的生命周期管理和UINavigationController有很大关系，因为后者在iOS应用者常常被用来管理大量VC的跳转控制。所以就可以考虑通过监控UINavigationController的navigation stack来达到检测VC是否发生内存泄露的目的。（一般以下这些方法都会被hook）</p>
+<p><img src="http://img.blog.csdn.net/20160716154700748" alt="这里写图片描述"></p>
+<p>&emsp;&emsp;再比如说常见的NSObject对象，其alloc和dealloc方法就是对象生命周期中很重要的两个方法，分别是分配内存资源和释放内存资源时会被调用的方法。然后就可以考虑通过method swizzing方法替换alloc和dealloc这两个方法的实现，这样就可以获得对象内存分配的一些信息。</p>
+<p><img src="http://img.blog.csdn.net/20160716154826851" alt="这里写图片描述"></p>
+<p>&emsp;&emsp;以下再给出个检测VC内存泄漏的原理：</p>
+<blockquote>
+<ol>
+<li><p>如何判断VC是否还在内存驻留？<br>Tips：利用ARC中weak指针指向的对象在对象释放时会自动置为nil的特性来检测VC是否在内存驻留。</p>
+</li>
+<li><p>在什么时机检测VC是否发生内存泄露？<br>Tips：通过监控UINavigationController的navigation stack，可以判断一个VC的生命周期的开始和结束。就是当VC从navigation stack移除且VC的viewDidDisappear方法执行时，可以认为一个VC的生命周期即将结束。这时候就可以创建一个指向该VC的weak指针，并初始化一个定时器对VC进行延时扫描，最后通过1中的方法判断VC是否还驻留在内存从而得出VC是否发生内存泄露的结论。</p>
+</li>
+</ol>
+</blockquote>
+<p><br></p>
+<h3 id="二、应用内存"><a href="#二、应用内存" class="headerlink" title="二、应用内存"></a>二、应用内存</h3><p>从苹果的开发者文档里可以看到，一个 app 的内存分三类：</p>
+<ol>
+<li><p><code>Leaked memory</code>: Memory unreferenced by your application that cannot be used again or freed (also detectable by using the Leaks instrument).</p>
+</li>
+<li><p><code>Abandoned memory</code>: Memory still referenced by your application that has no useful purpose.</p>
+</li>
+<li><p><code>Cached memory</code>: Memory still referenced by your application that might be used again for better performance.</p>
+</li>
+</ol>
+<p>&emsp;&emsp;其中 Leaked memory 和 Abandoned memory 都属于应该释放而没释放的内存，都是内存泄露，而 Leaks 工具只负责检测 Leaked memory，而不管 Abandoned memory。在 MRC 时代 Leaked memory 很常见，因为很容易忘了调用 release，但在 ARC 时代更常见的内存泄露是循环引用导致的 Abandoned memory，Leaks 工具查不出这类内存泄露，应用有限。（引用出处【<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">传送门</a>】）</p>
+<p><br></p>
+<h3 id="三、实践"><a href="#三、实践" class="headerlink" title="三、实践"></a>三、实践</h3><h4 id="3-1-对象内存管理"><a href="#3-1-对象内存管理" class="headerlink" title="3.1 对象内存管理"></a>3.1 对象内存管理</h4><p><br></p>
+<ol>
+<li>在MRC模式下，通过new, copy, alloc方式创建的对象，记得release。一般在delloc中进行释放操作。当然局部内产生的也要在局部内进行释放。</li>
+</ol>
+<blockquote>
+<p>点评：呵呵，在实践中发现最多的问题就是这个。尤其是在ARC和MRC都有的项目中。= =。我猜测原因之一可能是后面的代码修改者没意识到当前修改的文件是MRC模式的，所以在新增一些属性或成员变量后，没有在dealloc方法或对象使用完毕后及时的释放资源。</p>
+</blockquote>
+<p><br></p>
+<ol>
+<li>在MRC模式下，发送了retain消息，记得也要发送release消息。并且在一个对象发送retain消息之前，也要考虑是否要release原来的对象。</li>
+</ol>
+<p>碰到的一个栗子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@interface classA&#123;</div><div class="line">	NSString *_str;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)functionA&#123;</div><div class="line">	//正确的方式是这里要有: [_str release];</div><div class="line">	_str = [[NSString stringWithFormat:@&quot;%d&quot;, @(213)] retain];</div><div class="line">	</div><div class="line">	//后续代码...</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)functionB&#123;</div><div class="line">	//正确的方式是这里要有: [_str release];</div><div class="line">	_str = [[NSString stringWithFormat:@&quot;%d&quot;, @(213)] retain];</div><div class="line">//后续代码...</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Tips：这里存在一个问题就是functionA中对一个对象发送了retain消息，如果这时候又调用了functionB方法，str变量被重新赋值。此时如果没有先对str发送release消息的话，则会导致functionA中引用的对象发生内存泄露。<br>对于一般情况下使用的局部变量都会记得发送retain后发送release，然而在栗子中那种情况下，成员变量可能在不同方法中被重新赋值的时候，就要注意了！</p>
+</blockquote>
+<p><br></p>
+<ol>
+<li>不论是MRC还是ARC情况下，使用Core Foundation框架（C语言实现的框架，其可以和Cocoa Foundation库中的对象进行类型转换）创建的对象需要手动进行内存管理。即需要手动调用CFRetain和CFRelease来管理对象内存。</li>
+</ol>
+<blockquote>
+<p>Tips：这种情况没啥好说的了，就是记得CFRetain、CFRelease和retain、release一样要成对出现~</p>
+</blockquote>
+<p>&emsp;&emsp;再多说一点就是<code>Core Foundation</code>框架和<code>Cocoa Foundation</code>对象指针转换的内容。<code>Cocoa Foundation</code>指针与<code>Core Foundation</code>指针转换，需要考虑的是所指向对象所有权的归属。ARC提供了3个修饰符来管理。【参考资料：<a href="http://blog.csdn.net/annkey123/article/details/8271867" target="_blank" rel="external"> IOS之Core Foundation框架和Cocoa Foundation框架区别 </a>、<a href="https://developer.apple.com/library/ios/documentation/CoreFoundation/Reference/CoreFoundation_Collection/index.html" target="_blank" rel="external">Core Foundation Framework Reference</a>】</p>
+<ol>
+<li><p><code>__bridge</code>，什么也不做，仅仅是转换。此种情况下：<br>(1). 从Cocoa转换到Core，需要人工CFRetain，否则，Cocoa指针释放后， 传出去的指针则无效。</p>
+<p>(2). 从Core转换到Cocoa，需要人工CFRelease，否则，Cocoa指针释放后，对象引用计数仍为1，不会被销毁。</p>
+</li>
+<li><p><code>__bridge_retained</code>，转换后自动调用CFRetain，即帮助自动解决上述(1)的情形。</p>
+</li>
+<li><p><code>__bridge_transfer</code>，转换后自动调用CFRelease，即帮助自动解决上述(2)的情形。</p>
+</li>
+</ol>
+<p><br></p>
+<ol>
+<li>使用NSAutoreleasePool创建的自动释放池，一定要确保其发送drain或release消息。这样创建的自动释放池对象才会被释放，同时被加入自动释放池的对象才能收到release消息，避免内存泄露。</li>
+</ol>
+<p>碰到的栗子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">- (void)functionA&#123;</div><div class="line">	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];</div><div class="line">	NSString *str = [[NSString alloc] initWithFormat:@&quot;%d&quot;, @(213)];</div><div class="line">	[str release];</div><div class="line">	//执行各种代码...</div><div class="line">	</div><div class="line">	if (...)&#123;</div><div class="line">		//执行各种代码...</div><div class="line">		//问题就在这里：return 之前没有释放自动释放池！！！</div><div class="line">		//正确的做法，加上: [pool release];</div><div class="line">		return;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	[pool release];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Tips：栗子中的案例虽然看起来是个很逗比的错误，不过在实战中已经发现两处了…所以如果是MRC方式下这样使用自动释放池时，记得也要对自动释放池发送drain或release操作。如果是使用ARC的话，则不推荐栗子中使用自动释放池的方式，而是下面这种方式了。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@autoreleasepool &#123;</div><div class="line">    // Code benefitting from a local autorelease pool.</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;既然说到自动释放池，那就顺便简单了解一下其实现原理，使用场景和一些注意事项吧。上面也有提到NSAutoreleasePool有两个方法drain和release，关于这两者的区别可以参考这些资料：【<a href="http://xyxdasnjss.iteye.com/blog/1831703" target="_blank" rel="external">NSAutoReleasePool使用中drain和release的区别</a>】【<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSAutoreleasePool_Class/#//apple_ref/occ/instm/NSAutoreleasePool/drain" target="_blank" rel="external">NSAutoreleasePool</a>】。此外，还发现了一篇讲解AutoReleasePool的比较好的文章，里面也有解释了AutoReleasePool释放时间，原理等等：【<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">黑幕背后的Autorelease</a>】。</p>
+<p><br></p>
+<ol>
+<li>函数返回的对象，是否加入自动释放池（延迟释放）。从内存管理的规范上来讲，如果一个函数需要返回一个对象，这个对象应该加入自动释放池中（”谁创建，谁释放”）？虽然说从某种角度来说，不加进自动释放池，而是由函数调用者负责该对象的释放也是可行的。如果函数返回的对象没有加入自动释放池，而函数调用者在外部又没有释放该对象，则就有可能造成内存泄露的现象。</li>
+</ol>
+<p>（1）OC中有一些对象有多种创建的方法，比如说NSString, NSArray, NSDictionary之类的（还有它们的可变类型）。这些类都提供了两种类型的创建方式，一种是成员函数initWithXXX，另一种则是类函数stringWithXXX, arrayWithXXX（或array）， dictionaryWithXXX(或dictionary)这些。<br>&emsp;&emsp;这些方法都是有区别的，第一种方式产生的对象需要手动release来释放内存，第二种方式产生的对象已经被加到autoreleasepool中，不需要手动release来释放内存。所以在项目中也要注意这些对象使用不同创建方式时所采用的不同的对象管理方法，针对这两种对象生成方式，也有很多讨论，大家自己看看吧哈哈哈哈哈。</p>
+<p>参考资料：    </p>
+<ol>
+<li><a href="http://stackoverflow.com/questions/3898974/stringwithformat-vs-initwithformat-on-nsstring" target="_blank" rel="external">stringWithFormat vs. initWithFormat on NSString</a>   </li>
+<li><a href="http://www.cnblogs.com/yjmyzz/archive/2011/02/25/1965338.html" target="_blank" rel="external">objective-C: NSString应该用initWithFormat? 还是 stringWithFormat?</a><br>3.<a href="http://stackoverflow.com/questions/5423211/difference-between-nsmutablearray-array-vs-nsmutablearray-alloc-init" target="_blank" rel="external">Difference between [NSMutableArray array] vs [[NSMutableArray alloc] init]</a></li>
+</ol>
+<p>（2）其中就碰到过Runtime方法中的<code>class_copyIvarList</code>，<code>class_copyMethodList</code>这些方法返回的对象没有被手动释放导致的内存泄漏。因为这些是C实现的函数，是需要手动对函数返回值进行free的，不然则会导致内存泄露。= =。这里也顺便提醒平时需要注意对于C/C++的实现，当见到malloc/new分配的对象，就应该检查该对象有没有对应的free/delete操作，这些地方往往也是内存泄漏产生的地方。<br><br></p>
+<h4 id="3-2-引用循环"><a href="#3-2-引用循环" class="headerlink" title="3.2 引用循环"></a>3.2 引用循环</h4><p>&emsp;&emsp;这是无论在MRC还是ARC下都存在的一种导致内存泄露的情况，尤其是在ARC中，如果发生内存泄漏，其一般都会是罪魁祸首。= =。而且个人觉得引用循环这种问题是最难发现和分析的！项目很大的时候，模块间会很复杂，相互间依赖就很多，一不小心就很容易产生强引用循环这种现象。尤其是在使用到block的时候，更要注意适当处理以避免强引用循环的发生。</p>
+<p>后续有待更新。。。。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/内存管理/" rel="tag">#内存管理</a>
+          
+            <a href="/tags/内存泄露/" rel="tag">#内存泄露</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/09/Google-protocol-buffer-使用和原理浅析-And-进阶使用方式之PbCodec/" rel="next" title="Google protocol buffer 使用和原理浅析 - PbCodec介绍">
+                <i class="fa fa-chevron-left"></i> Google protocol buffer 使用和原理浅析 - PbCodec介绍
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/"
+           data-title="iOS-内存管理之内存泄露爬坑记QAQ" data-url="http://lysongzi.com/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、检测工具介绍"><span class="nav-number">1.</span> <span class="nav-text">一、检测工具介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Instrument-—-Leaks，Allocations，Analyze"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Instrument — Leaks，Allocations，Analyze</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-内存检测组件"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 内存检测组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、应用内存"><span class="nav-number">2.</span> <span class="nav-text">二、应用内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、实践"><span class="nav-number">3.</span> <span class="nav-text">三、实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-对象内存管理"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 对象内存管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-引用循环"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 引用循环</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

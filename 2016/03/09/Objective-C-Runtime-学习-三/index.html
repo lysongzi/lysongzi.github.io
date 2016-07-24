@@ -1,0 +1,866 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS,runtime," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+本片包括运用runtime机制实现对类的持久化，类的数据转化，以及动态给类增加方法等内容。更多内容可以参考前两篇的基础内容。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C Runtime 学习(三)">
+<meta property="og:url" content="http://lysongzi.com/2016/03/09/Objective-C-Runtime-学习-三/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+本片包括运用runtime机制实现对类的持久化，类的数据转化，以及动态给类增加方法等内容。更多内容可以参考前两篇的基础内容。">
+<meta property="og:image" content="http://img.blog.csdn.net/20160307165530629">
+<meta property="og:image" content="http://img.blog.csdn.net/20160307165639232">
+<meta property="og:image" content="http://img.blog.csdn.net/20160307165719474">
+<meta property="og:image" content="http://img.blog.csdn.net/20160307165814437">
+<meta property="og:updated_time" content="2016-03-09T11:18:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C Runtime 学习(三)">
+<meta name="twitter:description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+本片包括运用runtime机制实现对类的持久化，类的数据转化，以及动态给类增加方法等内容。更多内容可以参考前两篇的基础内容。">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160307165530629">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/03/09/Objective-C-Runtime-学习-三/"/>
+
+  <title> Objective-C Runtime 学习(三) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Objective-C Runtime 学习(三)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-09T19:12:31+08:00" content="2016-03-09">
+              2016-03-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/09/Objective-C-Runtime-学习-三/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/09/Objective-C-Runtime-学习-三/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/03/09/Objective-C-Runtime-学习-三/" class="leancloud_visitors" data-flag-title="Objective-C Runtime 学习(三)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>来源：ian（@ianisme）<br>链接：<a href="http://www.ianisme.com/ios/2019.html" target="_blank" rel="external">http://www.ianisme.com/ios/2019.html</a></p>
+</blockquote>
+<p>本片包括运用runtime机制实现对类的持久化，类的数据转化，以及动态给类增加方法等内容。更多内容可以参考前两篇的基础内容。</p>
+<a id="more"></a>
+<h2 id="类的归档篇"><a href="#类的归档篇" class="headerlink" title="类的归档篇"></a>类的归档篇</h2><p>苍老师的资料总要整理一下吧！</p>
+<blockquote>
+<p>创建People.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">@interface People : NSObject &lt;NSCoding&gt;</div><div class="line"> </div><div class="line">@property (nonatomic, copy) NSString *name; // 姓名</div><div class="line">@property (nonatomic, strong) NSNumber *age; // 年龄</div><div class="line">@property (nonatomic, copy) NSString *occupation; // 职业</div><div class="line">@property (nonatomic, copy) NSString *nationality; // 国籍</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>People.m<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">@implementation People</div><div class="line"> </div><div class="line">- (void)encodeWithCoder:(NSCoder *)aCoder &#123;</div><div class="line">    unsigned int count = 0;</div><div class="line">    Ivar *ivars = class_copyIvarList([People class], &amp;count);</div><div class="line">    for (NSUInteger i = 0; i &lt; count; i ++) &#123;</div><div class="line">        Ivar ivar = ivars[i];</div><div class="line">        const char *name = ivar_getName(ivar);</div><div class="line">        NSString *key = [NSString stringWithUTF8String:name];</div><div class="line">        id value = [self valueForKey:key];</div><div class="line">        [aCoder encodeObject:value forKey:key];</div><div class="line">    &#125;</div><div class="line">    free(ivars);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (id)initWithCoder:(NSCoder *)aDecoder &#123;</div><div class="line">    self = [super init];</div><div class="line">    if (self) &#123;</div><div class="line">        unsigned int count = 0;</div><div class="line">        Ivar *ivars = class_copyIvarList([People class], &amp;count);</div><div class="line">        for (NSUInteger i = 0; i &lt; count; i ++) &#123;</div><div class="line">            Ivar ivar = ivars[i];</div><div class="line">            const char *name = ivar_getName(ivar);</div><div class="line">            NSString *key = [NSString stringWithUTF8String:name];</div><div class="line">            id value = [aDecoder decodeObjectForKey:key];</div><div class="line">            [self setValue:value forKey:key];</div><div class="line">        &#125;</div><div class="line">        free(ivars);</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<h2 id="类的转换篇"><a href="#类的转换篇" class="headerlink" title="类的转换篇"></a>类的转换篇</h2><p>服务器返回了大量苍老师的数据，手机端这边接收后如何去转换呢？当然是要将JSON转换为Model啦！</p>
+<p>相信平时你们的项目中也用到过这些三方库，下面我们去了解下runtime实现JSON和Model互转。</p>
+<blockquote>
+<p>创建People.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">@interface People : NSObject</div><div class="line"> </div><div class="line">@property (nonatomic, copy) NSString *name; // 姓名</div><div class="line">@property (nonatomic, strong) NSNumber *age; // 年龄</div><div class="line">@property (nonatomic, copy) NSString *occupation; // 职业</div><div class="line">@property (nonatomic, copy) NSString *nationality; // 国籍</div><div class="line"> </div><div class="line">// 生成model</div><div class="line">- (instancetype)initWithDictionary:(NSDictionary *)dictionary;</div><div class="line"> </div><div class="line">// 转换成字典</div><div class="line">- (NSDictionary *)covertToDictionary;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>People.m的代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div></pre></td><td class="code"><pre><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">@implementation People</div><div class="line"> </div><div class="line">- (instancetype)initWithDictionary:(NSDictionary *)dictionary</div><div class="line">&#123;</div><div class="line">    self = [super init];</div><div class="line"> </div><div class="line">    if (self) &#123;</div><div class="line">        for (NSString *key in dictionary.allKeys) &#123;</div><div class="line">            id value = dictionary[key];</div><div class="line"> </div><div class="line">            SEL setter = [self propertySetterByKey:key];</div><div class="line">            if (setter) &#123;</div><div class="line">                // 这里还可以使用NSInvocation或者method_invoke，不再继续深究了，有兴趣google。</div><div class="line">                ((void (*)(id, SEL, id))objc_msgSend)(self, setter, value);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (NSDictionary *)covertToDictionary</div><div class="line">&#123;</div><div class="line">    unsigned int count = 0;</div><div class="line">    objc_property_t *properties = class_copyPropertyList([self class], &amp;count);</div><div class="line"> </div><div class="line">    if (count != 0) &#123;</div><div class="line">        NSMutableDictionary *resultDict = [&lt;a href=&quot;http://www.jobbole.com/members/www821839432&quot;&gt;@&#123;&#125;&lt;/a&gt; mutableCopy];</div><div class="line"> </div><div class="line">        for (NSUInteger i = 0; i &lt; count; i ++) &#123;</div><div class="line">            const void *propertyName = property_getName(properties[i]);</div><div class="line">            NSString *name = [NSString stringWithUTF8String:propertyName];</div><div class="line"> </div><div class="line">            SEL getter = [self propertyGetterByKey:name];</div><div class="line">            if (getter) &#123;</div><div class="line">                id value = ((id (*)(id, SEL))objc_msgSend)(self, getter);</div><div class="line">                if (value) &#123;</div><div class="line">                    resultDict[name] = value;</div><div class="line">                &#125; else &#123;</div><div class="line">                    resultDict[name] = @&quot;字典的key对应的value不能为nil哦！&quot;;</div><div class="line">                &#125;</div><div class="line"> </div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"> </div><div class="line">        free(properties);</div><div class="line"> </div><div class="line">        return resultDict;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    free(properties);</div><div class="line"> </div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">#pragma mark - private methods</div><div class="line"> </div><div class="line">// 生成setter方法</div><div class="line">- (SEL)propertySetterByKey:(NSString *)key</div><div class="line">&#123;</div><div class="line">    // 首字母大写，你懂得</div><div class="line">    NSString *propertySetterName = [NSString stringWithFormat:@&quot;set%@:&quot;, key.capitalizedString];</div><div class="line"> </div><div class="line">    SEL setter = NSSelectorFromString(propertySetterName);</div><div class="line">    if ([self respondsToSelector:setter]) &#123;</div><div class="line">        return setter;</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 生成getter方法</div><div class="line">- (SEL)propertyGetterByKey:(NSString *)key</div><div class="line">&#123;</div><div class="line">    SEL getter = NSSelectorFromString(key);</div><div class="line">    if ([self respondsToSelector:getter]) &#123;</div><div class="line">        return getter;</div><div class="line">    &#125;</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>main.m中运行以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line"> </div><div class="line">        NSDictionary *dict = @&#123;</div><div class="line">                               @&quot;name&quot; : @&quot;苍井空&quot;,</div><div class="line">                               @&quot;age&quot;  : @18,</div><div class="line">                               @&quot;occupation&quot; : @&quot;老师&quot;,</div><div class="line">                               @&quot;nationality&quot; : @&quot;日本&quot;</div><div class="line">                               &#125;;</div><div class="line"> </div><div class="line">        // 字典转模型</div><div class="line">        People *cangTeacher = [[People alloc] initWithDictionary:dict];</div><div class="line">        NSLog(@&quot;热烈欢迎，从%@远道而来的%@岁的%@%@&quot;,cangTeacher.nationality,cangTeacher.age,cangTeacher.name,cangTeacher.occupation);</div><div class="line"> </div><div class="line">        // 模型转字典</div><div class="line">        NSDictionary *covertedDict = [cangTeacher covertToDictionary];</div><div class="line">        NSLog(@&quot;%@&quot;,covertedDict);</div><div class="line"> </div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后输出内容如下：<br><img src="http://img.blog.csdn.net/20160307165530629" alt="这里写图片描述"></p>
+<p>相信通过前面的学习，这些代码不用写过多的注释你也可以看懂了，我把假设是网络返回的苍老师的资料转化为了model，然后又将model转回字典。这是一个JSON转Model相互转换的一个思路，大家稍后运行Demo细细品味。</p>
+<h2 id="动态增加类的方法篇"><a href="#动态增加类的方法篇" class="headerlink" title="动态增加类的方法篇"></a>动态增加类的方法篇</h2><p>这个实例主要是验证一下上文《5.2 消息动态解析》</p>
+<p>第一首：</p>
+<p>添加sing实例方法，但是不提供方法的实现。验证当找不到方法的实现时，动态添加方法。<br>创建People.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">@interface People : NSObject</div><div class="line"> </div><div class="line">@property (nonatomic, copy) NSString *name;</div><div class="line"> </div><div class="line">- (void)sing;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>创建People.m<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">@implementation People</div><div class="line"> </div><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</div><div class="line">&#123;</div><div class="line">    // 我们没有给People类声明sing方法，我们这里动态添加方法</div><div class="line">    if ([NSStringFromSelector(sel) isEqualToString:@&quot;sing&quot;]) &#123;</div><div class="line">        class_addMethod(self, sel, (IMP)otherSing, &quot;v@:&quot;);</div><div class="line">        return YES;</div><div class="line">    &#125;</div><div class="line">    return [super resolveInstanceMethod:sel];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">void otherSing(id self, SEL cmd)</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;%@ 唱歌啦！&quot;,((People *)self).name);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在main.m中运行以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line"> </div><div class="line">        People *cangTeacher = [[People alloc] init];</div><div class="line">        cangTeacher.name = @&quot;苍老师&quot;;</div><div class="line">        [cangTeacher sing];</div><div class="line"> </div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>结果如下：<br><img src="http://img.blog.csdn.net/20160307165639232" alt="这里写图片描述"></p>
+<p>我们没有提供苍老师唱歌的方法实现，因此在调用此方法的时候，会调用resolveInstanceMethod方法，我们动态添加了方法。我们也可以返回No，继续向下传递。（此处请返回《5.2 消息动态解析》第一步品味下）</p>
+<p>第二首</p>
+<p>外面的小鸟在唱歌，但是苍老师的歌声盖过了小鸟，我们只能听到苍老师唱歌了。<br>这里我们不声明sing方法，将调用途中动态更换调用对象。<br>在第一首代码的基础上，创建Bird的model<br>Bird.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#import  &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">@interface Bird : NSObject</div><div class="line"> </div><div class="line">@property (nonatomic, copy) NSString *name;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>Bird.m<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">#import &quot;Bird.h&quot;</div><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">@implementation Bird</div><div class="line"> </div><div class="line">// 第一步：我们不动态添加方法，返回NO，进入第二步；</div><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</div><div class="line">&#123;</div><div class="line">    return NO;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第二部：我们不指定备选对象响应aSelector，进入第三步；</div><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第三步：返回方法选择器，然后进入第四部；</div><div class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;sing&quot;]) &#123;</div><div class="line">        return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    return [super methodSignatureForSelector:aSelector];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第四部：这步我们修改调用对象</div><div class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation</div><div class="line">&#123;</div><div class="line">    // 我们改变调用对象为People</div><div class="line">    People *cangTeacher = [[People alloc] init];</div><div class="line">    cangTeacher.name = @&quot;苍老师&quot;;</div><div class="line">    [anInvocation invokeWithTarget:cangTeacher];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>main.m运行代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">#import &quot;People.h&quot;</div><div class="line">#import &quot;Bird.h&quot;</div><div class="line"> </div><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line"> </div><div class="line">        Bird *bird = [[Bird alloc] init];</div><div class="line">        bird.name = @&quot;小小鸟&quot;;</div><div class="line"> </div><div class="line">        ((void (*)(id, SEL))objc_msgSend)((id)bird, @selector(sing));</div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果如下：<br><img src="http://img.blog.csdn.net/20160307165719474" alt="这里写图片描述"></p>
+<p>成功更换了对象，把对象更换为苍老师了。（此处请返回《5.2 消息动态解析》品味）</p>
+<p>第三首</p>
+<p>苍老师不想唱歌想跳舞了。<br>这里我是实现不提供声明，不修改调用对象，但是将sing方法修改为dance方法。<br>创建People.h<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">@interface People : NSObject</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>People.m<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">@implementation People</div><div class="line"> </div><div class="line">// 第一步：我们不动态添加方法，返回NO，进入第二步；</div><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</div><div class="line">&#123;</div><div class="line">    return NO;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第二部：我们不指定备选对象响应aSelector，进入第三步；</div><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    return nil;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第三步：返回方法选择器，然后进入第四部；</div><div class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;sing&quot;]) &#123;</div><div class="line">        return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    return [super methodSignatureForSelector:aSelector];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 第四部：这步我们修改调用方法</div><div class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation</div><div class="line">&#123;</div><div class="line">    [anInvocation setSelector:@selector(dance)];</div><div class="line">    // 这还要指定是哪个对象的方法</div><div class="line">    [anInvocation invokeWithTarget:self];</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 若forwardInvocation没有实现，则会调用此方法</div><div class="line">- (void)doesNotRecognizeSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;消息无法处理：%@&quot;, NSStringFromSelector(aSelector));</div><div class="line">&#125;</div><div class="line"> </div><div class="line">- (void)dance</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;跳舞！！！come on！&quot;);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>在main.m中运行如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">#import &lt;Foundation/Foundation.h&gt;</div><div class="line"> </div><div class="line">#if TARGET_IPHONE_SIMULATOR</div><div class="line">#import &lt;objc/objc-runtime.h&gt;</div><div class="line">#else</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">#import &lt;objc/message.h&gt;</div><div class="line">#endif</div><div class="line"> </div><div class="line">#import &quot;People.h&quot;</div><div class="line"> </div><div class="line">int main(int argc, const char * argv[]) &#123;</div><div class="line">    @autoreleasepool &#123;</div><div class="line"> </div><div class="line">        People *cangTeacher = [[People alloc] init];</div><div class="line"> </div><div class="line">        ((void(*)(id, SEL)) objc_msgSend)((id)cangTeacher, @selector(sing));</div><div class="line"> </div><div class="line">    &#125;</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>结果如图：<br><img src="http://img.blog.csdn.net/20160307165814437" alt="这里写图片描述"></p>
+<p>成功更换了方法，苍老师由唱歌改为跳舞了（此处请返回《5.2 消息动态解析》品味）</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>好吧，我承认我骗了你，当你读到这里你肯定花了不止1小时。都是我的错，不是因为你笨，之所以说1小时是为了让你有信心，有耐心继续下去。读到这里恭喜你已经在iOS开发的道路上又向前了一步！同时我也要感谢以下参考文献以及文章，是他们让我更好的理解了runtime，再次表示感谢！这篇文章断断续续写了将近一周的时间，您可以读到这里就是对我最大的鼓励，谢谢！</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+            <a href="/tags/runtime/" rel="tag">#runtime</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/09/Objective-C-Runtime-学习-二/" rel="next" title="Objective-C Runtime 学习(二)">
+                <i class="fa fa-chevron-left"></i> Objective-C Runtime 学习(二)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/11/iOS-UIScrollview滑动时标题栏自动隐藏和显示效果/" rel="prev" title="iOS-UIScrollview滑动时标题栏自动隐藏和显示效果">
+                iOS-UIScrollview滑动时标题栏自动隐藏和显示效果 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/09/Objective-C-Runtime-学习-三/"
+           data-title="Objective-C Runtime 学习(三)" data-url="http://lysongzi.com/2016/03/09/Objective-C-Runtime-学习-三/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类的归档篇"><span class="nav-number">1.</span> <span class="nav-text">类的归档篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类的转换篇"><span class="nav-number">2.</span> <span class="nav-text">类的转换篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态增加类的方法篇"><span class="nav-number">3.</span> <span class="nav-text">动态增加类的方法篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="今天开始看了Effective Objective-C 2.0的一部分内容，然后打算记录下来一些其中提到的比较有用的注意点，然后在之后的实际开发过程中能加以应用，写出更好的代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-Effective Objective-C 2.0 读书笔记(一)">
+<meta property="og:url" content="http://lysongzi.com/2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="今天开始看了Effective Objective-C 2.0的一部分内容，然后打算记录下来一些其中提到的比较有用的注意点，然后在之后的实际开发过程中能加以应用，写出更好的代码。">
+<meta property="og:updated_time" content="2016-04-23T08:09:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-Effective Objective-C 2.0 读书笔记(一)">
+<meta name="twitter:description" content="今天开始看了Effective Objective-C 2.0的一部分内容，然后打算记录下来一些其中提到的比较有用的注意点，然后在之后的实际开发过程中能加以应用，写出更好的代码。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/"/>
+
+  <title> iOS-Effective Objective-C 2.0 读书笔记(一) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS-Effective Objective-C 2.0 读书笔记(一)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-04-23T15:58:54+08:00" content="2016-04-23">
+              2016-04-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/" class="leancloud_visitors" data-flag-title="iOS-Effective Objective-C 2.0 读书笔记(一)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天开始看了<code>Effective Objective-C 2.0</code>的一部分内容，然后打算记录下来一些其中提到的比较有用的注意点，然后在之后的实际开发过程中能加以应用，写出更好的代码。<br><a id="more"></a></p>
+<h2 id="第2条：在类的头文件中尽量少引入其他头文件"><a href="#第2条：在类的头文件中尽量少引入其他头文件" class="headerlink" title="第2条：在类的头文件中尽量少引入其他头文件"></a>第2条：在类的头文件中尽量少引入其他头文件</h2><p>&emsp;&emsp;一般我们在开发过程中编写一个类时候会分别创建<code>.h</code>和<code>.m</code>两个文件。而且大部分情况下我们创建的类和类之间会有关联，比如说类A中包含了一个类B类型的属性，那么在类A的实现文件中则会需要引入类B的头文件。那么问题来了，在什么地方引入类B的头文件呢?<br>&emsp;&emsp;最直接的方式就是在类A的.h文件中import类B的头文件了，然而这种方式虽然可行，但是并不够优雅。因为在.h文件中，不需要知道某个类的全部具体实现，只需要知道一个类名叫什么就好了。所以通常情况下我们都会在类A中通过以下方式告诉编译器存在一个类B。这种方式又被成为“向前声明”该类(这种方式可以降低类之间的耦合度？)。</p>
+<pre><code>//myClassA.h
+@class myClassB;
+</code></pre><p>&emsp;&emsp;然后在具体的类A的.m文件中才真正的引入类B的头文件。因为在实现文件时候类A才会真正依赖于类B的具体实现，需要知道其相关接口信息。</p>
+<pre><code>//myClassA.m
+import &quot;myClassB.h&quot;
+</code></pre><p>&emsp;&emsp;通过这种方式，将引入头文件的时机尽量延后，只需要在确需要的时候才引入，这样可以减少类的使用者所需要引入的头文件的数量。</p>
+<p>&emsp;&emsp;此外，向前声明也可以解决两个类互相引用的问题。如果类A引用了类B，类B又引用了类A，那么在解析A的头文件时需要引入另一个头文件，而恰巧另一个头文件也需要引用A，所以就会造成“循环引用”的情况。所以当使用#include而不是使用#import方式引入头文件时，则会导致死循环。</p>
+<p>&emsp;&emsp;在实际情况中，有时候不可避免的必须要在头文件中引入其他头文件。比如说写的类需要遵循某个协议的时候，那么这个协议必须要有完整的定义，且不能使用向前声明。所以这种类型的协议一般都单独写在一个头文件里。</p>
+<p>&emsp;&emsp;而像“委托协议”这样的则不需要单独写一个头文件，因为其通常只有与接收协议委托的类放在一起时候才有意义。</p>
+<h2 id="第4条-多用类型常量，少用-define预处理指令"><a href="#第4条-多用类型常量，少用-define预处理指令" class="headerlink" title="第4条 多用类型常量，少用#define预处理指令"></a>第4条 多用类型常量，少用#define预处理指令</h2><p>首先我们先来列举一下使用#define的不好的地方。</p>
+<ol>
+<li>定义出来的常量没有类型信息。</li>
+<li>编译器会简单的把引入该宏的所在头文件的地方，将所有的宏替换为定义的值，可能会导致代码膨胀。</li>
+<li>错误的宏定义可能会导致错误。例如宏定义的式子里要注意使用括号括起来，不然可能会导致一些计算式子的计算顺序出错。</li>
+</ol>
+<p>所以作者推崇的方式是使用定义常量代替宏定义。</p>
+<pre><code>static const NSString *MyClassAVar = @&quot;hello world.&quot;; 
+</code></pre><p>&emsp;&emsp;使用此方法的优点就在于常量包含类型信息，可以清楚描述常量的含义。但是实际开发中需要注意常量命名规范，若常量局限于某“编译单元”（也就是局限在“实现文件”内），则在前面加字幕k；若常量在类之外可见，则通常以类名为前缀。</p>
+<p>&emsp;&emsp;此外，无论使用宏定义还是使用常量定义，都需要注意的一点就是如果把该定义放在了头文件里，就要小心变量名冲突的问题。所以如果可以的话，推荐采用常量定义的方式，并且对于一些没必要对外访问的常量定义在实现文件中。而对于那些对外的常量定义，则需要比较规范的变量命名了避免命名冲突的问题，一般此类变量写法如下：</p>
+<pre><code>//在头文件中,创建的是指针常量,说明不能改变该指针变量指向的对象地址。
+extern NSString *const LYSStringConstant;
+
+//在实现文件中
+NSString *const LYSStringConstant = @&quot;com.lysongzi.value&quot;;
+</code></pre><p>&emsp;&emsp;并且以上变量必须要定义，且只能定义一次。通常都是将其定义在与声明该变量的头文件相关的实现文件里。由实现文件生成目标文件时，编译器会在“数据段”为字符串分配存储空间。链接器会把此目标文件与其他目标文件相链接，已生成最终的二进制文件。</p>
+<h2 id="第5条-用枚举表示状态、选项、状态码"><a href="#第5条-用枚举表示状态、选项、状态码" class="headerlink" title="第5条 用枚举表示状态、选项、状态码"></a>第5条 用枚举表示状态、选项、状态码</h2><p>&emsp;&emsp;枚举是一种常量命名方式。某个对象的各种状态我们都可以定义为一个简单的枚举集。并且在C++11标准之后扩充了枚举的一些特性，这些都使得枚举用来状态集是一种非常好的方式。通常情况下还会结合<code>typedef</code>这个关键字一起定义枚举类型。其中枚举类型主要有下面几种用法。</p>
+<h3 id="1-1-表示状态集合"><a href="#1-1-表示状态集合" class="headerlink" title="1.1 表示状态集合"></a>1.1 表示状态集合</h3><pre><code>//默认情况下的话编译器会给个枚举分派一个编号，从0开始，每个枚举递增1
+typedef enum LYSConnectionState{
+    LYSConnectionStateConnected, //0
+    LYSConnectionStateConnecting, //1
+    LYSConnectionStateDisconnected //2
+};
+
+//当然还可以手工指定某个枚举成员的对应值
+typedef enum LYSConnectionState{
+    LYSConnectionStateConnected = 1,
+    LYSConnectionStateConnecting = 2, 
+    LYSConnectionStateDisconnected //3
+};
+</code></pre><p>然后这样使用。</p>
+<pre><code>LYSConnectionState state = LYSConnectionConnected;
+</code></pre><h3 id="1-2-表示选项集合"><a href="#1-2-表示选项集合" class="headerlink" title="1.2 表示选项集合"></a>1.2 表示选项集合</h3><pre><code>typedef enum UIViewAutoresizing{
+    UIViewAutoresizingNone                 = 0,
+    UIViewAutoresizingFlexbleLeftMargin    = 1 &lt;&lt; 0,
+    UIViewAutoresizingFlexbleRightMargin   = 1 &lt;&lt; 1,
+    UIViewAutoresizingFlexbleTopMargin     = 1 &lt;&lt; 2,
+    UIViewAutoresizingFlexbleBottomMargin  = 1 &lt;&lt; 3,
+};
+</code></pre><p>&emsp;&emsp;每个选项都可以开启或关闭，使用上述方式定义枚举值可以结合“按位或操作符”来组合开启某个选项。用法如下：</p>
+<pre><code>UIViewAutoresizing resizing 
+    = UIViewAutoresizingFlexbleLeftMargin | UIViewAutoresizingFlexbleRightMargin;
+
+//然后判断某个值是否开启了某个选项时使用与操作
+if(resizing &amp; UIViewAutoresizingFlexbleLeftMargin) {...}
+else if(resizing &amp; UIViewAutoresizingFlexbleRightMargin) {...}
+</code></pre><h3 id="1-3-进阶"><a href="#1-3-进阶" class="headerlink" title="1.3 进阶"></a>1.3 进阶</h3><p>&emsp;&emsp;c++11标准修订了枚举的某些特性。是的枚举可以致命用何种“底层数据类型”来保存枚举类型的变量。比如上述中的LYSConnectionState类型枚举可以写成如下格式：</p>
+<pre><code>typedef enum LYSConnectionState : NSInteger {
+    LYSConnectionStateConnected, //0
+    LYSConnectionStateConnecting, //1
+    LYSConnectionStateDisconnected //2
+};
+</code></pre><p>&emsp;&emsp;再者，Foundation框架中定义了一些辅助的宏，以方便我们定义枚举类型时，也可以指定用于保存枚举类型值的底层数据类型。比如以下写法：</p>
+<pre><code>typedef NS_ENUM(NSUInteger, LYSConnectionState) {
+    LYSConnectionStateConnected,
+    LYSConnectionStateConnecting,
+    LYSConnectionStateDisconnected
+};
+
+typedef NS_OPTIONS(NSUInteger, UIViewAutoresizing) {
+    UIViewAutoresizingNone                 = 0,
+    UIViewAutoresizingFlexbleLeftMargin    = 1 &lt;&lt; 0,
+    UIViewAutoresizingFlexbleRightMargin   = 1 &lt;&lt; 1,
+    UIViewAutoresizingFlexbleTopMargin     = 1 &lt;&lt; 2,
+    UIViewAutoresizingFlexbleBottomMargin  = 1 &lt;&lt; 3,
+};
+</code></pre><p>&emsp;&emsp;其中我们可以看一些这些宏中核心部分是怎么写的。当然这里是针对OC的写法了，对于C++平台的会略有不同。</p>
+<pre><code>#ifndef NS_ENUM
+#define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
+#endif
+
+#ifndef NS_OPTIONS
+#define NS_OPTIONS(_type, _name) enum _name : _type _name; enum _name : _type
+#endif
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/27/iOS开源-图像缓存库LYImageCache/" rel="next" title="iOS开源-图像缓存库LYImageCache">
+                <i class="fa fa-chevron-left"></i> iOS开源-图像缓存库LYImageCache
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/24/iOS-Effective-Objective-C-2-0-读书笔记-二/" rel="prev" title=" iOS-Effective Objective-C 2.0 读书笔记(二)">
+                 iOS-Effective Objective-C 2.0 读书笔记(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/"
+           data-title="iOS-Effective Objective-C 2.0 读书笔记(一)" data-url="http://lysongzi.com/2016/04/23/iOS-Effective-Objective-C-2-0-读书笔记-一/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第2条：在类的头文件中尽量少引入其他头文件"><span class="nav-number">1.</span> <span class="nav-text">第2条：在类的头文件中尽量少引入其他头文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第4条-多用类型常量，少用-define预处理指令"><span class="nav-number">2.</span> <span class="nav-text">第4条 多用类型常量，少用#define预处理指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第5条-用枚举表示状态、选项、状态码"><span class="nav-number">3.</span> <span class="nav-text">第5条 用枚举表示状态、选项、状态码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-表示状态集合"><span class="nav-number">3.1.</span> <span class="nav-text">1.1 表示状态集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-表示选项集合"><span class="nav-number">3.2.</span> <span class="nav-text">1.2 表示选项集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-进阶"><span class="nav-number">3.3.</span> <span class="nav-text">1.3 进阶</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

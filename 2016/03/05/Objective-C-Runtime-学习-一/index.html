@@ -1,0 +1,1043 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+一、前言如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C Runtime 学习(一)">
+<meta property="og:url" content="http://lysongzi.com/2016/03/05/Objective-C-Runtime-学习-一/index.html">
+<meta property="og:site_name" content="林友松の代码屎">
+<meta property="og:description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+一、前言如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。">
+<meta property="og:image" content="http://img.blog.csdn.net/20160305123550666">
+<meta property="og:image" content="http://img.blog.csdn.net/20160305124027988">
+<meta property="og:image" content="http://img.blog.csdn.net/20160305124120543">
+<meta property="og:updated_time" content="2016-03-05T05:03:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C Runtime 学习(一)">
+<meta name="twitter:description" content="来源：ian（@ianisme）链接：http://www.ianisme.com/ios/2019.html
+
+一、前言如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160305123550666">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://lysongzi.com/2016/03/05/Objective-C-Runtime-学习-一/"/>
+
+  <title> Objective-C Runtime 学习(一) | 林友松の代码屎 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81201546-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?00ab0118952cad06530a7c98b4137b37";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=57581290";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">林友松の代码屎</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">我就是我，是颜色不一样的烟火</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Objective-C Runtime 学习(一)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-05T12:50:44+08:00" content="2016-03-05">
+              2016-03-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/05/Objective-C-Runtime-学习-一/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/05/Objective-C-Runtime-学习-一/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/03/05/Objective-C-Runtime-学习-一/" class="leancloud_visitors" data-flag-title="Objective-C Runtime 学习(一)">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>来源：ian（@ianisme）<br>链接：<a href="http://www.ianisme.com/ios/2019.html" target="_blank" rel="external">http://www.ianisme.com/ios/2019.html</a></p>
+</blockquote>
+<h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。<br><a id="more"></a><br>请跟着教程“一步步来”，请不要大概地扫两眼就说看不懂——以这种态度写成什么样你也看不懂。这是1小时入门教程，请不要试图在1分钟内入门！</p>
+<h2 id="二、本文目标"><a href="#二、本文目标" class="headerlink" title="二、本文目标"></a>二、本文目标</h2><p>1小时让你知道什么是Objective-C Runtime，并对它有一定的基本了解，可以在开发过程中运用自如。</p>
+<h2 id="三、Objective-C-Runtime到底是什么东西？"><a href="#三、Objective-C-Runtime到底是什么东西？" class="headerlink" title="三、Objective-C Runtime到底是什么东西？"></a>三、Objective-C Runtime到底是什么东西？</h2><p>简而言之，Objective-C Runtime是一个将C语言转化为面向对象语言的扩展。</p>
+<p>我们将C++和Objective进行对比，虽然C++和Objective-C都是在C的基础上加入面向对象的特性扩充而成的程序设计语言，但二者实现的机制差异很大。C++是基于静态类型，而Objective-C是基于动态运行时类型。也就是说用C++编写的程序编译时就直接编译成了可令机器读懂的机器语言；用Objective-C编写的程序不能直接编译成可令机器读懂的机器语言，而是在程序运行的时候，通过Runtime把程序转为可令机器读懂的机器语言。Runtime是Objective不可缺少的重要一部分。</p>
+<h2 id="四、Objective-C的元素认知"><a href="#四、Objective-C的元素认知" class="headerlink" title="四、Objective-C的元素认知"></a>四、Objective-C的元素认知</h2><h3 id="4-1-id和Class"><a href="#4-1-id和Class" class="headerlink" title="4.1 id和Class"></a>4.1 id和Class</h3><p>打开/Public Headers/objc.h文件可以看到如下定义：</p>
+<pre><code>#if !OBJC_TYPES_DEFINED
+/// An opaque type that represents an Objective-C class.
+typedef struct objc_class *Class;
+
+/// Represents an instance of a class.
+struct objc_object {
+    Class isa  OBJC_ISA_AVAILABILITY;
+};
+
+/// A pointer to an instance of a class.
+typedef struct objc_object *id;
+#endif
+</code></pre><p>Class是一个指向objc_class结构体的指针，而id是一个指向objc_object结构体的指针，其中的isa是一个指向objc_class结构体的指针。其中的id就是我们所说的对象，Class就是我们所说的类。</p>
+<p>打开/Public Headers/runtime.h文件<br>objc_class的定义如下：</p>
+<pre><code>typedef struct objc_class *Class;
+struct objc_class { 
+ Class isa      OBJC_ISA_AVAILABILITY; // metaclass
+#if !__OBJC2__
+ Class super_class       OBJC2_UNAVAILABLE; // 父类
+ const char *name        OBJC2_UNAVAILABLE; // 类名
+ long version            OBJC2_UNAVAILABLE; // 类的版本信息
+ long info               OBJC2_UNAVAILABLE; // 类信息 
+
+ //该类的实例变量大小（包括从父类继承下来的实例变量）
+ long instance_size      OBJC2_UNAVAILABLE; 
+
+ //该类的成员变量地址列表
+ struct objc_ivar_list *ivars      OBJC2_UNAVAILABLE; 
+
+ //方法地址列表，与 info 的一些标志位有关，如CLS_CLASS (0x1L)，则存储实例方法，如CLS_META (0x2L)，则存储类方法;
+ struct objc_method_list **methodLists  OBJC2_UNAVAILABLE; 
+
+ // 缓存最近使用的方法地址，用于提升效率；
+ struct objc_cache *cache      OBJC2_UNAVAILABLE; 
+
+ // 存储该类声明遵守的协议的列表
+ struct objc_protocol_list *protocols  OBJC2_UNAVAILABLE; 
+#endif
+}
+/* Use `Class` instead of `struct objc_class *` */
+</code></pre><p>由以上代码可见，类与对象的区别就是类比对象多了很多特征成员，类也可以当做一个objc_object来对待，也就是说类和对象都是对象，分别称作类对象（class object）和实例对象（instance object），这样我们就可以区别对象和类了。</p>
+<p>isa：objc_object（实例对象）中isa指针指向的类结构称为class（也就是该对象所属的类）其中存放着普通成员变量与动态方法（“-”开头的方法）；此处isa指针指向的类结构称为metaclass，其中存放着static类型的成员变量与static类型的方法（“+”开头的方法）。</p>
+<p>super_class： 指向该类的父类的指针，如果该类是根类（如NSObject或NSProxy），那么super_class就为nil。</p>
+<p>类与对象的继承层次关系如图（图片源自网络）：</p>
+<p><img src="http://img.blog.csdn.net/20160305123550666" alt="这里写图片描述"></p>
+<p>所有的metaclass中isa指针都是指向根metaclass，而根metaclass则指向自身。根metaclass是通过继承根类产生的，与根class结构体成员一致，不同的是根metaclass的isa指针指向自身。</p>
+<h3 id="4-2-SEL"><a href="#4-2-SEL" class="headerlink" title="4.2 SEL"></a>4.2 SEL</h3><p>SEL是selector在Objective-C中的表示类型。selector可以理解为区别方法的ID。</p>
+<pre><code>typedef struct objc_selector *SEL;
+</code></pre><p>objc_selector的定义如下：</p>
+<pre><code>struct objc_selector {
+    char *name;       OBJC2_UNAVAILABLE;// 名称
+    char *types;      OBJC2_UNAVAILABLE;// 类型
+};
+</code></pre><p>name和types都是char类型。</p>
+<p>4.3 IMP</p>
+<p>终于到IMP了，它在objc.h中得定义如下：</p>
+<pre><code>typedef id (*IMP)(id, SEL, ...);
+</code></pre><p>IMP是“implementation”的缩写，它是由编译器生成的一个函数指针。当你发起一个消息后（下文介绍），这个函数指针决定了最终执行哪段代码。</p>
+<h3 id="4-4-Method"><a href="#4-4-Method" class="headerlink" title="4.4 Method"></a>4.4 Method</h3><p>Method代表类中的某个方法的类型。</p>
+<pre><code>typedef struct objc_method *Method;
+</code></pre><p>objc_method的定义如下：</p>
+<pre><code>struct objc_method {
+    SEL method_name        OBJC2_UNAVAILABLE; // 方法名
+    char *method_types     OBJC2_UNAVAILABLE; // 方法类型
+    IMP method_imp         OBJC2_UNAVAILABLE; // 方法实现
+}
+</code></pre><p>方法名method_name类型为SEL，上文提到过。</p>
+<p>方法类型method_types是一个char指针，存储着方法的参数类型和返回值类型。</p>
+<p>方法实现method_imp的类型为IMP，上文提到过。</p>
+<h3 id="4-5-Ivar"><a href="#4-5-Ivar" class="headerlink" title="4.5 Ivar"></a>4.5 Ivar</h3><p>Ivar代表类中实例变量的类型</p>
+<pre><code>typedef struct objc_ivar *Ivar;
+</code></pre><p>objc_ivar的定义如下：</p>
+<pre><code>struct objc_ivar {
+    char *ivar_name      OBJC2_UNAVAILABLE; // 变量名
+    char *ivar_type      OBJC2_UNAVAILABLE; // 变量类型
+    int ivar_offset      OBJC2_UNAVAILABLE; // 基地址偏移字节
+#ifdef __LP64__
+    int space            OBJC2_UNAVAILABLE; // 占用空间
+#endif
+}
+</code></pre><h3 id="4-6-objc-property-t"><a href="#4-6-objc-property-t" class="headerlink" title="4.6 objc_property_t"></a>4.6 objc_property_t</h3><p>objc_property_t是属性，它的定义如下：</p>
+<pre><code>typedef struct objc_property *objc_property_t;
+</code></pre><p>objc_property是内置的类型，与之关联的还有一个objc_property_attribute_t，它是属性的attribute，也就是其实是对属性的详细描述，包括属性名称、属性编码类型、原子类型/非原子类型等。它的定义如下：</p>
+<pre><code>typedef struct {
+    const char *name; // 名称
+    const char *value;  // 值（通常是空的）
+} objc_property_attribute_t;
+</code></pre><h3 id="4-7-Cache"><a href="#4-7-Cache" class="headerlink" title="4.7 Cache"></a>4.7 Cache</h3><p>Catch的定义如下：</p>
+<pre><code>typedef struct objc_cache *Cache
+</code></pre><p>objc_cache的定义如下：</p>
+<pre><code>struct objc_cache {
+    unsigned int mask         OBJC2_UNAVAILABLE;
+    unsigned int occupied     OBJC2_UNAVAILABLE;
+    Method buckets[1]         OBJC2_UNAVAILABLE;
+};
+</code></pre><p>mask: 指定分配cache buckets的总数。在方法查找中，Runtime使用这个字段确定数组的索引位置。</p>
+<p>occupied: 实际占用cache buckets的总数。</p>
+<p>buckets: 指定Method数据结构指针的数组。这个数组可能包含不超过mask+1个元素。需要注意的是，指针可能是NULL，表示这个缓存bucket没有被占用，另外被占用的bucket可能是不连续的。这个数组可能会随着时间而增长。</p>
+<p>objc_msgSend（下文讲解）每调用一次方法后，就会把该方法缓存到cache列表中，下次的时候，就直接优先从cache列表中寻找，如果cache没有，才从methodLists中查找方法。</p>
+<h3 id="4-8-Catagory"><a href="#4-8-Catagory" class="headerlink" title="4.8 Catagory"></a>4.8 Catagory</h3><p>这个就是我们平时所说的类别了，很熟悉吧。它可以动态的为已存在的类添加新的方法。<br>它的定义如下：</p>
+<pre><code>typedef struct objc_category *Category;
+</code></pre><p>objc_category的定义如下：</p>
+<pre><code>struct objc_category {
+    char *category_name                           OBJC2_UNAVAILABLE; // 类别名称
+    char *class_name                              OBJC2_UNAVAILABLE; // 类名
+    struct objc_method_list *instance_methods     OBJC2_UNAVAILABLE; // 实例方法列表
+    struct objc_method_list *class_methods        OBJC2_UNAVAILABLE; // 类方法列表
+    struct objc_protocol_list *protocols          OBJC2_UNAVAILABLE; // 协议列表
+}
+</code></pre><p>因为是入门，以上就列举这些吧！</p>
+<h2 id="五、Objective-C的消息传递"><a href="#五、Objective-C的消息传递" class="headerlink" title="五、Objective-C的消息传递"></a>五、Objective-C的消息传递</h2><h3 id="5-1-基本消息传递"><a href="#5-1-基本消息传递" class="headerlink" title="5.1 基本消息传递"></a>5.1 基本消息传递</h3><p>在面向对象编程中，对象调用方法叫做发送消息。在编译时，程序的源代码就会从对象发送消息转换成Runtime的objc_msgSend函数调用。<br>例如某实例变量receiver实现某一个方法oneMethod</p>
+<pre><code>[receiver oneMethod];
+</code></pre><p>Runtime会将其转成类似这样的代码</p>
+<pre><code>objc_msgSend(receiver, selector);
+</code></pre><p>具体会转换成什么代码呢？</p>
+<p>Runtime会根据类型自动转换成下列某一个函数：</p>
+<blockquote>
+<p>(1)objc_msgSend:普通的消息都会通过该函数发送<br>(2)objc_msgSend_stret:消息中有数据结构作为返回值（不是简单值）时，通过此函数发送和接收返回值<br>(3)objc_msgSendSuper:和objc_msgSend类似，这里把消息发送给父类的实例<br>(4)objc_msgSendSuper_stret:和objc_msgSend_stret类似，这里把消息发送给父类的实例并接收返回值</p>
+</blockquote>
+<p>当消息被发送到实例对象时，是如图所示处理的（图片源自网络）：</p>
+<p><img src="http://img.blog.csdn.net/20160305124027988" alt="这里写图片描述"></p>
+<p>objc_msgSend函数的调用过程：</p>
+<p>第一步：检测这个selector是不是要忽略的。<br>第二步：检测这个target是不是nil对象。nil对象发送任何一个消息都会被忽略掉。<br>第三步：</p>
+<ol>
+<li><p>调用实例方法时，它会首先在自身isa指针指向的类（class）methodLists中查找该方法，如果找不到则会通过class的super_class指针找到父类的类对象结构体，然后从methodLists中查找该方法，如果仍然找不到，则继续通过super_class向上一级父类结构体中查找，直至根class；</p>
+</li>
+<li><p>当我们调用某个某个类方法时，它会首先通过自己的isa指针找到metaclass，并从其中methodLists中查找该类方法，如果找不到则会通过metaclass的super_class指针找到父类的metaclass对象结构体，然后从methodLists中查找该方法，如果仍然找不到，则继续通过super_class向上一级父类结构体中查找，直至根metaclass；</p>
+</li>
+</ol>
+<p>第四步：前三步都找不到就会进入动态方法解析(看下文)。</p>
+<p>5.2 消息动态解析</p>
+<p>动态解析流程图（图片来自网络）：<br><img src="http://img.blog.csdn.net/20160305124120543" alt="这里写图片描述"></p>
+<p>请参照图片品味以下步骤：</p>
+<p>第一步：通过resolveInstanceMethod：方法决定是否动态添加方法。如果返回Yes则通过class_addMethod动态添加方法，消息得到处理，结束；如果返回No，则进入下一步；</p>
+<p>第二步：这步会进入forwardingTargetForSelector:方法，用于指定备选对象响应这个selector，不能指定为self。如果返回某个对象则会调用对象的方法，结束。如果返回nil，则进入第三部；</p>
+<p>第三部：这步我们要通过methodSignatureForSelector:方法签名，如果返回nil，则消息无法处理。如果返回methodSignature，则进入下一步；</p>
+<p>第四部：这步调用forwardInvocation：方法，我们可以通过anInvocation对象做很多处理，比如修改实现方法，修改响应对象等，如果方法调用成功，则结束。如果失败，则进入doesNotRecognizeSelector方法，若我们没有实现这个方法，那么就会crash。</p>
+<p>到这里大家可能晕乎乎的，下面看实战篇吧！苍老师必须让你懂！</p>
+<h2 id="六、Runtime实战"><a href="#六、Runtime实战" class="headerlink" title="六、Runtime实战"></a>六、Runtime实战</h2><p>请大家放心，以下所有实战篇，在最后都会分享Demo给大家！</p>
+<h3 id="6-1-代码实战"><a href="#6-1-代码实战" class="headerlink" title="6.1 代码实战"></a>6.1 代码实战</h3><pre><code>#import &lt;Foundation/Foundation.h&gt;
+
+#if TARGET_IPHONE_SIMULATOR
+#import &lt;objc/objc-runtime.h&gt;
+#else
+#import &lt;objc/runtime.h&gt;
+#import &lt;objc/message.h&gt;
+#endif
+
+//自定义一个C语言方法
+void sayFunction(id self, SEL _cmd, id param)
+{
+    NSLog(@&quot;永远%@岁的%@说：%@&quot;, object_getIvar(self, class_getInstanceVariable([self class], &quot;_age&quot;)), [self valueForKey:@&quot;name&quot;], param);
+}
+
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        //动态创建一个类,其继承自NSObject
+        Class Person = objc_allocateClassPair([NSObject class], &quot;Person&quot;, 0);
+
+        //为该类添加NSString *_name成员变量
+        class_addIvar(Person, &quot;_name&quot;, sizeof(NSString *), log2(sizeof(NSString *)), @encode(NSString*));
+        //为该类添加int _age成员变量
+        class_addIvar(Person, &quot;_age&quot;, sizeof(int), sizeof(int), @encode(int));
+
+        //注册方法名为say的方法
+        SEL say = sel_registerName(&quot;say:&quot;);
+        //为该类增加名为say的方法
+        class_addMethod(Person, say, (IMP)sayFunction, &quot;v@:@&quot;);
+
+        //注册该类
+        objc_registerClassPair(Person);
+
+        //创建一个该类的实例
+        id personInstance = [[Person alloc] init];
+
+        //KVC动态改变对象实例中的属性
+        [personInstance setValue:@&quot;小松子&quot; forKey:@&quot;name&quot;];
+
+        //从类中获取成员变量
+        Ivar ageIvar = class_getInstanceVariable(Person, &quot;_age&quot;);
+        //为成员变量赋值
+        object_setIvar(personInstance, ageIvar, @16);
+
+        //调用实例对象中的say方法选择器
+        ((void (*)(id, SEL, id))objc_msgSend)(personInstance, say, @&quot;我是可爱迷人的小松子~&quot;);
+
+        //当Person类或者其子类实例还存在时，则不能销毁类
+        personInstance = nil;
+
+        //销毁类
+        objc_disposeClassPair(Person);
+    }
+    return 0;
+}
+</code></pre><p>最后的结果是：</p>
+<pre><code>2016-03-05 12:43:01.024 RuntimeDemon[22441:3062273] 永远16岁的小松子说：我是可爱迷人的小松子~
+</code></pre><p>再使用</p>
+<pre><code>objc_msgSend(peopleInstance, s, @&quot;大家好!&quot;);
+</code></pre><p>默认会出现以下错误：</p>
+<blockquote>
+<p>objc_msgSend()报错Too many arguments to function call ,expected 0,have3直接通过objc_msgSend(self, setter, value)是报错，说参数过多。</p>
+</blockquote>
+<p>请这样解决：</p>
+<blockquote>
+<p>Build Setting–&gt; Apple LLVM 7.0 – Preprocessing–&gt; Enable Strict Checking of objc_msgSend Calls 改为 NO</p>
+</blockquote>
+<p>当然你也可以这样写(推荐)：</p>
+<blockquote>
+<p>((void (*)(id, SEL, id))objc_msgSend)(peopleInstance, s, @”大家好”);<br>说明：强制转换objc_msgSend函数类型为带三个参数且返回值为void函数，然后才能传三个参数。</p>
+</blockquote>
+<p>此实战内容是，动态创建一个类，并创建成员变量和方法，最后赋值成员变量并发送消息。其中成员变量的赋值使用了KVC和object_setIvar函数两种方式，这些东西大家举一反三就可以了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag">#iOS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/28/iOS-Objective-C的属性修饰符/" rel="next" title="iOS-Objective-C的属性修饰符">
+                <i class="fa fa-chevron-left"></i> iOS-Objective-C的属性修饰符
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/09/Objective-C-Runtime-学习-二/" rel="prev" title="Objective-C Runtime 学习(二)">
+                Objective-C Runtime 学习(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/05/Objective-C-Runtime-学习-一/"
+           data-title="Objective-C Runtime 学习(一)" data-url="http://lysongzi.com/2016/03/05/Objective-C-Runtime-学习-一/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image-me/mee.gif"
+               alt="lysongzZ_" />
+          <p class="site-author-name" itemprop="name">lysongzZ_</p>
+          <p class="site-description motion-element" itemprop="description">做一个有理想的逗比。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">56</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lysongzi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2702970064" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://faaamo.com" title="霍曉霖" target="_blank">霍曉霖</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/chenyufeng1991" title="乞力马扎罗的雪雪" target="_blank">乞力马扎罗的雪雪</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://judyzhangxin.com" title="Zhangxin's Portfolio" target="_blank">Zhangxin's Portfolio</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、前言"><span class="nav-number">1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、本文目标"><span class="nav-number">2.</span> <span class="nav-text">二、本文目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Objective-C-Runtime到底是什么东西？"><span class="nav-number">3.</span> <span class="nav-text">三、Objective-C Runtime到底是什么东西？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、Objective-C的元素认知"><span class="nav-number">4.</span> <span class="nav-text">四、Objective-C的元素认知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-id和Class"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 id和Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-SEL"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 SEL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Method"><span class="nav-number">4.3.</span> <span class="nav-text">4.4 Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Ivar"><span class="nav-number">4.4.</span> <span class="nav-text">4.5 Ivar</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-objc-property-t"><span class="nav-number">4.5.</span> <span class="nav-text">4.6 objc_property_t</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-Cache"><span class="nav-number">4.6.</span> <span class="nav-text">4.7 Cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-Catagory"><span class="nav-number">4.7.</span> <span class="nav-text">4.8 Catagory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、Objective-C的消息传递"><span class="nav-number">5.</span> <span class="nav-text">五、Objective-C的消息传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-基本消息传递"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 基本消息传递</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、Runtime实战"><span class="nav-number">6.</span> <span class="nav-text">六、Runtime实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-代码实战"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 代码实战</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lysongzZ_</span>
+</div>
+
+<div class="powered-by">
+  浙江大学 
+</div>
+
+<div class="powered-by">
+  湖南大学 
+</div>
+
+<div class="theme-info">
+  Email：lysongzi.hnu@gmail.com
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lysongzZi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Y6BQun74uQrLoVrDJrb0YXX1-gzGzoHsz", "RxcoP9ffUhBtqxwg3h2ssWc7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
