@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="iOS,内存管理,内存泄露," />
+  <meta name="keywords" content="内存管理,内存泄露," />
 
 
 
@@ -84,22 +84,23 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
-&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
+<meta name="description" content="&amp;emsp;&amp;emsp;前段时间被分配查应用的内存泄露问题，然后搜集了一大波内存管理相关的资料，并且在整个过程中狠狠的实践了一波。下面就把这段时间内碰到的坑（从别的地方也搜刮到很多坑），以及搜集到的一些理论知识（简洁版）总结一发。
+&amp;emsp;&amp;emsp;背景：一个复杂的iOS应用可能会混合着MRR和ARC两种内存管理方式，就是有一部分文件MRR实现，而另一部分则是ARC实现（原因目测是因为复用M">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS-内存管理之内存泄露爬坑记QAQ">
 <meta property="og:url" content="http://lysongzi.com/2016/07/16/iOS-内存管理之内存泄露爬坑记QAQ/index.html">
 <meta property="og:site_name" content="林友松の代码屎">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
-&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;前段时间被分配查应用的内存泄露问题，然后搜集了一大波内存管理相关的资料，并且在整个过程中狠狠的实践了一波。下面就把这段时间内碰到的坑（从别的地方也搜刮到很多坑），以及搜集到的一些理论知识（简洁版）总结一发。
+&amp;emsp;&amp;emsp;背景：一个复杂的iOS应用可能会混合着MRR和ARC两种内存管理方式，就是有一部分文件MRR实现，而另一部分则是ARC实现（原因目测是因为复用M">
+<meta property="og:image" content="http://img.blog.csdn.net/20160807235702450">
 <meta property="og:image" content="http://img.blog.csdn.net/20160716154700748">
 <meta property="og:image" content="http://img.blog.csdn.net/20160716154826851">
-<meta property="og:updated_time" content="2016-07-16T16:10:14.000Z">
+<meta property="og:updated_time" content="2016-08-07T16:43:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS-内存管理之内存泄露爬坑记QAQ">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。
-&amp;emsp;&amp;emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几">
-<meta name="twitter:image" content="http://img.blog.csdn.net/20160716154700748">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;前段时间被分配查应用的内存泄露问题，然后搜集了一大波内存管理相关的资料，并且在整个过程中狠狠的实践了一波。下面就把这段时间内碰到的坑（从别的地方也搜刮到很多坑），以及搜集到的一些理论知识（简洁版）总结一发。
+&amp;emsp;&amp;emsp;背景：一个复杂的iOS应用可能会混合着MRR和ARC两种内存管理方式，就是有一部分文件MRR实现，而另一部分则是ARC实现（原因目测是因为复用M">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160807235702450">
 
 
 
@@ -288,6 +289,25 @@
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -326,51 +346,10 @@
       
 
       
-        <p>&emsp;&emsp;前段时间被分配到查内存泄漏这种大坑，不胜惶恐！！！结果还真的跳进去了，爬了好长一段时间都没爬出来QAQ。每天开着Leaks各种捣鼓爱啪啪，然后看到一大波“神奇”的内存泄露信息，头都大了。</p>
-<p>&emsp;&emsp;不过这虽然是个大坑，不过趁着这次机会可以把内存管理知识好好实践了一遍。或许现在大多数的新项目都是ARC的了，然而在一些实际的大项目中，会重用很多诺干年前（其实也就几年前）的代码，QAQ，而这些代码会有很多实现采用的是MRC的方式，所以项目中就经常可以见到混合着ARC和MRC这两种不同内存管理模式的代码。然后ARC文件的代码可能会调用MRC模式实现的代码，当然也还有反过来的情况。</p>
-<p>&emsp;&emsp;除了ARC和MRC混合，有时候还有很多底层库是使用C/C++实现的，而且这些库中也涉及一些OC方面的库类调用，这样的情况就又复杂一点了。 = =，所以C/C++的内存管理也是需要有所了解滴~~~</p>
-<p>&emsp;&emsp;QAQ，接下来在最后部分会简单列举一些碰到过的发生内存泄漏的情况吧。最后大家会发现这些问题都很简单，但熟话说的好，潜水淹死人啊！<br><a id="more"></a></p>
-<h3 id="一、检测工具介绍"><a href="#一、检测工具介绍" class="headerlink" title="一、检测工具介绍"></a>一、检测工具介绍</h3><h4 id="1-1-Instrument-—-Leaks，Allocations，Analyze"><a href="#1-1-Instrument-—-Leaks，Allocations，Analyze" class="headerlink" title="1.1 Instrument — Leaks，Allocations，Analyze"></a>1.1 Instrument — Leaks，Allocations，Analyze</h4><p>&emsp;&emsp;我用到的检测内存泄露的工具主要是Xcode中集成的Leaks组件，这个组件的检测准确率还是比较高的（毕竟水果家亲儿子），可以查看到很多比如说是泄露大小，泄露产生的地方及其堆栈信息等。但是这里的“泄露产生的地方”并不一定可以定位到具体发生泄漏的某一句代码，而是会标出发生泄漏的对象初始化分配内存的地方，然后需要具体去分析该对象来查处泄漏的原因。   </p>
-<blockquote>
-<p>参考资料：  </p>
-<ol>
-<li>【<a href="http://www.jianshu.com/p/c0aa12d91f05" target="_blank" rel="external">使用Instruments定位iOS应用的Memory Leaks</a>】   </li>
-<li>【<a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Instrument-Leaks.html#//apple_ref/doc/uid/TP40004652-CH60-SW1" target="_blank" rel="external">Leaks Instrument</a>】   </li>
-</ol>
-</blockquote>
-<p>&emsp;&emsp;Allocations工具是一个跟踪由应用程序分配的对象内存的工具。一般就是用来在疑似内存泄露的地方，通过反复操作，查看某些对象内存是否有被正常的释放，从而得知是否发生内存泄露。（= =。这里我并没使用到这个，这算是以前比较古老的检测内存泄漏的方式了，不过某些情况下也还是挺有用。）   </p>
-<blockquote>
-<p>参考资料：     </p>
-<ol>
-<li>【<a href="https://blog.leancloud.cn/2835/" target="_blank" rel="external">iOS性能优化：Instruments 工具的救命三招</a>】   </li>
-<li>【<a href="http://www.cnblogs.com/ym123/p/4316328.html" target="_blank" rel="external">IOS性能调优系列：使用Allocation动态分析内存使用情况</a>】</li>
-</ol>
-</blockquote>
-<p>&emsp;&emsp;Analyze是一款静态分析代码的工具。它可以发现一些逻辑错误，内存泄漏和声明错误（未使用变量）等。这里可以发现的一些内存泄漏问题主要是一些常见的循环引用，CF库对象未release等相对简单的问题，通常是在进行其他方式检测之前就使用的方式，把一些简单的问题先发现并处理了。</p>
-<blockquote>
-<p>参考资料：    </p>
-<ol>
-<li>【<a href="http://www.cnblogs.com/ym123/p/4309400.html" target="_blank" rel="external">IOS性能调优系列：Analyze静态分析</a>】   </li>
-<li>【<a href="http://blog.csdn.net/xdrt81y/article/details/11036317" target="_blank" rel="external">IPhone开发工具篇-利用xcode profile和analyze进行性能优化</a>】</li>
-</ol>
-</blockquote>
-<h4 id="1-2-内存检测组件"><a href="#1-2-内存检测组件" class="headerlink" title="1.2 内存检测组件"></a>1.2 内存检测组件</h4><p>&emsp;&emsp;此外还有一些“植入”项目中的内存检测组件，比如说Facebook iOS 内存检测三剑客(FBAllocationTracker/FBMemoryProfiler/FBRetainCycleDetector)，MSLeakHunter，<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">MLeaksFinder</a>，<a href="https://gold.xitu.io/entry/577ba7d9a633bd005be0d0fd" target="_blank" rel="external">PLeakSniffer</a>等等。</p>
-<p>&emsp;&emsp;这些组件的实现原理都是大同小异的。主要就是灵活运用了OC中的Rumtime机制，以及各种OC对象生命周期管理相关的特性。这些组件为了实现对OC对象的内存监控，其本质就是在这些对象被分配和释放的时机进行监测，结合系统对这些对象生命周期管理方法实现是否发生内存泄露检测的目的。</p>
-<p>&emsp;&emsp;比如说需要监测一个UIViewController类型的对象，就可以联想到iOS中VC的生命周期管理和UINavigationController有很大关系，因为后者在iOS应用者常常被用来管理大量VC的跳转控制。所以就可以考虑通过监控UINavigationController的navigation stack来达到检测VC是否发生内存泄露的目的。（一般以下这些方法都会被hook）</p>
-<p><img src="http://img.blog.csdn.net/20160716154700748" alt="这里写图片描述"></p>
-<p>&emsp;&emsp;再比如说常见的NSObject对象，其alloc和dealloc方法就是对象生命周期中很重要的两个方法，分别是分配内存资源和释放内存资源时会被调用的方法。然后就可以考虑通过method swizzing方法替换alloc和dealloc这两个方法的实现，这样就可以获得对象内存分配的一些信息。</p>
-<p><img src="http://img.blog.csdn.net/20160716154826851" alt="这里写图片描述"></p>
-<p>&emsp;&emsp;以下再给出个检测VC内存泄漏的原理：</p>
-<blockquote>
-<ol>
-<li><p>如何判断VC是否还在内存驻留？<br>Tips：利用ARC中weak指针指向的对象在对象释放时会自动置为nil的特性来检测VC是否在内存驻留。</p>
-</li>
-<li><p>在什么时机检测VC是否发生内存泄露？<br>Tips：通过监控UINavigationController的navigation stack，可以判断一个VC的生命周期的开始和结束。就是当VC从navigation stack移除且VC的viewDidDisappear方法执行时，可以认为一个VC的生命周期即将结束。这时候就可以创建一个指向该VC的weak指针，并初始化一个定时器对VC进行延时扫描，最后通过1中的方法判断VC是否还驻留在内存从而得出VC是否发生内存泄露的结论。</p>
-</li>
-</ol>
-</blockquote>
-<p><br></p>
-<h3 id="二、应用内存"><a href="#二、应用内存" class="headerlink" title="二、应用内存"></a>二、应用内存</h3><p>从苹果的开发者文档里可以看到，一个 app 的内存分三类：</p>
+        <p>&emsp;&emsp;前段时间被分配查应用的内存泄露问题，然后搜集了一大波内存管理相关的资料，并且在整个过程中狠狠的实践了一波。下面就把这段时间内碰到的坑（从别的地方也搜刮到很多坑），以及搜集到的一些理论知识（简洁版）总结一发。</p>
+<p>&emsp;&emsp;背景：一个复杂的iOS应用可能会混合着MRR和ARC两种内存管理方式，就是有一部分文件MRR实现，而另一部分则是ARC实现（原因目测是因为复用MRR实现的旧代码）。所以就存在一种现象，如果后来的开发者没注意该文件是否为ARC模式时，则有可能会忘记对对象进行release等操作从而导致内存泄露的发生。</p>
+<p>&emsp;&emsp;除了项目可能是ARC和MRR混合模式，有时候还有很多底层库是使用C/C++实现的，所以对于C/C++的内存管理也是需要有所了解的。<br><a id="more"></a></p>
+<h1 id="应用内存管理"><a href="#应用内存管理" class="headerlink" title="应用内存管理"></a>应用内存管理</h1><p>从苹果的开发者文档里可以看到，一个 app 的内存分三类：</p>
 <ol>
 <li><p><code>Leaked memory</code>: Memory unreferenced by your application that cannot be used again or freed (also detectable by using the Leaks instrument).</p>
 </li>
@@ -379,27 +358,53 @@
 <li><p><code>Cached memory</code>: Memory still referenced by your application that might be used again for better performance.</p>
 </li>
 </ol>
-<p>&emsp;&emsp;其中 Leaked memory 和 Abandoned memory 都属于应该释放而没释放的内存，都是内存泄露，而 Leaks 工具只负责检测 Leaked memory，而不管 Abandoned memory。在 MRC 时代 Leaked memory 很常见，因为很容易忘了调用 release，但在 ARC 时代更常见的内存泄露是循环引用导致的 Abandoned memory，Leaks 工具查不出这类内存泄露，应用有限。（引用出处【<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">传送门</a>】）</p>
-<p><br></p>
-<h3 id="三、实践"><a href="#三、实践" class="headerlink" title="三、实践"></a>三、实践</h3><h4 id="3-1-对象内存管理"><a href="#3-1-对象内存管理" class="headerlink" title="3.1 对象内存管理"></a>3.1 对象内存管理</h4><p><br></p>
-<ol>
-<li>在MRC模式下，通过new, copy, alloc方式创建的对象，记得release。一般在delloc中进行释放操作。当然局部内产生的也要在局部内进行释放。</li>
-</ol>
+<p>&emsp;&emsp;其中 <code>Leaked memory</code>和 <code>Abandoned memory</code> 都属于应该释放而没释放的内存，某种意义上来说都可以算内存泄露。而 <code>Leaks</code>工具只负责检测<code>Leaked memory</code>，而无法检测 <code>Abandoned memory</code>（这个是不是就是传说中的循环引用问题）相关的问题。</p>
+<p>&emsp;&emsp;在 MRR 模式下 <code>Leaked memory</code>是比较常见，因为很容易忘了发送 <code>release</code>消息。而在 ARC 时代更常见的内存泄露是循环引用导致的 <code>Abandoned memory</code>，<code>Leaks</code>工具是无法直接检测出这类内存泄露问题的，可以借助一些别的工具（例如静态分析<code>Static Analyze</code>）。（引用出处【<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">传送门</a>】）</p>
+<h2 id="内存管理原理"><a href="#内存管理原理" class="headerlink" title="内存管理原理"></a>内存管理原理</h2><p>&emsp;&emsp;iOS平台内存管理采用的是引用计数机制，主要提供了MRR（Manual Retain-Release）和ARC（Automatic Reference Counting）两种内存管理方式，同时还提供了自动释放池这种半自动释放机制。</p>
 <blockquote>
-<p>点评：呵呵，在实践中发现最多的问题就是这个。尤其是在ARC和MRC都有的项目中。= =。我猜测原因之一可能是后面的代码修改者没意识到当前修改的文件是MRC模式的，所以在新增一些属性或成员变量后，没有在dealloc方法或对象使用完毕后及时的释放资源。</p>
+<p>PS：这里的MRR就是传说中的MRC。只是我查<code>iOS Developer</code>文档时发现好像没有MRC这个叫法，也不知道这个叫法是怎么来的…</p>
 </blockquote>
-<p><br></p>
+<p><img src="http://img.blog.csdn.net/20160807235702450" alt="这里写图片描述"></p>
+<p>&emsp;&emsp;无论是MRR还是ARC，其本质都是引用计数。在MRR模式中，通过发送alloc,new, copy等方法可以创建一个对象，刚创建的对象引用计数值都为1。然后通过发送retain方法可以拥有该对象，同时会使得该对象的引用计数+1。最后可以向对象发送release消息放弃该对象所有权，同时会使得该对象的引用计数-1。当一个对象的引用计数为0时，则会被系统回收释放。</p>
+<p>&emsp;&emsp;ARC实际上是一种编译器特性。编译器会在编译时自动在适当的位置插入retain, release消息来进行对象内存管理。而对于实际开发，只需要谨记：当一个对象被任何强指针引用时，则会被系统回收释放（可以理解为有几个强引用指向对象，则该对象引用计数为x，当没有强指针引用对象，则其引用计数为0）。</p>
+<h2 id="MRR内存管理准则"><a href="#MRR内存管理准则" class="headerlink" title="MRR内存管理准则"></a>MRR内存管理准则</h2><ul>
+<li>谁创建，谁释放。</li>
+<li>谁retain，谁release/autorelease。</li>
+<li>不要向不拥有的对象发送release。</li>
+</ul>
+<h1 id="检测工具介绍"><a href="#检测工具介绍" class="headerlink" title="检测工具介绍"></a>检测工具介绍</h1><h2 id="Instrument-—-Leaks，Allocations，Analyze"><a href="#Instrument-—-Leaks，Allocations，Analyze" class="headerlink" title="Instrument — Leaks，Allocations，Analyze"></a>Instrument — Leaks，Allocations，Analyze</h2><p>&emsp;&emsp;我用到的检测内存泄露的工具主要是Xcode中集成的<code>Leaks</code>组件，这个组件的检测准确率比较高，可以查看到很多比如说是泄露大小，泄露产生的地方及其堆栈信息等。</p>
+<p>&emsp;&emsp;这里的“泄露产生的地方”并不一定可以定位到具体发生泄漏的某一句代码，而是会标出发生泄漏的对象初始化分配内存的地方，然后需要具体去分析和跟踪该对象的内存管理来查找泄漏的原因。</p>
+<p>&emsp;&emsp;<code>Allocations</code>工具是一个跟踪由应用程序分配的对象内存的工具。可以用来在疑似内存泄露的地方，通过反复操作，查看某些对象内存是否有被正常的释放，从而得知是否发生内存泄露。</p>
+<p>&emsp;&emsp;<code>Analyze</code>是一款静态分析代码的工具。它可以发现一些逻辑错误，内存泄漏和声明错误（未使用变量）等。这个组件还可以检测出一些内存泄漏问题，比如一些比较明显的循环引用，CF库对象未release等相对简单的问题，通常是在进行其他方式检测之前就使用的方式，把一些简单的问题先发现并处理了。</p>
+<blockquote>
+<p>参考资料：</p>
 <ol>
-<li>在MRC模式下，发送了retain消息，记得也要发送release消息。并且在一个对象发送retain消息之前，也要考虑是否要release原来的对象。</li>
+<li><a href="http://www.jianshu.com/p/c0aa12d91f05" target="_blank" rel="external">使用Instruments定位iOS应用的Memory Leaks</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Instrument-Leaks.html#//apple_ref/doc/uid/TP40004652-CH60-SW1" target="_blank" rel="external">Leaks Instrument</a></li>
+<li><a href="https://blog.leancloud.cn/2835/" target="_blank" rel="external">iOS性能优化：Instruments 工具的救命三招</a></li>
+<li><a href="http://www.cnblogs.com/ym123/p/4316328.html" target="_blank" rel="external">IOS性能调优系列：使用Allocation动态分析内存使用情况</a></li>
+<li><a href="http://www.cnblogs.com/ym123/p/4309400.html" target="_blank" rel="external">IOS性能调优系列：Analyze静态分析</a></li>
+<li><a href="http://blog.csdn.net/xdrt81y/article/details/11036317" target="_blank" rel="external">IPhone开发工具篇-利用xcode profile和analyze进行性能优化</a> </li>
 </ol>
+</blockquote>
+<h2 id="内存检测组件"><a href="#内存检测组件" class="headerlink" title="内存检测组件"></a>内存检测组件</h2><p>&emsp;&emsp;此外还有一些“植入”项目中的内存检测组件，比如说Facebook iOS 内存检测三剑客(FBAllocationTracker/FBMemoryProfiler/FBRetainCycleDetector)，MSLeakHunter，<a href="http://wereadteam.github.io/2016/02/22/MLeaksFinder/" target="_blank" rel="external">MLeaksFinder</a>，<a href="https://gold.xitu.io/entry/577ba7d9a633bd005be0d0fd" target="_blank" rel="external">PLeakSniffer</a>等等。</p>
+<h3 id="内存泄露检测组件原理简介"><a href="#内存泄露检测组件原理简介" class="headerlink" title="内存泄露检测组件原理简介"></a>内存泄露检测组件原理简介</h3><p>&emsp;&emsp;这些组件的其中大部分的实现原理都是类似的。主要就是灵活运用了OC中的<code>Rumtime</code>机制，以及各种OC对象生命周期管理相关的特性。这些组件为了实现对OC对象的内存监控，其本质就是在这些对象被分配和释放的时机进行监测。</p>
+<p>&emsp;&emsp;比如说需要监测一个<code>UIViewController</code>类型的对象，就可以联想到iOS中VC的生命周期和<code>UINavigationController</code>有很大关系，因为后者在iOS应用中常常被用来管理大量VC的跳转控制。所以就可以考虑通过监控<code>UINavigationController</code>的<code>navigation stack</code>来达到检测VC是否发生内存泄露的目的。（以下这些方法都会被hook）</p>
+<p><img src="http://img.blog.csdn.net/20160716154700748" alt="这里写图片描述"></p>
+<p>&emsp;&emsp;再比如说常见的<code>NSObject</code>对象，其<code>alloc</code>和<code>dealloc</code>方法就是对象生命周期中很重要的两个方法，分别是分配内存资源和释放内存资源时会被调用的方法。那么就可以考虑通过<code>method swizzing</code>方法替换<code>alloc</code>和<code>dealloc</code>这两个方法的实现，从而获得对象内存分配和释放的相关信息。</p>
+<p><img src="http://img.blog.csdn.net/20160716154826851" alt="这里写图片描述"></p>
+<h4 id="检测UIViewController内存泄漏的原理"><a href="#检测UIViewController内存泄漏的原理" class="headerlink" title="检测UIViewController内存泄漏的原理"></a>检测UIViewController内存泄漏的原理</h4><p>（1）如何判断VC是否还在内存驻留？<br>答：利用ARC中weak指针指向的对象在对象释放时会自动置为nil的特性来检测VC是否在内存驻留。</p>
+<p>（2） 在什么时机检测VC是否发生内存泄露？<br>答：通过监控<code>UINavigationController</code>的<code>navigation stack</code>，可以判断一个VC的生命周期的开始和结束。就是当VC从<code>navigation stack</code>移除且VC的<code>viewDidDisappear</code>方法执行时，可以粗略的认为一个VC的生命周期即将结束。这时候就可以创建一个指向该VC的weak指针，并初始化一个定时器对VC进行延时扫描，最后通过(1)中的方法判断VC是否还驻留在内存从而得出VC是否发生内存泄露的结论。</p>
+<h1 id="那些年踩过的坑"><a href="#那些年踩过的坑" class="headerlink" title="那些年踩过的坑"></a>那些年踩过的坑</h1><h2 id="对象内存管理"><a href="#对象内存管理" class="headerlink" title="对象内存管理"></a>对象内存管理</h2><p>(1) 在MRC模式下，通过new, copy, alloc方式创建的对象，记得release。一般在delloc中进行释放操作。当然局部内产生的也要在局部内进行释放。</p>
+<blockquote>
+<p>点评：呵呵，在实践中发现最多的问题就是这个。尤其是在ARC和MRC都有的项目中。= =。我猜测原因之一可能是后面的代码修改者没意识到当前修改的文件是MRR模式的，所以在新增一些属性或成员变量后，没有在dealloc方法或对象使用完毕后及时的释放资源。</p>
+</blockquote>
+<p>(2) 在MRR模式下，发送了retain消息，记得也要发送release消息。并且在一个对象发送retain消息之前，也要考虑是否要release原来的对象。</p>
 <p>碰到的一个栗子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@interface classA&#123;</div><div class="line">	NSString *_str;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)functionA&#123;</div><div class="line">	//正确的方式是这里要有: [_str release];</div><div class="line">	_str = [[NSString stringWithFormat:@&quot;%d&quot;, @(213)] retain];</div><div class="line">	</div><div class="line">	//后续代码...</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)functionB&#123;</div><div class="line">	//正确的方式是这里要有: [_str release];</div><div class="line">	_str = [[NSString stringWithFormat:@&quot;%d&quot;, @(213)] retain];</div><div class="line">//后续代码...</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
 <blockquote>
 <p>Tips：这里存在一个问题就是functionA中对一个对象发送了retain消息，如果这时候又调用了functionB方法，str变量被重新赋值。此时如果没有先对str发送release消息的话，则会导致functionA中引用的对象发生内存泄露。<br>对于一般情况下使用的局部变量都会记得发送retain后发送release，然而在栗子中那种情况下，成员变量可能在不同方法中被重新赋值的时候，就要注意了！</p>
 </blockquote>
-<p><br></p>
-<ol>
-<li>不论是MRC还是ARC情况下，使用Core Foundation框架（C语言实现的框架，其可以和Cocoa Foundation库中的对象进行类型转换）创建的对象需要手动进行内存管理。即需要手动调用CFRetain和CFRelease来管理对象内存。</li>
-</ol>
+<p>(3) 不论是MRR还是ARC情况下，使用Core Foundation框架（C语言实现的框架，其可以和Cocoa Foundation库中的对象进行类型转换）创建的对象需要手动进行内存管理。即需要手动调用CFRetain和CFRelease来管理对象内存。</p>
 <blockquote>
 <p>Tips：这种情况没啥好说的了，就是记得CFRetain、CFRelease和retain、release一样要成对出现~</p>
 </blockquote>
@@ -413,28 +418,22 @@
 <li><p><code>__bridge_transfer</code>，转换后自动调用CFRelease，即帮助自动解决上述(2)的情形。</p>
 </li>
 </ol>
-<p><br></p>
-<ol>
-<li>使用NSAutoreleasePool创建的自动释放池，一定要确保其发送drain或release消息。这样创建的自动释放池对象才会被释放，同时被加入自动释放池的对象才能收到release消息，避免内存泄露。</li>
-</ol>
+<p><br><br>(4) 使用NSAutoreleasePool创建的自动释放池，一定要确保其发送drain或release消息。这样创建的自动释放池对象才会被释放，同时被加入自动释放池的对象才能收到release消息，避免内存泄露。</p>
 <p>碰到的栗子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">- (void)functionA&#123;</div><div class="line">	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];</div><div class="line">	NSString *str = [[NSString alloc] initWithFormat:@&quot;%d&quot;, @(213)];</div><div class="line">	[str release];</div><div class="line">	//执行各种代码...</div><div class="line">	</div><div class="line">	if (...)&#123;</div><div class="line">		//执行各种代码...</div><div class="line">		//问题就在这里：return 之前没有释放自动释放池！！！</div><div class="line">		//正确的做法，加上: [pool release];</div><div class="line">		return;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	[pool release];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <blockquote>
 <p>Tips：栗子中的案例虽然看起来是个很逗比的错误，不过在实战中已经发现两处了…所以如果是MRC方式下这样使用自动释放池时，记得也要对自动释放池发送drain或release操作。如果是使用ARC的话，则不推荐栗子中使用自动释放池的方式，而是下面这种方式了。</p>
 </blockquote>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@autoreleasepool &#123;</div><div class="line">    // Code benefitting from a local autorelease pool.</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>&emsp;&emsp;既然说到自动释放池，那就顺便简单了解一下其实现原理，使用场景和一些注意事项吧。上面也有提到NSAutoreleasePool有两个方法drain和release，关于这两者的区别可以参考这些资料：【<a href="http://xyxdasnjss.iteye.com/blog/1831703" target="_blank" rel="external">NSAutoReleasePool使用中drain和release的区别</a>】【<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSAutoreleasePool_Class/#//apple_ref/occ/instm/NSAutoreleasePool/drain" target="_blank" rel="external">NSAutoreleasePool</a>】。此外，还发现了一篇讲解AutoReleasePool的比较好的文章，里面也有解释了AutoReleasePool释放时间，原理等等：【<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">黑幕背后的Autorelease</a>】。</p>
-<p><br></p>
+<p>(5) 函数返回的对象，是否加入自动释放池（延迟释放）。从内存管理的规范上来讲，如果一个函数需要返回一个对象，这个对象应该加入自动释放池中（”谁创建，谁释放”）？虽然说从某种角度来说，不加进自动释放池，而是由函数调用者负责该对象的释放也是可行的。如果函数返回的对象没有加入自动释放池，而函数调用者在外部又没有释放该对象，则就有可能造成内存泄露的现象。</p>
+<p>5.1）OC中有一些对象有多种创建的方法，比如说NSString, NSArray, NSDictionary之类的（还有它们的可变类型）。这些类都提供了两种类型的创建方式，一种是成员函数initWithXXX，另一种则是类函数stringWithXXX, arrayWithXXX（或array）， dictionaryWithXXX(或dictionary)这些。<br>这些方法都是有区别的，第一种方式产生的对象需要手动release来释放内存，第二种方式产生的对象已经被加到autoreleasepool中，不需要手动release来释放内存。所以在项目中也要注意这些对象使用不同创建方式时所采用的不同的对象管理方法，针对这两种对象生成方式，也有很多讨论，大家自己看看吧哈哈哈哈哈。</p>
+<p>参考资料：</p>
 <ol>
-<li>函数返回的对象，是否加入自动释放池（延迟释放）。从内存管理的规范上来讲，如果一个函数需要返回一个对象，这个对象应该加入自动释放池中（”谁创建，谁释放”）？虽然说从某种角度来说，不加进自动释放池，而是由函数调用者负责该对象的释放也是可行的。如果函数返回的对象没有加入自动释放池，而函数调用者在外部又没有释放该对象，则就有可能造成内存泄露的现象。</li>
-</ol>
-<p>（1）OC中有一些对象有多种创建的方法，比如说NSString, NSArray, NSDictionary之类的（还有它们的可变类型）。这些类都提供了两种类型的创建方式，一种是成员函数initWithXXX，另一种则是类函数stringWithXXX, arrayWithXXX（或array）， dictionaryWithXXX(或dictionary)这些。<br>&emsp;&emsp;这些方法都是有区别的，第一种方式产生的对象需要手动release来释放内存，第二种方式产生的对象已经被加到autoreleasepool中，不需要手动release来释放内存。所以在项目中也要注意这些对象使用不同创建方式时所采用的不同的对象管理方法，针对这两种对象生成方式，也有很多讨论，大家自己看看吧哈哈哈哈哈。</p>
-<p>参考资料：    </p>
-<ol>
-<li><a href="http://stackoverflow.com/questions/3898974/stringwithformat-vs-initwithformat-on-nsstring" target="_blank" rel="external">stringWithFormat vs. initWithFormat on NSString</a>   </li>
+<li><a href="http://stackoverflow.com/questions/3898974/stringwithformat-vs-initwithformat-on-nsstring" target="_blank" rel="external">stringWithFormat vs. initWithFormat on NSString</a></li>
 <li><a href="http://www.cnblogs.com/yjmyzz/archive/2011/02/25/1965338.html" target="_blank" rel="external">objective-C: NSString应该用initWithFormat? 还是 stringWithFormat?</a><br>3.<a href="http://stackoverflow.com/questions/5423211/difference-between-nsmutablearray-array-vs-nsmutablearray-alloc-init" target="_blank" rel="external">Difference between [NSMutableArray array] vs [[NSMutableArray alloc] init]</a></li>
 </ol>
-<p>（2）其中就碰到过Runtime方法中的<code>class_copyIvarList</code>，<code>class_copyMethodList</code>这些方法返回的对象没有被手动释放导致的内存泄漏。因为这些是C实现的函数，是需要手动对函数返回值进行free的，不然则会导致内存泄露。= =。这里也顺便提醒平时需要注意对于C/C++的实现，当见到malloc/new分配的对象，就应该检查该对象有没有对应的free/delete操作，这些地方往往也是内存泄漏产生的地方。<br><br></p>
-<h4 id="3-2-引用循环"><a href="#3-2-引用循环" class="headerlink" title="3.2 引用循环"></a>3.2 引用循环</h4><p>&emsp;&emsp;这是无论在MRC还是ARC下都存在的一种导致内存泄露的情况，尤其是在ARC中，如果发生内存泄漏，其一般都会是罪魁祸首。= =。而且个人觉得引用循环这种问题是最难发现和分析的！项目很大的时候，模块间会很复杂，相互间依赖就很多，一不小心就很容易产生强引用循环这种现象。尤其是在使用到block的时候，更要注意适当处理以避免强引用循环的发生。</p>
+<p>5.2）其中就碰到过Runtime方法中的<code>class_copyIvarList</code>，<code>class_copyMethodList</code>这些方法返回的对象没有被手动释放导致的内存泄漏。因为这些是C实现的函数，是需要手动对函数返回值进行free的，不然则会导致内存泄露。= =。这里也顺便提醒平时需要注意对于C/C++的实现，当见到malloc/new分配的对象，就应该检查该对象有没有对应的free/delete操作，这些地方往往也是内存泄漏产生的地方。</p>
+<h2 id="3-2-引用循环"><a href="#3-2-引用循环" class="headerlink" title="3.2 引用循环"></a>3.2 引用循环</h2><p>&emsp;&emsp;这是无论在MRR还是ARC下都存在的一种导致内存泄露的情况，尤其是在ARC中，如果发生内存泄漏，其一般都会是罪魁祸首。尤其是在使用block的时候，更要注意适当处理以避免强引用循环的发生。</p>
 <p>后续有待更新。。。。</p>
 
       
@@ -457,8 +456,6 @@
     <footer class="post-footer">
       
         <div class="post-tags">
-          
-            <a href="/tags/iOS/" rel="tag">#iOS</a>
           
             <a href="/tags/内存管理/" rel="tag">#内存管理</a>
           
@@ -637,7 +634,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、检测工具介绍"><span class="nav-number">1.</span> <span class="nav-text">一、检测工具介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Instrument-—-Leaks，Allocations，Analyze"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Instrument — Leaks，Allocations，Analyze</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-内存检测组件"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 内存检测组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、应用内存"><span class="nav-number">2.</span> <span class="nav-text">二、应用内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、实践"><span class="nav-number">3.</span> <span class="nav-text">三、实践</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-对象内存管理"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 对象内存管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-引用循环"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 引用循环</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#应用内存管理"><span class="nav-number">1.</span> <span class="nav-text">应用内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存管理原理"><span class="nav-number">1.1.</span> <span class="nav-text">内存管理原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MRR内存管理准则"><span class="nav-number">1.2.</span> <span class="nav-text">MRR内存管理准则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#检测工具介绍"><span class="nav-number">2.</span> <span class="nav-text">检测工具介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Instrument-—-Leaks，Allocations，Analyze"><span class="nav-number">2.1.</span> <span class="nav-text">Instrument — Leaks，Allocations，Analyze</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存检测组件"><span class="nav-number">2.2.</span> <span class="nav-text">内存检测组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内存泄露检测组件原理简介"><span class="nav-number">2.2.1.</span> <span class="nav-text">内存泄露检测组件原理简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#检测UIViewController内存泄漏的原理"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">检测UIViewController内存泄漏的原理</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#那些年踩过的坑"><span class="nav-number">3.</span> <span class="nav-text">那些年踩过的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对象内存管理"><span class="nav-number">3.1.</span> <span class="nav-text">对象内存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-引用循环"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 引用循环</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
